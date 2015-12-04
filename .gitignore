@@ -1,0 +1,10 @@
+/target
+/classes
+/checkouts
+pom.xml
+*.jar
+*.class
+.*
+example-*
+lein-template.iml
+pom.xml.asc

@@ -1,0 +1,10 @@
+{{=<$ $>=}}
+
+{<$#when-datomic$>
+ :datomic {:dbs {:<$name$> {:url           "datomic:mem://<$name$>"
+                            :schema        "<$name$>.migrations"
+                            :auto-migrate  true
+                            :auto-drop     true
+                            :seed-function <$name$>.<$name$>-data/seed-<$name$>}}}
+ <$/when-datomic$>
+ :port    3000}
