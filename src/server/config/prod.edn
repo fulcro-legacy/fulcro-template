@@ -1,0 +1,3 @@
+; Config files can read raw strings or EDN from env variables (:env/VAR and :env.edn/VAR)
+{:user :env/USER
+ :port :env.edn/PORT}

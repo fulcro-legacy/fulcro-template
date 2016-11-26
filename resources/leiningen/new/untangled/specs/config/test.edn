@@ -1,9 +1,0 @@
-{{=<$ $>=}}
-
-{<$#when-datomic$>
- :datomic {:dbs {:<$name$> {:url           "datomic:mem://<$name$>"
-                            :schema        "<$name$>.migrations"
-                            :auto-migrate  false
-                            :auto-drop     false}}}
- <$/when-datomic$>
- :port    3000}
