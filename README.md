@@ -85,7 +85,7 @@ Add a server config:
 
 <img src="docs/img/server.png">
 
-Then run both from IntelliJ.
+Then run *both* from IntelliJ.
 
 ## Using from other editors
 
@@ -98,7 +98,9 @@ The simplest approach is to start a REPL:
 lein repl
 ```
 
-and use the `start-figwheel` or `go` functions to start figwheel or the server.
+*You will need two REPLs*: one for the server, and one for you dev builds of the client.
+
+There is a pre-supplied function named `start-figwheel` that will start the cljs builds and figwheel hot code push.
 
 ## Using the server
 
