@@ -1,6 +1,7 @@
 *.class
+*.iml
 *.jar
-.*
+.idea
 checkouts
 classes
 figwheel_server.log

@@ -3,12 +3,12 @@
   :license {:name "MIT" :url "https://opensource.org/licenses/MIT"}
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
-                 [org.clojure/clojurescript "1.9.293"]
+                 [org.clojure/clojurescript "1.9.494"]
                  [commons-io "2.5"]
 
-                 [navis/untangled-client "0.6.0"]
+                 [navis/untangled-client "0.7.0"]
                  [untangled/om-css "1.0.0"]
-                 [org.omcljs/om "1.0.0-alpha47"]
+                 [org.omcljs/om "1.0.0-alpha48"]
 
                  [navis/untangled-spec "0.3.9" :scope "test" :exclusions [io.aviso/pretty]]
                  [lein-doo "0.1.7" :scope "test"]
@@ -17,7 +17,7 @@
                  [com.taoensso/timbre "4.7.4"]
                  [navis/untangled-server "0.6.2"]]
 
-  :plugins [[lein-cljsbuild "1.1.4"]
+  :plugins [[lein-cljsbuild "1.1.5"]
             [lein-doo "0.1.7"]
             [com.jakemccrary/lein-test-refresh "0.17.0"]]
 
@@ -90,10 +90,10 @@
                        :prep-tasks ["compile"
                                     ["cljsbuild" "once" "production"]]}
              :dev     {:source-paths ["dev/client" "dev/server" "src/client" "src/server"]
-                       :dependencies [[binaryage/devtools "0.8.3"]
+                       :dependencies [[binaryage/devtools "0.9.1"]
                                       [org.clojure/tools.namespace "0.2.11"]
                                       [com.cemerick/piggieback "0.2.1"]
-                                      [figwheel-sidecar "0.5.8" :exclusions [org.clojure/tools.reader]]
+                                      [figwheel-sidecar "0.5.9" :exclusions [org.clojure/tools.reader]]
                                       [devcards "0.2.2" :exclusions [org.omcljs/om]]]
                        :repl-options {:init-ns          user
                                       :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}})
