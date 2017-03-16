@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-set -o errexit
-([[ -n "$DEBUG" ]] || [[ -n "$TRACE" ]]) && set -o xtrace
+([[ -n "$DEBUG" ]] || [[ -n "$TRACE" ]]) && set -x
+set -e
 
 assert_clean_work_tree () {
-    if [[ -n "$(git status -s)" ]]; then
+    if [[ -z "$OVERRIDE" ]] && [[ -n "$(git status -s)" ]]; then
         echo "[ERROR]: Uncommited changes!"
         git status
         exit 1
@@ -33,9 +33,9 @@ rename_matching_dirs () {
 
 main () {
     assert_clean_work_tree
-    read -p "Renaming namespace 'untangled-template' to: " ns
-    read -p "Renaming file/dir 'untangled_template' to: " fdir
+    read -p "Renaming 'untangled-template' to: " ns
     search_and_replace "untangled-template" "$ns"
+    local fdir="${ns//-/_}"
     search_and_replace "untangled_template" "$fdir"
     rename_matching_dirs "untangled_template" "$fdir"
 }
