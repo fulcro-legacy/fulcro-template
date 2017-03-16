@@ -16,13 +16,12 @@ search_and_replace () {
     #stackoverflow.com/questions/19242275/re-error-illegal-byte-sequence-on-mac-os-x
     #stackoverflow.com/questions/1115854/how-to-resolve-error-bad-index-fatal-index-file-corrupt-when-using-git
     export LC_ALL=C
-    #IN_PLACE_EXT should be empty for newer sed versions (where sed --version works), and an empty quoted string for
-    #older sed versions.
-    IN_PLACE_EXT='""'
-    if sed --version > /dev/null 2>&1; then
-      IN_PLACE_EXT=
-    fi
-    grep --exclude="$0" --exclude-dir=".git" -lr "$1" * | xargs sed -i $IN_PLACE_EXT "s/$1/$2/g"
+    for f in $(grep --exclude="$0" --exclude-dir=".git" -lr "$1" *); do
+        #using .bak in place extension for portability between sed versions
+        #is more portable (& easier) than no backup
+        sed -i.bak "s/$1/$2/g" "$f"
+        rm ${f}.bak
+    done
     unset LC_ALL
 }
 
