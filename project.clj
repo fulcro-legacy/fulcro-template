@@ -6,16 +6,16 @@
                  [org.clojure/clojurescript "1.9.494"]
                  [commons-io "2.5"]
 
-                 [navis/untangled-client "0.7.0"]
+                 [untangled-web/untangled "1.0.0-SNAPSHOT"]
                  [untangled/om-css "1.0.0"]
                  [org.omcljs/om "1.0.0-alpha48"]
 
-                 [navis/untangled-spec "0.3.9" :scope "test" :exclusions [io.aviso/pretty]]
+                 [navis/untangled-spec "1.0.0-alpha3" :scope "test" ]
                  [lein-doo "0.1.7" :scope "test"]
-                 [org.clojure/core.async "0.2.395"]
+                 [org.clojure/core.async "0.3.442"]
                  [http-kit "2.2.0"]
-                 [com.taoensso/timbre "4.7.4"]
-                 [navis/untangled-server "0.6.2"]]
+                 [com.taoensso/timbre "4.8.0"]
+                 ]
 
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-doo "0.1.7"]
@@ -91,9 +91,9 @@
                                     ["cljsbuild" "once" "production"]]}
              :dev     {:source-paths ["dev/client" "dev/server" "src/client" "src/server"]
                        :dependencies [[binaryage/devtools "0.9.1"]
-                                      [org.clojure/tools.namespace "0.2.11"]
+                                      [org.clojure/tools.namespace "0.3.0-alpha3"]
                                       [com.cemerick/piggieback "0.2.1"]
                                       [figwheel-sidecar "0.5.9" :exclusions [org.clojure/tools.reader]]
-                                      [devcards "0.2.2" :exclusions [org.omcljs/om]]]
+                                      [devcards "0.2.2" ]]
                        :repl-options {:init-ns          user
                                       :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}})
