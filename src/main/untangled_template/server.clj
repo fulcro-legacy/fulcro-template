@@ -1,4 +1,4 @@
-(ns untangled-template.system
+(ns untangled-template.server
   (:require
     [untangled.server :as core]
     [untangled.easy-server :as easy]
@@ -19,7 +19,7 @@
     ; If you're sure this is the only component hooking in, you could simply set it instead.
     (let [vanilla-pipeline (easy/get-pre-hook handler)]
       (easy/set-pre-hook! handler (comp vanilla-pipeline
-                                     (partial cookies/wrap-cookies))))
+                                    (partial cookies/wrap-cookies))))
     this)
   (stop [this] this))
 
@@ -35,8 +35,8 @@
                    :handlers {:sample1 (fn [env {:keys [route-params]}]
                                          (timbre/info "Got a request on sample1 route with " :ENV env :ROUTE-PARAMS route-params)
                                          (-> (str "Hello: " (:id route-params))
-                                             response/response
-                                             (response/content-type "text/plain")))}}
+                                           response/response
+                                           (response/content-type "text/plain")))}}
     ; TEMPLATE: :examples
     :components {:pipeline (component/using                 ; add some additional wrappers to the pipeline
                              (map->AdditionalPipeline {})

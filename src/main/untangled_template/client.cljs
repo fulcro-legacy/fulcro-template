@@ -1,4 +1,4 @@
-(ns untangled-template.core
+(ns untangled-template.client
   (:require [om.next :as om]
             [untangled.client.core :as uc]
             [untangled.client.data-fetch :as f]

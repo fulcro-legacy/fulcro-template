@@ -6,7 +6,6 @@
                  [org.clojure/clojurescript "1.9.671"]
 
                  [awkay/untangled "1.0.0-beta1"]
-                 [untangled/om-css "1.0.0"]
                  [org.omcljs/om "1.0.0-beta1"]
 
                  [awkay/untangled-spec "1.0.0-beta1" :scope "test"]
@@ -28,23 +27,23 @@
                  :with-repl    true
                  :changes-only true}
 
-  :source-paths ["src/server"]
-  :test-paths ["specs" "specs/server" "specs/config"]
+  :source-paths ["src/main"]
+  :test-paths ["src/test"]
   :clean-targets ^{:protect false} ["target" "resources/public/js" "resources/private"]
 
   :figwheel {:css-dirs ["resources/public/css"]}
 
   :cljsbuild {:builds [{:id           "production"
-                        :source-paths ["src/client"]
+                        :source-paths ["src/main"]
                         :jar          true
                         :compiler     {:asset-path    "js/prod"
-                                       :main          untangled-template.main
-                                       :optimizations :simple
+                                       :main          untangled-template.client-main
+                                       :optimizations :advanced
                                        :output-dir    "resources/public/js/prod"
                                        :output-to     "resources/public/js/untangled_template.min.js"}}
                        {:id           "dev"
                         :figwheel     true
-                        :source-paths ["src/client" "dev/client"]
+                        :source-paths ["src/main" "dev/client"]
                         :compiler     {:asset-path           "js/dev"
                                        :external-config
                                                              {:devtools/config
@@ -57,8 +56,8 @@
                                        :preloads             [devtools.preload]
                                        :source-map-timestamp true}}
                        {:id           "test"
-                        :source-paths ["specs/client" "src/client"]
-                        :figwheel     true
+                        :source-paths ["src/test" "src/main"]
+                        :figwheel     {:on-jsload untangled-template.spec-main/client-tests}
                         :compiler     {:asset-path    "js/specs"
                                        :main          untangled-template.spec-main
                                        :optimizations :none
@@ -66,7 +65,7 @@
                                        :output-to     "resources/public/js/specs.js"
                                        :preloads      [devtools.preload]}}
                        {:id           "automated-tests"
-                        :source-paths ["specs/client" "src/client"]
+                        :source-paths ["src/test" "src/main"]
                         :compiler     {:asset-path    "js/ci"
                                        :main          untangled-template.all-tests
                                        :optimizations :none
@@ -74,7 +73,7 @@
                                        :output-to     "resources/private/js/unit-tests.js"}}
                        {:id           "cards"
                         :figwheel     {:devcards true}
-                        :source-paths ["src/client" "src/cards"]
+                        :source-paths ["src/main" "src/cards"]
                         :compiler     {:asset-path           "js/cards"
                                        :main                 untangled-template.cards
                                        :optimizations        :none

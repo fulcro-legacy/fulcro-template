@@ -3,7 +3,7 @@
     [untangled.client.core :as uc]
     [om.next :as om]
 
-    [untangled-template.core :as core]
+    [untangled-template.client :as core]
     [untangled-template.ui.root :as root]
 
     [cljs.pprint :refer [pprint]]))

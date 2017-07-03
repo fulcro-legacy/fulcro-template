@@ -1,4 +1,4 @@
-(ns untangled-template.core
+(ns untangled-template.server-main
   (:require
     [com.stuartsierra.component :as component]
     [untangled.server :as c]

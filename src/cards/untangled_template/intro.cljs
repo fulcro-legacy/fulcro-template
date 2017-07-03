@@ -5,5 +5,5 @@
             [om.dom :as dom]))
 
 (defcard SVGPlaceholder
-         "# SVG Placeholder"
-         (comp/ui-placeholder {:w 200 :h 200}))
+  "# SVG Placeholder"
+  (comp/ui-placeholder {:w 200 :h 200}))

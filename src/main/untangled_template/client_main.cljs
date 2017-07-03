@@ -1,5 +1,5 @@
-(ns untangled-template.main
-  (:require [untangled-template.core :refer [app]]
+(ns untangled-template.client-main
+  (:require [untangled-template.client :refer [app]]
             [untangled.client.core :as core]
             [untangled-template.ui.root :as root]))
 
