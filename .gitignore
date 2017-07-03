@@ -11,3 +11,4 @@ pom.xml
 pom.xml.asc
 resources/public/js
 target
+out

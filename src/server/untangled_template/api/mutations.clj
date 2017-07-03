@@ -1,19 +1,20 @@
 (ns untangled-template.api.mutations
   (:require
-
     [om.next.server :as oms]
     [taoensso.timbre :as timbre]
-    [untangled.server.core :as core]))
-
-(defmulti apimutate oms/dispatch)
+    [untangled.server :as core :refer [defmutation]]))
 
 (defonce logged-in? (atom false))
 
-(defmethod apimutate 'login/attempt-login [env k {:keys [u p uid]}]
-  {:action (fn []
-             (reset! logged-in? true)
-             {:uid     42
-              :tempids {uid 42}})})
+(defmutation attempt-login
+  "Server mutation: Attempt a login on the server. Returns a remapping of the user ID generated on the client."
+  [{:keys [u p uid]}]
+  (action [env]
+    (reset! logged-in? true)
+    {:uid     42
+     :tempids {uid 42}}))
 
-(defmethod apimutate 'login/logout [env k {:keys [u p uid]}]
-  {:action (fn [] (reset! logged-in? false))})
+(defmutation logout
+  "Server mutation: Log the given UI out"
+  [{:keys [u p uid]}]
+  (action [env] (reset! logged-in? false)))

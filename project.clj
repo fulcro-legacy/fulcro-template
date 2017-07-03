@@ -2,22 +2,20 @@
   :description "A clonable & upstream untangled template"
   :license {:name "MIT" :url "https://opensource.org/licenses/MIT"}
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
-                 [org.clojure/clojurescript "1.9.494"]
-                 [commons-io "2.5"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
+                 [org.clojure/clojurescript "1.9.671"]
 
-                 [untangled-web/untangled "1.0.0-SNAPSHOT"]
+                 [awkay/untangled "1.0.0-beta1"]
                  [untangled/om-css "1.0.0"]
-                 [org.omcljs/om "1.0.0-alpha48"]
+                 [org.omcljs/om "1.0.0-beta1"]
 
-                 [navis/untangled-spec "1.0.0-alpha3" :scope "test" ]
+                 [awkay/untangled-spec "1.0.0-beta1" :scope "test"]
                  [lein-doo "0.1.7" :scope "test"]
-                 [org.clojure/core.async "0.3.442"]
+                 [org.clojure/core.async "0.3.443"]
                  [http-kit "2.2.0"]
-                 [com.taoensso/timbre "4.8.0"]
-                 ]
+                 [com.taoensso/timbre "4.10.0"]]
 
-  :plugins [[lein-cljsbuild "1.1.5"]
+  :plugins [[lein-cljsbuild "1.1.6"]
             [lein-doo "0.1.7"]
             [com.jakemccrary/lein-test-refresh "0.17.0"]]
 
@@ -49,9 +47,9 @@
                         :source-paths ["src/client" "dev/client"]
                         :compiler     {:asset-path           "js/dev"
                                        :external-config
-                                       {:devtools/config
-                                        ;;github.com/binaryage/cljs-devtools/blob/master/docs/configuration.md
-                                        {:print-config-overrides true}}
+                                                             {:devtools/config
+                                                              ;;github.com/binaryage/cljs-devtools/blob/master/docs/configuration.md
+                                                              {:print-config-overrides true}}
                                        :main                 cljs.user
                                        :optimizations        :none
                                        :output-dir           "resources/public/js/dev"
@@ -90,10 +88,10 @@
                        :prep-tasks ["compile"
                                     ["cljsbuild" "once" "production"]]}
              :dev     {:source-paths ["dev/client" "dev/server" "src/client" "src/server"]
-                       :dependencies [[binaryage/devtools "0.9.1"]
+                       :dependencies [[binaryage/devtools "0.9.2"]
                                       [org.clojure/tools.namespace "0.3.0-alpha3"]
                                       [com.cemerick/piggieback "0.2.1"]
-                                      [figwheel-sidecar "0.5.9" :exclusions [org.clojure/tools.reader]]
-                                      [devcards "0.2.2" ]]
+                                      [figwheel-sidecar "0.5.10" :exclusions [org.clojure/tools.reader]]
+                                      [devcards "0.2.3"]]
                        :repl-options {:init-ns          user
                                       :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}})

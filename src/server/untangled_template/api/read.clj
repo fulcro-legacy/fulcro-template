@@ -1,16 +1,18 @@
 (ns untangled-template.api.read
   (:require
-    ;[untangled.datomic.protocols :as udb]
     [untangled-template.api.mutations :as m]
-    [taoensso.timbre :as timbre]))
+    [untangled.server :refer [defquery-entity defquery-root]]))
 
-(timbre/info "Loading API definitions for untangled-template.api.read")
+(defquery-root :logged-in?
+  "Answer the :logged-in? query"
+  (value [env params]
+    @m/logged-in?))
 
+(defquery-root :logged-in?
+  "Answer the :hello-world query"
+  (value [env params] 42))
 
-(defn api-read [{:keys [query request] :as env} disp-key params]
-  ;(let [connection (udb/get-connection survey-database)])
-  (case disp-key
-    :logged-in? {:value @m/logged-in?}
-    :hello-world {:value 42}
-    :current-user {:value {:id 42 :name "Tony Kay"}}
-    (throw (ex-info "Invalid request" {:query query :key disp-key}))))
+(defquery-root :current-user
+  "Answer the :current-user query"
+  (value [env params]
+    {:id 42 :name "Tony Kay"}))
