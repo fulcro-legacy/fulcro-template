@@ -4,6 +4,7 @@
     [om.dom :as dom]
     [untangled-template.ui.login :as l]
     [untangled-template.ui.main :as main]
+    [untangled-template.ui.preferences :as prefs]
     [untangled-template.ui.new-user :as nu]
     [om.next :as om :refer-macros [defui]]
     [untangled.client.core :as u]
@@ -28,6 +29,7 @@
   :loading Loading
   :new-user nu/NewUser
   :login l/LoginPage
+  :preferences prefs/PreferencesPage
   :main main/MainPage)
 
 (def ui-pages (om/factory Pages))
@@ -58,7 +60,8 @@
           (when logged-in?
             (dom/ul #js {:className "nav navbar-nav"}
               ;; More nav links here
-              (dom/li nil (dom/a #js {:className "active" :onClick #(om/transact! this `[(r/route-to {:handler :main}) :pages])} "Main"))))
+              (dom/li nil (dom/a #js {:className "active" :onClick #(om/transact! this `[(r/route-to {:handler :main}) :pages])} "Main"))
+              (dom/li nil (dom/a #js {:className "active" :onClick #(om/transact! this `[(r/route-to {:handler :preferences}) :pages])} "Preferences"))))
           (if logged-in?
             (ui-login-stats loading-data current-user logout)
             (ui-login-button loading-data login)))))))
@@ -73,6 +76,7 @@
       (r/routing-tree
         (r/make-route :login [(r/router-instruction :page-router [:login :page])])
         (r/make-route :new-user [(r/router-instruction :page-router [:new-user :page])])
+        (r/make-route :preferences [(r/router-instruction :page-router [:preferences :page])])
         (r/make-route :main [(r/router-instruction :page-router [:main :page])])
         (r/make-route :loading [(r/router-instruction :page-router [:loading :page])]))))
   Object

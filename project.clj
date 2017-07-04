@@ -7,6 +7,7 @@
 
                  [awkay/untangled "1.0.0-beta1"]
                  [org.omcljs/om "1.0.0-beta1"]
+                 [bidi "2.1.1"]
 
                  [awkay/untangled-spec "1.0.0-beta1" :scope "test"]
                  [lein-doo "0.1.7" :scope "test"]
