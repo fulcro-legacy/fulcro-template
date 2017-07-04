@@ -48,6 +48,46 @@ you to your desired page after login.
 │       └── index.html          Production mode application home page
 ├── script
 │   └── figwheel.clj            CLJ script for starting figwheel automatically
+├── bin
+│   └── rename-project.sh       A script you can use to rename the project and packages
+├── package.json                User for CI testing via Node
+├── project.clj                 The project file
+├── script
+│   └── figwheel.clj            A clojure script for starting figwheel on build(s)
+├── src
+│   ├── cards
+│   │   └── untangled_template  Devcards
+│   │       ├── cards.cljs
+│   │       └── intro.cljs
+│   ├── main                         The Main Source Folder
+│   │   ├── config
+│   │   │   ├── defaults.edn         The server config defaults
+│   │   │   ├── dev.edn              The server config for dev mode
+│   │   │   └── prod.edn             A SUGGGESTED production config for Heroku
+│   │   └── untangled_template
+│   │       ├── api
+│   │       │   ├── mutations.clj    The server-side implementation of mutations
+│   │       │   ├── mutations.cljs   The client-side impl of mutations
+│   │       │   └── read.clj         Server-side read handlers
+│   │       ├── client.cljs          The creation of the client instance
+│   │       ├── client_main.cljs     The production main for client
+│   │       ├── server.clj           The creation of the server
+│   │       ├── server_main.clj      The production main for server
+│   │       └── ui
+│   │           ├── components.cljs     Sample UI placeholder component
+│   │           ├── html5_routing.cljs  Full-blown HTML5 routing with bidi/pushy
+│   │           ├── login.cljs          The login screen
+│   │           ├── main.cljs           The placeholder main screen
+│   │           ├── new_user.cljs       The placeholder new user screen (doesn't submit to server)
+│   │           ├── preferences.cljs    The placeholder preferences screen
+│   │           ├── root.cljs           The UI root
+│   │           └── user.cljs           A representation of User for login
+│   └── test
+│       └── untangled_template
+│           ├── CI_runner.cljs          The entry point for CI testing
+│           ├── client_test_main.cljs   The entry point for dev-mode testing
+│           ├── sample_spec.cljc        A sample client/server spec
+│           └── tests_to_run.cljs       Client-side requires for all spec files (so they get loaded)
 ```
 
 ## Setting up Run Configurations (IntelliJ)
@@ -70,12 +110,16 @@ when working from a lower-level system editor.
 The simplest approach is to start a REPL:
 
 ```
-lein repl
+JVM_OPTS=-Ddev lein repl
 ```
 
 *You will need two REPLs*: one for the server, and one for you dev builds of the client.
 
 There is a pre-supplied function named `start-figwheel` that will start the cljs builds and figwheel hot code push.
+
+```
+(start-figwheel [:test :dev :cards])
+```
 
 ## Using the server
 
@@ -92,20 +136,14 @@ In the server REPL, start the server with:
 To reload the server code:
 
 ```
-(reset)
+(restart)
 ```
 
 IF your compile fails, Recompile after failed compile:
 
 ```
-(refresh)
-(go)
-```
-
-If you cannot find `refresh`, try:
-
-```
 (tools-ns/refresh)
+(go)
 ```
 
 ## Using the Full Stack App (dev mode)
@@ -116,7 +154,7 @@ Open a browser on:
 http://localhost:3000/index-dev.html
 ```
 
-## Dev Cards
+## Dev Cards (once figwheel is running)
 
 Open a browser on:
 
@@ -124,12 +162,12 @@ Open a browser on:
 http://localhost:3449/cards.html
 ```
 
-## Specs
+## Client Tests (once figwheel is running)
 
 Open a browser on:
 
 ```
-http://localhost:3449/test.html
+http://localhost:3449/untangled-spec-client-tests.html
 ```
 
 ## Continuous Integration Tests
