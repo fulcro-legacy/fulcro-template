@@ -71,7 +71,7 @@
    (init path)
    (start)))
 
-(defn retart
+(defn restart
   "Stop, refresh, and restart the server."
   []
   (stop)

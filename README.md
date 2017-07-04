@@ -104,6 +104,10 @@ There is a pre-supplied function named `start-figwheel` that will start the cljs
 
 ## Using the server
 
+IMPORTANT: When work in development mode, be sure to pass the
+JVM option `-Ddev`. This will ensure the HTML5 service sends the
+right page.
+
 In the server REPL, start the server with:
 
 ```
