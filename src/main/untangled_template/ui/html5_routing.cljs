@@ -19,6 +19,8 @@
 ;; To keep track of the global HTML5 pushy routing object
 (def history (atom nil))
 
+
+
 ;; To indicate when we should turn on URI mapping. This is so you can use with devcards (by turning it off)
 (defonce use-html5-routing (atom true))
 
@@ -51,7 +53,6 @@
   [state-map {:keys [handler route-params] :as bidi-match}]
   (if @use-html5-routing
     (let [path (apply bidi/path-for app-routes handler (flatten (seq route-params)))]
-      (js/console.log :path path)
       (pushy/set-token! @history path)
       state-map)
     (r/update-routing-links state-map bidi-match)))
@@ -64,7 +65,7 @@
   (cond
     (or (= :login handler) (:logged-in? state-map)) (r/update-routing-links state-map bidi-match)
     (not (:logged-in? state-map)) (-> state-map
-                                    (assoc :loaded-uri (pushy/get-token @history))
+                                    (assoc :loaded-uri (when @history (pushy/get-token @history)))
                                     (redirect* {:handler :login}))
     (invalid-route? handler) (redirect* state-map {:handler :main})
     :else state-map))
@@ -86,3 +87,11 @@
      (let [path (apply bidi/path-for app-routes page (flatten (seq route-params)))]
        (pushy/set-token! @history (bidi/path-for app-routes page)))
      (om/transact! component `[(set-route! ~{:handler page :route-params route-params}) :pages]))))
+
+(defn start-routing [app-root]
+  (when (and @use-html5-routing (not @history))
+    (let [; NOTE: the :pages follow-on read, so the whole UI updates when page changes
+          set-route! (fn [match]
+                       (om/transact! app-root `[(set-route! ~match) :pages]))]
+      (reset! history (pushy/pushy set-route! (partial bidi/match-route app-routes)))
+      (pushy/start! @history))))

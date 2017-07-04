@@ -38,9 +38,8 @@
                                         (om/transact! this `[(api/attempt-login {:uid ~(om/tempid) :u ~username :p ~password})
                                                              (tx/fallback {:action api/server-down})])
                                         (df/load this :logged-in? nil)
-                                        (df/load this :current-user user/User {:post-mutation-params {:handler :main}
-                                                                               :post-mutation        `r/set-route!
-                                                                               :refresh              [:logged-in? :current-user]}))}
+                                        (df/load this :current-user user/User {:post-mutation `api/login-complete
+                                                                               :refresh       [:logged-in? :current-user]}))}
               "Login")))
         (dom/div #js {:className "row"}
           (dom/div #js {:className "col-xs-4"} "")

@@ -8,6 +8,23 @@ server always approves login.
 
 It is set up to be deployable to Heroku (or anywhere) as a standalone jar.
 
+## Features
+
+The app supports a fake user database (see `valid-users` in `src/main/untangled_template/api/mutations.clj`)
+with two users. HTML5 Routing is configured, and the routing tree and BIDI config
+are in `html5_routing.cljs`.
+
+The server has been set up with a session store, and the login
+mutations show you how you can access and modify it (see `mutations.clj`). The
+server has also been configured to serve the same index page for all URI requests
+of HTML, so that the browser can decide what to show based on the URI in
+app logic. See `server.clj` for details of the augmented Ring pipeline.
+
+The HTML5 routing is smart enough to know where you wanted to go. It
+remembers the URI that came in on load. If you're already logged in, it
+will start the UI in the place. If you have to login, it will redirect
+you to your desired page after login.
+
 ## Contents
 
 ```
@@ -28,51 +45,9 @@ It is set up to be deployable to Heroku (or anywhere) as a standalone jar.
 │       │   ├── edn.css         CSS files for rendering specs in browser
 │       │   └── test.css
 │       ├── index-dev.html      Dev mode application home page
-│       ├── index.html          Production mode application home page
-│       └── test.html           Tests HTML page
+│       └── index.html          Production mode application home page
 ├── script
 │   └── figwheel.clj            CLJ script for starting figwheel automatically
-├── specs
-│   ├── client
-│   │   └── untangled_template
-│   │       ├── all_tests.cljs       CI file for running all tests
-│   │       ├── sample_spec.cljs     Sample CLJS specification
-│   │       ├── spec_main.cljs       File to join all specs into a browser-runnable spec
-│   │       ├── tests_to_run.cljs    Common file (for CI and Browser) to ensure all tests are loaded
-│   │       └── ui
-│   │           └── root_spec.cljs   Sample Specification
-│   ├── config
-│   └── server
-│       └── sample
-│           └── sample_spec.clj      Sample Server-side specification
-├── src
-│   ├── cards
-│   │   └── untangled_template
-│   │       ├── cards.cljs           Devcards setup
-│   │       └── intro.cljs           Sample Devcard
-│   ├── client
-│   │   └── untangled_template
-│   │       ├── core.cljs            Definition of app. Used by production and dev modes
-│   │       ├── main.cljs            Production entry point for cljs app
-│   │       ├── state
-│   │       │   └── mutations.cljs   A place to put Om mutations
-│   │       └── ui
-│   │           ├── components.cljs  Sample UI component
-│   │           ├── login.cljs       UI Login screen. Includes some mutations.
-│   │           ├── main.cljs        UI Main screen
-│   │           ├── new_user.cljs    UI New User Screen
-│   │           └── root.cljs        Root UI with Union query for tab switching. Includes nav mutations.
-│   └── server
-│       ├── config                   Server EDN configuration files
-│       │   ├── defaults.edn         Always applied (but always used as a base for config merge)
-│       │   ├── dev.edn              Dev-mode config (auto-selected by user.clj setup)
-│       │   └── prod.edn             Production-mode config. Selected via -Dconfig=config/prod.edn
-│       └── untangled_template
-│           ├── api
-│           │   ├── mutations.clj    Server-side Om mutations
-│           │   └── read.clj         Server-side Om queries
-│           ├── core.clj             Server-side entry point for production mode
-│           └── system.clj           Server-side system configuration (shared for dev and production)
 ```
 
 ## Setting up Run Configurations (IntelliJ)

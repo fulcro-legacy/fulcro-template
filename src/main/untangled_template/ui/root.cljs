@@ -58,15 +58,22 @@
 
 (defui ^:once Root
   static om/IQuery
-  (query [this] [:ui/react-key :logged-in? {:current-user (om/get-query user/User)} :ui/loading-data {:pages (om/get-query Pages)}])
+  (query [this] [:ui/react-key :ui/ready? :logged-in? {:current-user (om/get-query user/User)} :ui/loading-data {:pages (om/get-query Pages)}])
   static u/InitialAppState
   (initial-state [this params]
     (merge
-      {:logged-in? false :current-user nil :pages (u/get-initial-state Pages nil)}
+      {; Is there a user logged in?
+       :logged-in?   false
+       ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
+       :ui/ready?    false
+       ; What are the details of the logged in user
+       :current-user nil
+       :pages        (u/get-initial-state Pages nil)}
       r/app-routing-tree))
   Object
   (render [this]
-    (let [{:keys [ui/loading-data ui/react-key pages current-user logged-in?] :or {ui/react-key "ROOT"}} (om/props this)]
+    (let [{:keys [ui/ready? ui/loading-data ui/react-key pages current-user logged-in?] :or {ui/react-key "ROOT"}} (om/props this)]
       (dom/div #js {:key react-key}
         (ui-navbar this)
-        (ui-pages pages)))))
+        (when ready?
+          (ui-pages pages))))))
