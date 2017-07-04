@@ -54,7 +54,7 @@
                                                    (f/form-field this form :name :className className :id "username"))}
                 (tr "Email Address"))
               (b/labeled-input {:split           2
-                                :error           (when password-error password-error)
+                                :error           (when (f/invalid? form :password) (tr "Password must be at least 7 characters long"))
                                 :input-generator (fn [{:keys [className]}]
                                                    (f/form-field this form :password :className className :id "password"))} (tr "Password"))
               (b/labeled-input {:split           2
