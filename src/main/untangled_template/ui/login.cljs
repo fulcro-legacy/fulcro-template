@@ -26,19 +26,19 @@
                   (df/load this :logged-in? nil)
                   (df/load this :current-user user/User {:post-mutation `api/login-complete
                                                          :refresh       [:logged-in? :current-user]}))]
-      (b/container {}
+      (b/container-fluid {}
         (b/row {}
-          (b/col {:xs 6 :xs-offset 3}
-            (when server-down
-              (dom/div nil "Unable to contact server. Try again later."))
-            (when loading-data
-              (dom/div nil "Working..."))
+          (b/col {:lg-offset 4 :lg 4 :xs-offset 1 :xs 11}
             (dom/div #js {:className "form-horizontal"}
               (b/labeled-input {:id "username" :type "text" :split 2 :onChange #(m/set-string! this :ui/username :event %)} (tr "Username"))
               (b/labeled-input {:id "password" :type "password" :split 2 :onChange #(m/set-string! this :ui/password :event %)} (tr "Password"))
-              (dom/div #js {:className "form-group"}
-                (dom/div #js {:className "col-sm-offset-2 col-sm-10"}
-                  (b/button {:type "submit" :onClick login} "Login"))))))
+              (b/labeled-input {:id              "submit" :split 2
+                                :input-generator (fn [props]
+                                                   (b/button (merge props {:kind :primary :disabled loading-data :type "submit" :onClick login}) "Login"))} ""))))
+        (when server-down
+          (b/row {}
+            (b/col {:xs-offset 4 :xs 4}
+              (b/alert {:kind :warning} "Unable to contact server. Try again later."))))
         (b/row nil
           (b/col {:xs-offset 4 :xs 4}
             "Don't have a login yet? "

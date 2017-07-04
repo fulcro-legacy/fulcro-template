@@ -17,6 +17,7 @@
   "Answer the :current-user query"
   (value [{:keys [request]} params]
     (let [resp (-> m/valid-users
+                 deref
                  (get (-> request :session :uid))
                  (select-keys [:uid :name :email]))]
       (timbre/info "Current user: " resp)

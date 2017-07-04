@@ -52,15 +52,12 @@
 (defrecord SessionStore [memory-store]
   store/SessionStore
   (read-session [_ key]
-    (timbre/info "Read session for key " key)
     (get @memory-store key))
   (write-session [_ key data]
     (let [key (or key (util/unique-key))]
-      (timbre/info "Saved session for key " key)
       (swap! memory-store assoc key data)
       key))
   (delete-session [_ key]
-    (timbre/info "Deleted session for key " key)
     (swap! memory-store dissoc key)
     nil)
   component/Lifecycle

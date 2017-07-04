@@ -5,7 +5,8 @@
     [pushy.core :as pushy]
     [bidi.verbose :refer [branch leaf param]]
     [bidi.bidi :as bidi]
-    [om.next :as om]))
+    [om.next :as om]
+    [untangled.client.logging :as log]))
 
 (def app-routing-tree
   (r/routing-tree
@@ -18,8 +19,6 @@
 
 ;; To keep track of the global HTML5 pushy routing object
 (def history (atom nil))
-
-
 
 ;; To indicate when we should turn on URI mapping. This is so you can use with devcards (by turning it off)
 (defonce use-html5-routing (atom true))
@@ -37,7 +36,6 @@
     (leaf MAIN :main)
     (leaf "index-dev.html" :main)
     (leaf "" :main)
-    (branch "boo/" (param :id) (leaf "" :boo))
     (leaf LOGIN :login)
     (leaf "signup.html" :new-user)
     (leaf "preferences.html" :preferences)))
@@ -63,12 +61,12 @@
   history events."
   [state-map {:keys [handler] :as bidi-match}]
   (cond
-    (or (= :login handler) (:logged-in? state-map)) (r/update-routing-links state-map bidi-match)
+    (or (= :new-user handler) (= :login handler)) (r/update-routing-links state-map bidi-match)
     (not (:logged-in? state-map)) (-> state-map
                                     (assoc :loaded-uri (when @history (pushy/get-token @history)))
                                     (redirect* {:handler :login}))
     (invalid-route? handler) (redirect* state-map {:handler :main})
-    :else state-map))
+    :else (r/update-routing-links state-map bidi-match)))
 
 (defmutation set-route!
   "Om mutation: YOU PROBABLY DO NOT WANT THIS ONE. Use `nav-to!` (as a plain function from the UI) instead.
@@ -92,6 +90,8 @@
   (when (and @use-html5-routing (not @history))
     (let [; NOTE: the :pages follow-on read, so the whole UI updates when page changes
           set-route! (fn [match]
-                       (om/transact! app-root `[(set-route! ~match) :pages]))]
+                       ; Delay. history events should happen after a tx is processed, but a set token could happen during.
+                       (js/setTimeout #(om/transact! app-root `[(set-route! ~match) :pages])
+                         10))]
       (reset! history (pushy/pushy set-route! (partial bidi/match-route app-routes)))
       (pushy/start! @history))))

@@ -13,12 +13,13 @@
     [untangled.client.routing :refer [defrouter]]
     [untangled.client.mutations :as m]
     [untangled.ui.bootstrap3 :as b]
-    [untangled-template.api.mutations :as api]))
+    [untangled-template.api.mutations :as api]
+    [untangled.client.core :as uc]))
 
 (defrouter Pages :page-router
   (ident [this props] [(:id props) :page])
-  :new-user nu/NewUser
   :login l/LoginPage
+  :new-user nu/NewUser
   :preferences prefs/PreferencesPage
   :main main/MainPage)
 
@@ -47,18 +48,38 @@
           (dom/span #js {:className "navbar-brand"}
             (dom/span nil "Template Brand")))
         (dom/div #js {:className "collapse navbar-collapse"}
-          (when (= true logged-in?)
+          (when (true? logged-in?)
             (dom/ul #js {:className "nav navbar-nav"}
               ;; More nav links here
               (dom/li nil (dom/a #js {:className "active" :onClick #(r/nav-to! this :main)} "Main"))
               (dom/li nil (dom/a #js {:className "active" :onClick #(r/nav-to! this :preferences)} "Preferences"))))
-          (if logged-in?
+          (if (true? logged-in?)
             (ui-login-stats loading-data current-user logout)
             (ui-login-button loading-data login)))))))
 
+;; Add other modals here.
+(defui ^:once Modals
+  static om/IQuery
+  (query [this] [{:welcome-modal (om/get-query b/Modal)}])
+  static u/InitialAppState
+  (initial-state [this params] {:welcome-modal (uc/get-initial-state b/Modal {:id :welcome :backdrop true})})
+  Object
+  (render [this]
+    (let [{:keys [welcome-modal]} (om/props this)]
+      (b/ui-modal welcome-modal
+        (b/ui-modal-title nil
+          (dom/b nil "Welcome!"))
+        (b/ui-modal-body nil
+          (dom/p #js {:className b/text-info} "Glad you could join us!"))
+        (b/ui-modal-footer nil
+          (b/button {:onClick #(om/transact! this `[(b/hide-modal {:id :welcome})])} "Thanks!"))))))
+
 (defui ^:once Root
   static om/IQuery
-  (query [this] [:ui/react-key :ui/ready? :logged-in? {:current-user (om/get-query user/User)} :ui/loading-data {:pages (om/get-query Pages)}])
+  (query [this] [:ui/react-key :ui/ready? :logged-in?
+                 {:current-user (om/get-query user/User)}
+                 {:root/modals (om/get-query Modals)}
+                 :ui/loading-data {:pages (om/get-query Pages)}])
   static u/InitialAppState
   (initial-state [this params]
     (merge
@@ -68,11 +89,12 @@
        :ui/ready?    false
        ; What are the details of the logged in user
        :current-user nil
+       :root/modals  (uc/get-initial-state Modals {})
        :pages        (u/get-initial-state Pages nil)}
       r/app-routing-tree))
   Object
   (render [this]
-    (let [{:keys [ui/ready? ui/loading-data ui/react-key pages current-user logged-in?] :or {ui/react-key "ROOT"}} (om/props this)]
+    (let [{:keys [ui/ready? ui/loading-data ui/react-key pages welcome-modal current-user logged-in?] :or {ui/react-key "ROOT"}} (om/props this)]
       (dom/div #js {:key react-key}
         (ui-navbar this)
         (when ready?
