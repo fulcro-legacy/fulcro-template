@@ -23,8 +23,6 @@
   (render [this]
     (dom/div nil "Loading...")))
 
-(def ui-loading (om/factory Loading))
-
 (defrouter Pages :page-router
   (ident [this props] [(:id props) :page])
   :loading Loading
@@ -49,7 +47,7 @@
 
 (defn ui-navbar [this]
   (let [login  #(om/transact! this `[(r/route-to {:handler :login})])
-        logout #(om/transact! this `[(api/logout {})])
+        logout #(om/transact! this `[(api/logout {}) :logged-in? :current-user])
         {:keys [ui/loading-data current-user logged-in?]} (om/props this)]
     (dom/div #js {:className "navbar navbar-default"}
       (dom/div #js {:className "container-fluid"}
@@ -60,20 +58,26 @@
           (when logged-in?
             (dom/ul #js {:className "nav navbar-nav"}
               ;; More nav links here
-              (dom/li nil (dom/a #js {:className "active" :onClick #(om/transact! this '[(r/route-to {:handler :main})]) :href "#"} "Main"))))
+              (dom/li nil (dom/a #js {:className "active" :onClick #(om/transact! this `[(r/route-to {:handler :main}) :pages])} "Main"))))
           (if logged-in?
             (ui-login-stats loading-data current-user logout)
             (ui-login-button loading-data login)))))))
 
 (defui ^:once Root
   static om/IQuery
-  (query [this] [:ui/react-key :logged-in? :current-user :ui/loading-data {:current-page (om/get-query Pages)}])
+  (query [this] [:ui/react-key :logged-in? :current-user :ui/loading-data {:pages (om/get-query Pages)}])
   static u/InitialAppState
-  (initial-state [this params] {:logged-in? false :current-user {} :current-page (u/initial-state Pages nil)})
+  (initial-state [this params]
+    (merge
+      {:logged-in? false :current-user {} :pages (u/get-initial-state Pages nil)}
+      (r/routing-tree
+        (r/make-route :login [(r/router-instruction :page-router [:login :page])])
+        (r/make-route :new-user [(r/router-instruction :page-router [:new-user :page])])
+        (r/make-route :main [(r/router-instruction :page-router [:main :page])])
+        (r/make-route :loading [(r/router-instruction :page-router [:loading :page])]))))
   Object
   (render [this]
-    (let [{:keys [ui/loading-data ui/react-key current-page current-user logged-in?] :or {ui/react-key "ROOT"}} (om/props this)
-          logout #(om/transact! this `[(api/logout {})])]
+    (let [{:keys [ui/loading-data ui/react-key pages current-user logged-in?] :or {ui/react-key "ROOT"}} (om/props this)]
       (dom/div #js {:key react-key}
         (ui-navbar this)
-        (ui-pages (om/computed current-page {:logout logout}))))))
+        (ui-pages pages)))))

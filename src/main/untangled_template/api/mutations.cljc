@@ -1,20 +1,22 @@
 (ns untangled-template.api.mutations
   (:require
-    [om.next.server :as oms]
-    [taoensso.timbre :as timbre]
+    #?(:clj [om.next.server :as oms])
+    #?(:clj
+            [taoensso.timbre :as timbre])
     #?(:cljs [untangled.client.mutations :refer [defmutation]]
        :clj
-    [untangled.server :as core :refer [defmutation]])))
+            [untangled.server :as core :refer [defmutation]])
+            [untangled.client.routing :as r]))
 
 #?(:cljs
    (defmutation attempt-login
      "Om mutation: Attempt to log in the user. Triggers a server interaction to see if there is already a cookie."
      [{:keys [uid]}]
-     (remote [env] true)
      (action [{:keys [state]}]
        (swap! state assoc
          :current-user {:id uid :name "???"}
-         :server-down false))))
+         :server-down false))
+     (remote [env] true)))
 
 #?(:cljs
    (defmutation server-down
@@ -25,23 +27,24 @@
 #?(:cljs
    (defmutation login-complete
      "Om mutation: Attempted login post-mutation the update the UI with the result."
-     [{:keys [state]} k p]
-     {:action (fn []
-                (let [{:keys [logged-in? current-user]} @state]
-                  (if logged-in?
-                    (swap! state assoc :current-page [:main :page])
-                    (swap! state assoc :current-page [:login :page]))))}))
+     [p]
+     (action [{:keys [state]}]
+       (let [{:keys [logged-in? current-user]} @state]
+         (swap! state (fn [s]
+                        (if logged-in?
+                          (r/update-routing-links s {:handler :main})
+                          (r/update-routing-links s {:handler :login}))))))))
 
 #?(:cljs
    (defmutation logout
      "Om mutation: Removes user identity from the local app and asks the server to forget the user as well."
      [p]
-     (remote [env] true)
      (action [{:keys [state]}]
-       (swap! state assoc
-         :current-user {}
-         :logged-in? false
-         :current-page [:login :page]))))
+       (swap! state (fn [s]
+                      (-> s
+                        (r/update-routing-links {:handler :login})
+                        (assoc :current-user {} :logged-in? false)))))
+     (remote [env] true)))
 
 #?(:clj (defonce logged-in? (atom false)))
 

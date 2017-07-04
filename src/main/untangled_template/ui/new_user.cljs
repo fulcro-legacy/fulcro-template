@@ -18,7 +18,7 @@
       (dom/div nil
         (dom/div #js {:className "row"}
           (dom/div #js {:className "col-xs-4"} "")
-          (dom/div #js {:class [:form :$col-xs-4]}
+          (dom/div #js {}
             (dom/div #js {:className "form-group"}
               (dom/label #js {:htmlFor "username"} "Email Address")
               (dom/input #js {:className "form-control" :type "email" :name "username" :value username
@@ -34,5 +34,3 @@
                               :type     "password" :value password2
                               :onChange #(m/set-string! this :ui/password2 :event %)}))
             (dom/button #js {:onClick #(om/transact! this `[(api/sign-up {:uid ~(om/tempid) :u ~username :p ~password})])} "Sign Up!")))))))
-
-(def ui-new-user (om/factory NewUser))

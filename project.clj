@@ -57,17 +57,17 @@
                                        :source-map-timestamp true}}
                        {:id           "test"
                         :source-paths ["src/test" "src/main"]
-                        :figwheel     {:on-jsload untangled-template.spec-main/client-tests}
-                        :compiler     {:asset-path    "js/specs"
-                                       :main          untangled-template.spec-main
+                        :figwheel     {:on-jsload untangled-template.client-test-main/client-tests}
+                        :compiler     {:asset-path    "js/test"
+                                       :main          untangled-template.client-test-main
                                        :optimizations :none
-                                       :output-dir    "resources/public/js/specs"
-                                       :output-to     "resources/public/js/specs.js"
+                                       :output-dir    "resources/public/js/test"
+                                       :output-to     "resources/public/js/test/test.js"
                                        :preloads      [devtools.preload]}}
                        {:id           "automated-tests"
                         :source-paths ["src/test" "src/main"]
                         :compiler     {:asset-path    "js/ci"
-                                       :main          untangled-template.all-tests
+                                       :main          untangled-template.CI-runner
                                        :optimizations :none
                                        :output-dir    "resources/private/js/ci"
                                        :output-to     "resources/private/js/unit-tests.js"}}

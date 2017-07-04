@@ -4,7 +4,8 @@
             [untangled.client.data-fetch :as df]
             [om.dom :as dom]
             [untangled-template.api.mutations :as api]
-            [untangled.client.mutations :as m]))
+            [untangled.client.mutations :as m]
+            [untangled.client.routing :as r]))
 
 (defui ^:once LoginPage
   static u/InitialAppState
@@ -19,7 +20,7 @@
       (dom/div nil
         (dom/div #js {:className "row"}
           (dom/div #js {:className "col-xs-4"} "")
-          (dom/div #js {:class [:form :$col-xs-4]}
+          (dom/div #js {}
             (when server-down
               (dom/div nil "Unable to contact server. Try again later."))
             (when loading-data
@@ -43,6 +44,4 @@
           (dom/div #js {:className "col-xs-4"} "")
           (dom/div #js {:className "col-xs-4"}
             "Don't have a login yet? "
-            (dom/a #js {:onClick #(om/transact! this `[(api/nav-to {:target :new-user}) :ui/react-key])} "Sign up!")))))))
-
-(def ui-login (om/factory LoginPage))
+            (dom/a #js {:onClick #(om/transact! this `[(r/route-to {:handler :new-user}) :pages])} "Sign up!")))))))

@@ -8,7 +8,7 @@
     [figwheel-sidecar.system :as fig]
     [untangled-spec.suite :as suite]
     [untangled-spec.selectors :as sel]
-    [untangled-template.system :as sys]))
+    untangled-template.server))
 
 ;;FIGWHEEL
 (def figwheel (atom nil))
@@ -35,7 +35,7 @@
 
 ;; ==================== SERVER ====================
 
-(set-refresh-dirs "dev/server" "src/server" "specs/server")
+(set-refresh-dirs "dev/server" "src/main" "src/test" "src/cards")
 
 (defn started? [sys]
   (-> sys :config :value))
@@ -50,7 +50,7 @@
 (defn- init [path]
   {:pre [(not (started? @system))
          (get cfg-paths path)]}
-  (when-let [new-system (sys/make-system (get cfg-paths path))]
+  (when-let [new-system (untangled-template.server/make-system (get cfg-paths path))]
     (reset! system new-system)))
 
 (defn- start []
@@ -71,7 +71,7 @@
    (init path)
    (start)))
 
-(defn reset
+(defn retart
   "Stop, refresh, and restart the server."
   []
   (stop)
@@ -86,6 +86,6 @@
 (suite/def-test-suite start-server-tests
   {:config       {:port 8888}
    :test-paths   ["src/test"]
-   :source-paths ["src/main"]}
+   :source-paths ["dev/server" "src/main"]}
   {:available #{:focused :unit :integration}
    :default   #{::sel/none :focused :unit}})

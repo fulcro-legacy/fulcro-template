@@ -1,4 +1,4 @@
-(ns untangled-template.spec-main
+(ns untangled-template.client-test-main
   (:require untangled-template.tests-to-run
             [untangled-spec.selectors :as sel]
             [untangled-spec.suite :as suite]))
