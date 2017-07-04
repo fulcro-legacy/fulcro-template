@@ -47,7 +47,7 @@
           (dom/span #js {:className "navbar-brand"}
             (dom/span nil "Template Brand")))
         (dom/div #js {:className "collapse navbar-collapse"}
-          (when logged-in?
+          (when (= true logged-in?)
             (dom/ul #js {:className "nav navbar-nav"}
               ;; More nav links here
               (dom/li nil (dom/a #js {:className "active" :onClick #(r/nav-to! this :main)} "Main"))
