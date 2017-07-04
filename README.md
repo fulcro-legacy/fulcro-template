@@ -8,6 +8,9 @@ server always approves login.
 
 It is set up to be deployable to Heroku (or anywhere) as a standalone jar.
 
+Master: <img src="https://api.travis-ci.org/awkay/untangled-template.svg?branch=master"></img>
+Develop: <img src="https://api.travis-ci.org/awkay/untangled-template.svg?branch=develop"></img>
+
 ## Features
 
 The app supports a fake user database (see `valid-users` in `src/main/untangled_template/api/mutations.clj`)

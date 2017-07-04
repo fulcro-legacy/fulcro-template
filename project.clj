@@ -85,7 +85,7 @@
                                        :preloads             [devtools.preload]
                                        :source-map-timestamp true}}]}
 
-  :profiles {:uberjar {:main       untangled-template.core
+  :profiles {:uberjar {:main       untangled-template.server-main
                        :aot        :all
                        :prep-tasks ["compile"
                                     ["cljsbuild" "once" "production"]]}
