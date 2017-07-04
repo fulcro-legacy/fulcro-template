@@ -14,7 +14,7 @@
      [{:keys [uid]}]
      (action [{:keys [state]}]
        (swap! state assoc
-         :current-user {:id uid :name "???"}
+         :current-user {:id uid :name ""}
          :server-down false))
      (remote [env] true)))
 
