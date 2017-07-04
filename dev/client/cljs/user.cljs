@@ -10,7 +10,10 @@
 
 (enable-console-print!)
 
-(reset! core/app (uc/mount @core/app root/Root "app"))
+(defn mount []
+  (reset! core/app (uc/mount @core/app root/Root "app")))
+
+(mount)
 
 (defn app-state [] @(:reconciler @core/app))
 
