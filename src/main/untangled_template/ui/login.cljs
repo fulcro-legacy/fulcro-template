@@ -5,7 +5,8 @@
             [om.dom :as dom]
             [untangled-template.api.mutations :as api]
             [untangled.client.mutations :as m]
-            [untangled.client.routing :as r]))
+            [untangled-template.ui.html5-routing :as r]
+            [untangled-template.ui.user :as user]))
 
 (defui ^:once LoginPage
   static u/InitialAppState
@@ -33,15 +34,15 @@
               (dom/label #js {:htmlFor "password"} "Password")
               (dom/input #js {:name     "password" :className "form-control" :type "password" :value password
                               :onChange #(m/set-string! this :ui/password :event %)}))
-            (dom/button #js {:onClick #(om/transact! this `[(api/attempt-login {:uid ~(om/tempid) :u ~username :p ~password})
-                                                            (tx/fallback {:action api/server-down})
-                                                            (untangled/load {:query         [:logged-in? :current-user]
-                                                                             :post-mutation api/login-complete})
-                                                            :ui/react-key
-                                                            :logged-in?
-                                                            :current-user])} "Login")))
+            (dom/button #js {:onClick (fn []
+                                        (om/transact! this `[(api/attempt-login {:uid ~(om/tempid) :u ~username :p ~password})
+                                                             (tx/fallback {:action api/server-down})])
+                                        (df/load this :logged-in? nil)
+                                        (df/load this :current-user user/User {:post-mutation `api/login-complete
+                                                                               :refresh       [:logged-in? :current-user]}))}
+              "Login")))
         (dom/div #js {:className "row"}
           (dom/div #js {:className "col-xs-4"} "")
           (dom/div #js {:className "col-xs-4"}
             "Don't have a login yet? "
-            (dom/a #js {:onClick #(om/transact! this `[(r/route-to {:handler :new-user}) :pages])} "Sign up!")))))))
+            (dom/a #js {:onClick #(r/nav-to! this :new-user)} "Sign up!")))))))

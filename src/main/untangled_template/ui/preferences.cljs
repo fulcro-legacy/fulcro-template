@@ -1,17 +1,16 @@
-(ns untangled-template.ui.main
+(ns untangled-template.ui.preferences
   (:require [om.next :as om :refer [defui]]
             [untangled.client.core :as u]
             [om.dom :as dom]
             [untangled.client.mutations :as m]))
 
-(defui ^:once MainPage
+(defui ^:once PreferencesPage
   static u/InitialAppState
-  (initial-state [this params] {:id :main})
+  (initial-state [this params] {:id :preferences})
   static om/IQuery
-  (query [this] [:id [:current-user '_]])
+  (query [this] [:id])
   static om/Ident
   (ident [this props] [:main :page])
   Object
   (render [this]
-    (let [{:keys [current-user]} (om/props this)]
-      (dom/div #js {} "Main page"))))
+    (dom/div #js {} "Preferences page")))

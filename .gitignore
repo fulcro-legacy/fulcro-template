@@ -12,3 +12,6 @@ pom.xml.asc
 resources/public/js
 target
 out
+package-lock.json
+resources/private
+.lein-repl-history

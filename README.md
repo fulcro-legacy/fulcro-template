@@ -8,6 +8,23 @@ server always approves login.
 
 It is set up to be deployable to Heroku (or anywhere) as a standalone jar.
 
+## Features
+
+The app supports a fake user database (see `valid-users` in `src/main/untangled_template/api/mutations.clj`)
+with two users. HTML5 Routing is configured, and the routing tree and BIDI config
+are in `html5_routing.cljs`.
+
+The server has been set up with a session store, and the login
+mutations show you how you can access and modify it (see `mutations.clj`). The
+server has also been configured to serve the same index page for all URI requests
+of HTML, so that the browser can decide what to show based on the URI in
+app logic. See `server.clj` for details of the augmented Ring pipeline.
+
+The HTML5 routing is smart enough to know where you wanted to go. It
+remembers the URI that came in on load. If you're already logged in, it
+will start the UI in the place. If you have to login, it will redirect
+you to your desired page after login.
+
 ## Contents
 
 ```
@@ -28,51 +45,49 @@ It is set up to be deployable to Heroku (or anywhere) as a standalone jar.
 │       │   ├── edn.css         CSS files for rendering specs in browser
 │       │   └── test.css
 │       ├── index-dev.html      Dev mode application home page
-│       ├── index.html          Production mode application home page
-│       └── test.html           Tests HTML page
+│       └── index.html          Production mode application home page
 ├── script
 │   └── figwheel.clj            CLJ script for starting figwheel automatically
-├── specs
-│   ├── client
-│   │   └── untangled_template
-│   │       ├── all_tests.cljs       CI file for running all tests
-│   │       ├── sample_spec.cljs     Sample CLJS specification
-│   │       ├── spec_main.cljs       File to join all specs into a browser-runnable spec
-│   │       ├── tests_to_run.cljs    Common file (for CI and Browser) to ensure all tests are loaded
-│   │       └── ui
-│   │           └── root_spec.cljs   Sample Specification
-│   ├── config
-│   └── server
-│       └── sample
-│           └── sample_spec.clj      Sample Server-side specification
+├── bin
+│   └── rename-project.sh       A script you can use to rename the project and packages
+├── package.json                User for CI testing via Node
+├── project.clj                 The project file
+├── script
+│   └── figwheel.clj            A clojure script for starting figwheel on build(s)
 ├── src
-│   ├── cards
-│   │   └── untangled_template
-│   │       ├── cards.cljs           Devcards setup
-│   │       └── intro.cljs           Sample Devcard
-│   ├── client
-│   │   └── untangled_template
-│   │       ├── core.cljs            Definition of app. Used by production and dev modes
-│   │       ├── main.cljs            Production entry point for cljs app
-│   │       ├── state
-│   │       │   └── mutations.cljs   A place to put Om mutations
-│   │       └── ui
-│   │           ├── components.cljs  Sample UI component
-│   │           ├── login.cljs       UI Login screen. Includes some mutations.
-│   │           ├── main.cljs        UI Main screen
-│   │           ├── new_user.cljs    UI New User Screen
-│   │           └── root.cljs        Root UI with Union query for tab switching. Includes nav mutations.
-│   └── server
-│       ├── config                   Server EDN configuration files
-│       │   ├── defaults.edn         Always applied (but always used as a base for config merge)
-│       │   ├── dev.edn              Dev-mode config (auto-selected by user.clj setup)
-│       │   └── prod.edn             Production-mode config. Selected via -Dconfig=config/prod.edn
-│       └── untangled_template
-│           ├── api
-│           │   ├── mutations.clj    Server-side Om mutations
-│           │   └── read.clj         Server-side Om queries
-│           ├── core.clj             Server-side entry point for production mode
-│           └── system.clj           Server-side system configuration (shared for dev and production)
+│   ├── cards
+│   │   └── untangled_template  Devcards
+│   │       ├── cards.cljs
+│   │       └── intro.cljs
+│   ├── main                         The Main Source Folder
+│   │   ├── config
+│   │   │   ├── defaults.edn         The server config defaults
+│   │   │   ├── dev.edn              The server config for dev mode
+│   │   │   └── prod.edn             A SUGGGESTED production config for Heroku
+│   │   └── untangled_template
+│   │       ├── api
+│   │       │   ├── mutations.clj    The server-side implementation of mutations
+│   │       │   ├── mutations.cljs   The client-side impl of mutations
+│   │       │   └── read.clj         Server-side read handlers
+│   │       ├── client.cljs          The creation of the client instance
+│   │       ├── client_main.cljs     The production main for client
+│   │       ├── server.clj           The creation of the server
+│   │       ├── server_main.clj      The production main for server
+│   │       └── ui
+│   │           ├── components.cljs     Sample UI placeholder component
+│   │           ├── html5_routing.cljs  Full-blown HTML5 routing with bidi/pushy
+│   │           ├── login.cljs          The login screen
+│   │           ├── main.cljs           The placeholder main screen
+│   │           ├── new_user.cljs       The placeholder new user screen (doesn't submit to server)
+│   │           ├── preferences.cljs    The placeholder preferences screen
+│   │           ├── root.cljs           The UI root
+│   │           └── user.cljs           A representation of User for login
+│   └── test
+│       └── untangled_template
+│           ├── CI_runner.cljs          The entry point for CI testing
+│           ├── client_test_main.cljs   The entry point for dev-mode testing
+│           ├── sample_spec.cljc        A sample client/server spec
+│           └── tests_to_run.cljs       Client-side requires for all spec files (so they get loaded)
 ```
 
 ## Setting up Run Configurations (IntelliJ)
@@ -95,14 +110,22 @@ when working from a lower-level system editor.
 The simplest approach is to start a REPL:
 
 ```
-lein repl
+JVM_OPTS=-Ddev lein repl
 ```
 
 *You will need two REPLs*: one for the server, and one for you dev builds of the client.
 
 There is a pre-supplied function named `start-figwheel` that will start the cljs builds and figwheel hot code push.
 
+```
+(start-figwheel [:test :dev :cards])
+```
+
 ## Using the server
+
+IMPORTANT: When work in development mode, be sure to pass the
+JVM option `-Ddev`. This will ensure the HTML5 service sends the
+right page.
 
 In the server REPL, start the server with:
 
@@ -113,20 +136,14 @@ In the server REPL, start the server with:
 To reload the server code:
 
 ```
-(reset)
+(restart)
 ```
 
 IF your compile fails, Recompile after failed compile:
 
 ```
-(refresh)
-(go)
-```
-
-If you cannot find `refresh`, try:
-
-```
 (tools-ns/refresh)
+(go)
 ```
 
 ## Using the Full Stack App (dev mode)
@@ -137,7 +154,7 @@ Open a browser on:
 http://localhost:3000/index-dev.html
 ```
 
-## Dev Cards
+## Dev Cards (once figwheel is running)
 
 Open a browser on:
 
@@ -145,12 +162,12 @@ Open a browser on:
 http://localhost:3449/cards.html
 ```
 
-## Specs
+## Client Tests (once figwheel is running)
 
 Open a browser on:
 
 ```
-http://localhost:3449/test.html
+http://localhost:3449/untangled-spec-client-tests.html
 ```
 
 ## Continuous Integration Tests
