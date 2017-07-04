@@ -170,6 +170,43 @@ Open a browser on:
 http://localhost:3449/untangled-spec-client-tests.html
 ```
 
+Now edit `sample-spec.cljc` and save. The tests will update automatically.
+
+See the docs on http://github.com/awkay/untangled-spec for directions on
+using things like selectors!
+
+## Server Tests
+
+The server tests can be run from a console, or even better: rendered
+live in a browser.
+
+### Server Tests from a Console
+
+The test-refresh plugin will render the results, and refresh them on saves:
+
+```
+lein test-refresh
+```
+
+### Server Tests in a Browser
+
+This runs the tests in a JVM, but uses a websocket to push the results
+to a web UI. This is much more powerful, but requires you start another
+server:
+
+```
+$ lein repl
+user=> (start-server-tests)
+```
+
+Then access the test UI at:
+
+```
+http://localhost:8888/untangled-spec-server-tests.html
+```
+
+Now edit `sample-spec.cljc` and save. The tests will update within milliseconds!
+
 ## Continuous Integration Tests
 
 The project is set up to be able to run both the UI and Server tests from a
