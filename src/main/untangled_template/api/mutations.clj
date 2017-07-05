@@ -3,7 +3,8 @@
     [om.next.server :as oms]
     [taoensso.timbre :as timbre]
     [untangled.server :as core :refer [defmutation]]
-    [untangled.server :as server]))
+    [untangled.server :as server]
+    [taoensso.timbre :as log]))
 
 (def valid-users
   (atom {1 {:uid 1 :name "Tony" :email "tony@nowhere.com" :password "letmein"}
@@ -21,6 +22,28 @@
   "Get the next available ID for a user."
   []
   (->> @valid-users keys (reduce max) inc))
+
+(defn add-user
+  "Add a user to the database. UID must be a tempid. Returns a map from tempid to new real ID."
+  [{:keys [uid] :as user}]
+  (let [real-id (next-id)]
+    (log/info "Adding user " real-id)
+    (swap! valid-users assoc real-id (select-keys (assoc user :uid real-id) [:uid :name :email :password]))
+    {uid real-id}))
+
+(defn commit-new [[table id] entity]
+  (log/info "Committing new " table entity)
+  (case table
+    :user/by-id (add-user entity)
+    {}))
+
+(defmethod core/server-mutate 'untangled.ui.forms/commit-to-entity [env k {:keys [form/new-entities] :as p}]
+  {:action (fn []
+             (log/info "Commit entity: " k p)
+             (when (seq new-entities)
+               {:tempids (reduce (fn [remaps [k v]]
+                                   (log/info "Create new " k v)
+                                   (merge remaps (commit-new k v))) {} new-entities)}))})
 
 (defmutation attempt-login
   "Server mutation: Attempt a login on the server. Returns a remapping of the user ID generated on the client.

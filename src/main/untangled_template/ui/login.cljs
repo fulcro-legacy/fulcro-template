@@ -8,7 +8,8 @@
             [untangled.client.mutations :as m]
             [untangled-template.ui.html5-routing :as r]
             [untangled-template.ui.user :as user]
-            [untangled.ui.bootstrap3 :as b]))
+            [untangled.ui.bootstrap3 :as b]
+            [untangled.events :as evt]))
 
 (defui ^:once LoginPage
   static u/InitialAppState
@@ -30,8 +31,8 @@
         (b/row {}
           (b/col {:lg-offset 4 :lg 4 :xs-offset 1 :xs 11}
             (dom/div #js {:className "form-horizontal"}
-              (b/labeled-input {:id "username" :type "text" :split 2 :onChange #(m/set-string! this :ui/username :event %)} (tr "Username"))
-              (b/labeled-input {:id "password" :type "password" :split 2 :onChange #(m/set-string! this :ui/password :event %)} (tr "Password"))
+              (b/labeled-input {:id "username" :type "text" :split 2 :onChange #(m/set-string! this :ui/username :event %)} (tr "Email"))
+              (b/labeled-input {:id "password" :type "password" :split 2 :onKeyDown (fn [evt] (when (evt/enter-key? evt) (login))) :onChange #(m/set-string! this :ui/password :event %)} (tr "Password"))
               (b/labeled-input {:id              "submit" :split 2
                                 :input-generator (fn [props]
                                                    (b/button (merge props {:kind :primary :disabled loading-data :type "submit" :onClick login}) "Login"))} ""))))
