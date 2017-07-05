@@ -86,8 +86,9 @@
                        :prep-tasks ["compile"
                                     ["cljsbuild" "once" "production"]]}
              :dev     {:source-paths ["dev/client" "dev/server" "src/client" "src/server"]
-                       :dependencies [[binaryage/devtools "0.9.2"]
-                                      [org.clojure/tools.namespace "0.3.0-alpha3"]
+                       :dependencies [[binaryage/devtools "0.9.4"]
+                                      [org.clojure/tools.namespace "0.3.0-alpha4"]
+                                      [org.clojure/tools.nrepl "0.2.13" ]
                                       [com.cemerick/piggieback "0.2.1"]
                                       [figwheel-sidecar "0.5.11" :exclusions [org.clojure/tools.reader]]
                                       [devcards "0.2.3"]]
