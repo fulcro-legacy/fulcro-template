@@ -6,11 +6,17 @@
     [untangled-template.client :as core]
     [untangled-template.ui.root :as root]
 
-    [cljs.pprint :refer [pprint]]))
+    [cljs.pprint :refer [pprint]]
+    [untangled.client.logging :as log]))
 
 (enable-console-print!)
 
-(reset! core/app (uc/mount @core/app root/Root "app"))
+(log/set-level :all)
+
+(defn mount []
+  (reset! core/app (uc/mount @core/app root/Root "app")))
+
+(mount)
 
 (defn app-state [] @(:reconciler @core/app))
 

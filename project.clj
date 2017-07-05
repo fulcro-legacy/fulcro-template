@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.671"]
 
-                 [awkay/untangled "1.0.0-beta1"]
+                 [awkay/untangled "1.0.0-beta2-SNAPSHOT"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
                  [bidi "2.1.1"]
@@ -45,13 +45,9 @@
                                        :output-dir    "resources/public/js/prod"
                                        :output-to     "resources/public/js/untangled_template.min.js"}}
                        {:id           "dev"
-                        :figwheel     true
-                        :source-paths ["src/main" "dev/client"]
+                        :figwheel     {:on-jsload "cljs.user/mount"}
+                        :source-paths ["dev/client" "src/main"]
                         :compiler     {:asset-path           "js/dev"
-                                       :external-config
-                                                             {:devtools/config
-                                                              ;;github.com/binaryage/cljs-devtools/blob/master/docs/configuration.md
-                                                              {:print-config-overrides true}}
                                        :main                 cljs.user
                                        :optimizations        :none
                                        :output-dir           "resources/public/js/dev"
@@ -60,7 +56,7 @@
                                        :source-map-timestamp true}}
                        {:id           "test"
                         :source-paths ["src/test" "src/main"]
-                        :figwheel     {:on-jsload untangled-template.client-test-main/client-tests}
+                        :figwheel     {:on-jsload "untangled-template.client-test-main/client-tests"}
                         :compiler     {:asset-path    "js/test"
                                        :main          untangled-template.client-test-main
                                        :optimizations :none
@@ -93,7 +89,7 @@
                        :dependencies [[binaryage/devtools "0.9.2"]
                                       [org.clojure/tools.namespace "0.3.0-alpha3"]
                                       [com.cemerick/piggieback "0.2.1"]
-                                      [figwheel-sidecar "0.5.10" :exclusions [org.clojure/tools.reader]]
+                                      [figwheel-sidecar "0.5.11" :exclusions [org.clojure/tools.reader]]
                                       [devcards "0.2.3"]]
                        :repl-options {:init-ns          user
                                       :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}})

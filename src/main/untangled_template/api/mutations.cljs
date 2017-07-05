@@ -4,7 +4,8 @@
     [untangled.client.mutations :refer [defmutation]]
     [untangled.client.routing :as ur]
     [untangled-template.ui.html5-routing :as r]
-    [om.next :as om]))
+    [om.next :as om]
+    [untangled.client.logging :as log]))
 
 (defmutation attempt-login
   "Om mutation: Attempt to log in the user. Triggers a server interaction to see if there is already a cookie."
@@ -31,12 +32,11 @@
             desired-page (if (= r/LOGIN-URI desired-page)
                            r/MAIN-URI
                            desired-page)]
-        (swap! state assoc :ui/ready? true) ; Make the UI show up. (flicker prevention)
-        (if logged-in?
+        (swap! state assoc :ui/ready? true)                 ; Make the UI show up. (flicker prevention)
+        (when logged-in?
           (if @r/use-html5-routing
             (pushy/set-token! @r/history desired-page)
-            (swap! state ur/update-routing-links {:handler :main}))
-          (swap! state ur/update-routing-links {:handler :login}))))))
+            (swap! state ur/update-routing-links {:handler :main})))))))
 
 (defmutation logout
   "Om mutation: Removes user identity from the local app and asks the server to forget the user as well."
