@@ -3,8 +3,10 @@
 This is a Full Stack template with specs, dev cards, and client code.
 It contains a mock login/signup screen, top-level tab routing (once logged in), etc.
 
-You must run the server (and use it through the server) for login to work, but ANY username/password are accepted. The
-server always approves login.
+You must run the server (and use it through the server) for login to work. The server always approves login.
+
+You can login with `tony@nowhere.com` or `joe@nowhere.com`, the password is `letmein`.
+
 
 It is set up to be deployable to Heroku (or anywhere) as a standalone jar.
 
