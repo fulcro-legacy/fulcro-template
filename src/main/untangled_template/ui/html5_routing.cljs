@@ -91,6 +91,7 @@
     (let [; NOTE: the :pages follow-on read, so the whole UI updates when page changes
           set-route! (fn [match]
                        ; Delay. history events should happen after a tx is processed, but a set token could happen during.
+                       ; Time doesn't matter. This thread has to let go of the CPU before timeouts can process.
                        (js/setTimeout #(om/transact! app-root `[(set-route! ~match) :pages])
                          10))]
       (reset! history (pushy/pushy set-route! (partial bidi/match-route app-routes)))
