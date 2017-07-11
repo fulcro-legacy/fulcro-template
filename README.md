@@ -13,6 +13,13 @@ It is set up to be deployable to Heroku (or anywhere) as a standalone jar.
 Master: <img src="https://api.travis-ci.org/awkay/untangled-template.svg?branch=master"></img>
 Develop: <img src="https://api.travis-ci.org/awkay/untangled-template.svg?branch=develop"></img>
 
+## Road Map
+
+If any work is currently planned or in progress, you can see it via:
+
+[![Stories Ready](https://badge.waffle.io/awkay/untangled-template.png?label=ready&title=Ready)](http://waffle.io/awkay/untangled-template)
+[![Stories in Progress](https://badge.waffle.io/awkay/untangled-template.png?label=in+progress&title=In+Progress)](http://waffle.io/awkay/untangled-template)
+
 ## Features
 
 The app supports a fake user database (see `valid-users` in `src/main/untangled_template/api/mutations.clj`)
