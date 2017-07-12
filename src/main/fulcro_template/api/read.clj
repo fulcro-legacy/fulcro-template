@@ -1,11 +1,11 @@
-(ns untangled-template.api.read
+(ns fulcro-template.api.read
   (:require
-    [untangled-template.api.mutations :as m]
-    [untangled.server :refer [defquery-entity defquery-root]]
+    [fulcro-template.api.mutations :as m]
+    [fulcro.server :refer [defquery-entity defquery-root]]
     [taoensso.timbre :as timbre]))
 
-;; SERVER READ IMPLEMENTATION. We're using `untangled-parser`. You can either use defmulti on the multimethods
-;; (see untangled.server defmulti declarations) or the defquery-* helper macros.
+;; SERVER READ IMPLEMENTATION. We're using `fulcro-parser`. You can either use defmulti on the multimethods
+;; (see fulcro.server defmulti declarations) or the defquery-* helper macros.
 (defquery-root :logged-in?
   "Answer the :logged-in? query"
   (value [{:keys [request]} params]

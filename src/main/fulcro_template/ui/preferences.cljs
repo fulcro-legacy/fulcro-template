@@ -1,8 +1,8 @@
-(ns untangled-template.ui.preferences
+(ns fulcro-template.ui.preferences
   (:require [om.next :as om :refer [defui]]
-            [untangled.client.core :as u]
+            [fulcro.client.core :as u]
             [om.dom :as dom]
-            [untangled.client.mutations :as m]))
+            [fulcro.client.mutations :as m]))
 
 (defui ^:once PreferencesPage
   static u/InitialAppState

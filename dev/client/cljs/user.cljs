@@ -1,13 +1,13 @@
 (ns cljs.user
   (:require
-    [untangled.client.core :as uc]
+    [fulcro.client.core :as uc]
     [om.next :as om]
 
-    [untangled-template.client :as core]
-    [untangled-template.ui.root :as root]
+    [fulcro-template.client :as core]
+    [fulcro-template.ui.root :as root]
 
     [cljs.pprint :refer [pprint]]
-    [untangled.client.logging :as log]))
+    [fulcro.client.logging :as log]))
 
 (enable-console-print!)
 

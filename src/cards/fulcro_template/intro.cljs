@@ -1,7 +1,7 @@
-(ns untangled-template.intro
+(ns fulcro-template.intro
   (:require [devcards.core :as rc :refer-macros [defcard]]
             [om.next :as om :refer-macros [defui]]
-            [untangled-template.ui.components :as comp]
+            [fulcro-template.ui.components :as comp]
             [om.dom :as dom]))
 
 (defcard SVGPlaceholder

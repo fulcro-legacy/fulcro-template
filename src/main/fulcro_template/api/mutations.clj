@@ -1,9 +1,9 @@
-(ns untangled-template.api.mutations
+(ns fulcro-template.api.mutations
   (:require
     [om.next.server :as oms]
     [taoensso.timbre :as timbre]
-    [untangled.server :as core :refer [defmutation]]
-    [untangled.server :as server]
+    [fulcro.server :as core :refer [defmutation]]
+    [fulcro.server :as server]
     [taoensso.timbre :as log]))
 
 (def valid-users
@@ -37,7 +37,7 @@
     :user/by-id (add-user entity)
     {}))
 
-(defmethod core/server-mutate 'untangled.ui.forms/commit-to-entity [env k {:keys [form/new-entities] :as p}]
+(defmethod core/server-mutate 'fulcro.ui.forms/commit-to-entity [env k {:keys [form/new-entities] :as p}]
   {:action (fn []
              (log/info "Commit entity: " k p)
              (when (seq new-entities)

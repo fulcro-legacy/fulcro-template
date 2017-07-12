@@ -1,15 +1,15 @@
-(ns untangled-template.ui.login
+(ns fulcro-template.ui.login
   (:require [om.next :as om :refer [defui]]
-            [untangled.i18n :refer [tr]]
-            [untangled.client.core :as u]
-            [untangled.client.data-fetch :as df]
+            [fulcro.i18n :refer [tr]]
+            [fulcro.client.core :as u]
+            [fulcro.client.data-fetch :as df]
             [om.dom :as dom]
-            [untangled-template.api.mutations :as api]
-            [untangled.client.mutations :as m]
-            [untangled-template.ui.html5-routing :as r]
-            [untangled-template.ui.user :as user]
-            [untangled.ui.bootstrap3 :as b]
-            [untangled.events :as evt]))
+            [fulcro-template.api.mutations :as api]
+            [fulcro.client.mutations :as m]
+            [fulcro-template.ui.html5-routing :as r]
+            [fulcro-template.ui.user :as user]
+            [fulcro.ui.bootstrap3 :as b]
+            [fulcro.events :as evt]))
 
 (defui ^:once LoginPage
   static u/InitialAppState

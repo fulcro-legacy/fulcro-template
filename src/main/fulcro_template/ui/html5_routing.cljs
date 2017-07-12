@@ -1,12 +1,12 @@
-(ns untangled-template.ui.html5-routing
+(ns fulcro-template.ui.html5-routing
   (:require
-    [untangled.client.routing :as r]
-    [untangled.client.mutations :as m :refer [defmutation]]
+    [fulcro.client.routing :as r]
+    [fulcro.client.mutations :as m :refer [defmutation]]
     [pushy.core :as pushy]
     [bidi.verbose :refer [branch leaf param]]
     [bidi.bidi :as bidi]
     [om.next :as om]
-    [untangled.client.logging :as log]))
+    [fulcro.client.logging :as log]))
 
 (def app-routing-tree
   (r/routing-tree

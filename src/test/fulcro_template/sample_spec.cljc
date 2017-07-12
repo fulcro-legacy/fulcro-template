@@ -1,6 +1,6 @@
-(ns untangled-template.sample-spec
+(ns fulcro-template.sample-spec
   (:require
-    [untangled-spec.core :refer [specification provided behavior assertions]]))
+    [fulcro-spec.core :refer [specification provided behavior assertions]]))
 
 ; These tests will run for both client and server
 (specification "Server Math"

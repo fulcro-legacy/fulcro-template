@@ -1,11 +1,11 @@
-(ns untangled-template.api.mutations
+(ns fulcro-template.api.mutations
   (:require
     [pushy.core :as pushy]
-    [untangled.client.mutations :refer [defmutation]]
-    [untangled.client.routing :as ur]
-    [untangled-template.ui.html5-routing :as r]
+    [fulcro.client.mutations :refer [defmutation]]
+    [fulcro.client.routing :as ur]
+    [fulcro-template.ui.html5-routing :as r]
     [om.next :as om]
-    [untangled.client.logging :as log]))
+    [fulcro.client.logging :as log]))
 
 (defmutation attempt-login
   "Om mutation: Attempt to log in the user. Triggers a server interaction to see if there is already a cookie."
@@ -26,7 +26,7 @@
   [p]
   (action [{:keys [component state]}]
     ; idempotent (start routing)
-    (r/start-routing (-> untangled-template.client/app deref :reconciler om/app-root))
+    (r/start-routing (-> fulcro-template.client/app deref :reconciler om/app-root))
     (let [{:keys [logged-in? current-user]} @state]
       (let [desired-page (get @state :loaded-uri (or (pushy/get-token @r/history) r/MAIN-URI))
             desired-page (if (= r/LOGIN-URI desired-page)

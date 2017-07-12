@@ -1,8 +1,8 @@
-(ns untangled-template.ui.main
+(ns fulcro-template.ui.main
   (:require [om.next :as om :refer [defui]]
-            [untangled.client.core :as u]
+            [fulcro.client.core :as u]
             [om.dom :as dom]
-            [untangled.client.mutations :as m]))
+            [fulcro.client.mutations :as m]))
 
 (defui ^:once MainPage
   static u/InitialAppState

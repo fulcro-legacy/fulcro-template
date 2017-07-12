@@ -1,20 +1,20 @@
-(ns untangled-template.ui.root
+(ns fulcro-template.ui.root
   (:require
-    [untangled.client.mutations :as mut]
+    [fulcro.client.mutations :as mut]
     [om.dom :as dom]
-    [untangled-template.ui.html5-routing :as r]
-    [untangled-template.ui.login :as l]
-    [untangled-template.ui.user :as user]
-    [untangled-template.ui.main :as main]
-    [untangled-template.ui.preferences :as prefs]
-    [untangled-template.ui.new-user :as nu]
+    [fulcro-template.ui.html5-routing :as r]
+    [fulcro-template.ui.login :as l]
+    [fulcro-template.ui.user :as user]
+    [fulcro-template.ui.main :as main]
+    [fulcro-template.ui.preferences :as prefs]
+    [fulcro-template.ui.new-user :as nu]
     [om.next :as om :refer-macros [defui]]
-    [untangled.client.core :as u]
-    [untangled.client.routing :refer [defrouter]]
-    [untangled.client.mutations :as m]
-    [untangled.ui.bootstrap3 :as b]
-    [untangled-template.api.mutations :as api]
-    [untangled.client.core :as uc]))
+    [fulcro.client.core :as u]
+    [fulcro.client.routing :refer [defrouter]]
+    [fulcro.client.mutations :as m]
+    [fulcro.ui.bootstrap3 :as b]
+    [fulcro-template.api.mutations :as api]
+    [fulcro.client.core :as uc]))
 
 (defrouter Pages :page-router
   (ident [this props] [(:id props) :page])

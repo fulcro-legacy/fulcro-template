@@ -10,12 +10,12 @@ You can login with `tony@nowhere.com` or `joe@nowhere.com`, the password is `let
 
 It is set up to be deployable to Heroku (or anywhere) as a standalone jar.
 
-Master: <img src="https://api.travis-ci.org/awkay/untangled-template.svg?branch=master"></img>
-Develop: <img src="https://api.travis-ci.org/awkay/untangled-template.svg?branch=develop"></img>
+Master: <img src="https://api.travis-ci.org/fulcrologic/fulcro-template.svg?branch=master"></img>
+Develop: <img src="https://api.travis-ci.org/fulcrologic/fulcro-template.svg?branch=develop"></img>
 
 ## Features
 
-The app supports a fake user database (see `valid-users` in `src/main/untangled_template/api/mutations.clj`)
+The app supports a fake user database (see `valid-users` in `src/main/fulcro_template/api/mutations.clj`)
 with two users. HTML5 Routing is configured, and the routing tree and BIDI config
 are in `html5_routing.cljs`.
 
@@ -61,7 +61,7 @@ you to your desired page after login.
 │   └── figwheel.clj            A clojure script for starting figwheel on build(s)
 ├── src
 │   ├── cards
-│   │   └── untangled_template  Devcards
+│   │   └── fulcro_template  Devcards
 │   │       ├── cards.cljs
 │   │       └── intro.cljs
 │   ├── main                         The Main Source Folder
@@ -69,7 +69,7 @@ you to your desired page after login.
 │   │   │   ├── defaults.edn         The server config defaults
 │   │   │   ├── dev.edn              The server config for dev mode
 │   │   │   └── prod.edn             A SUGGGESTED production config for Heroku
-│   │   └── untangled_template
+│   │   └── fulcro_template
 │   │       ├── api
 │   │       │   ├── mutations.clj    The server-side implementation of mutations
 │   │       │   ├── mutations.cljs   The client-side impl of mutations
@@ -88,7 +88,7 @@ you to your desired page after login.
 │   │           ├── root.cljs           The UI root
 │   │           └── user.cljs           A representation of User for login
 │   └── test
-│       └── untangled_template
+│       └── fulcro_template
 │           ├── CI_runner.cljs          The entry point for CI testing
 │           ├── client_test_main.cljs   The entry point for dev-mode testing
 │           ├── sample_spec.cljc        A sample client/server spec
@@ -172,12 +172,12 @@ http://localhost:3449/cards.html
 Open a browser on:
 
 ```
-http://localhost:3449/untangled-spec-client-tests.html
+http://localhost:3449/fulcro-spec-client-tests.html
 ```
 
 Now edit `sample-spec.cljc` and save. The tests will update automatically.
 
-See the docs on http://github.com/awkay/untangled-spec for directions on
+See the docs on http://github.com/fulcrologic/fulcro-spec for directions on
 using things like selectors!
 
 ## Server Tests
@@ -207,7 +207,7 @@ user=> (start-server-tests)
 Then access the test UI at:
 
 ```
-http://localhost:8888/untangled-spec-server-tests.html
+http://localhost:8888/fulcro-spec-server-tests.html
 ```
 
 Now edit `sample-spec.cljc` and save. The tests will update within milliseconds!
@@ -229,7 +229,7 @@ There is a GNU `Makefile` in the project that can start various command
 line interactions. This file is commented so you can see what targets
 are valid.
 
-Example: Run a REPL that is ready to run the Untangled Server:
+Example: Run a REPL that is ready to run the Fulcro Server:
 
 ```
 make server
@@ -243,14 +243,14 @@ Build the standalone Jar with:
 lein uberjar
 ```
 
-will build `target/untangled_template.jar`.
+will build `target/fulcro_template.jar`.
 
 The production `prod.edn` file (in src/config) grabs the web PORT from
 the environment (as required by Heroku). So, this jar can be run with:
 
 ```
 export PORT=8080   # the web server port to use
-java -Dconfig=config/prod.edn -jar untangled_template.jar
+java -Dconfig=config/prod.edn -jar fulcro_template.jar
 ```
 
 The `Procfile` gives the correct information to heroku, so if you've

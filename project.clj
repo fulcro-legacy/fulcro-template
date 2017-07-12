@@ -1,17 +1,17 @@
-(defproject untangled-template "0.1.0-SNAPSHOT"
-  :description "A clonable & upstream untangled template"
+(defproject fulcrologic/fulcro-template "0.1.0-SNAPSHOT"
+  :description "A clonable & upstream fulcro template"
   :license {:name "MIT" :url "https://opensource.org/licenses/MIT"}
   :min-lein-version "2.7.0"
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.671"]
 
-                 [awkay/untangled "1.0.0-beta2-SNAPSHOT"]
+                 [fulcrologic/fulcro "1.0.0-beta2-SNAPSHOT"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
                  [bidi "2.1.1"]
 
-                 [awkay/untangled-spec "1.0.0-beta1" :scope "test"]
+                 [fulcrologic/fulcro-spec "1.0.0-beta1" :scope "test"]
                  [lein-doo "0.1.7" :scope "test"]
                  [org.clojure/core.async "0.3.443"]
                  [http-kit "2.2.0"]
@@ -24,9 +24,9 @@
   :doo {:build "automated-tests"
         :paths {:karma "node_modules/karma/bin/karma"}}
 
-  :uberjar-name "untangled_template.jar"
+  :uberjar-name "fulcro_template.jar"
 
-  :test-refresh {:report       untangled-spec.reporters.terminal/untangled-report
+  :test-refresh {:report       fulcro-spec.reporters.terminal/fulcro-report
                  :with-repl    true
                  :changes-only true}
 
@@ -40,10 +40,10 @@
                         :source-paths ["src/main"]
                         :jar          true
                         :compiler     {:asset-path    "js/prod"
-                                       :main          untangled-template.client-main
+                                       :main          fulcro-template.client-main
                                        :optimizations :advanced
                                        :output-dir    "resources/public/js/prod"
-                                       :output-to     "resources/public/js/untangled_template.min.js"}}
+                                       :output-to     "resources/public/js/fulcro_template.min.js"}}
                        {:id           "dev"
                         :figwheel     {:on-jsload "cljs.user/mount"}
                         :source-paths ["dev/client" "src/main"]
@@ -51,14 +51,14 @@
                                        :main                 cljs.user
                                        :optimizations        :none
                                        :output-dir           "resources/public/js/dev"
-                                       :output-to            "resources/public/js/untangled_template.js"
+                                       :output-to            "resources/public/js/fulcro_template.js"
                                        :preloads             [devtools.preload]
                                        :source-map-timestamp true}}
                        {:id           "test"
                         :source-paths ["src/test" "src/main"]
-                        :figwheel     {:on-jsload "untangled-template.client-test-main/client-tests"}
+                        :figwheel     {:on-jsload "fulcro-template.client-test-main/client-tests"}
                         :compiler     {:asset-path    "js/test"
-                                       :main          untangled-template.client-test-main
+                                       :main          fulcro-template.client-test-main
                                        :optimizations :none
                                        :output-dir    "resources/public/js/test"
                                        :output-to     "resources/public/js/test/test.js"
@@ -66,7 +66,7 @@
                        {:id           "automated-tests"
                         :source-paths ["src/test" "src/main"]
                         :compiler     {:asset-path    "js/ci"
-                                       :main          untangled-template.CI-runner
+                                       :main          fulcro-template.CI-runner
                                        :optimizations :none
                                        :output-dir    "resources/private/js/ci"
                                        :output-to     "resources/private/js/unit-tests.js"}}
@@ -74,14 +74,14 @@
                         :figwheel     {:devcards true}
                         :source-paths ["src/main" "src/cards"]
                         :compiler     {:asset-path           "js/cards"
-                                       :main                 untangled-template.cards
+                                       :main                 fulcro-template.cards
                                        :optimizations        :none
                                        :output-dir           "resources/public/js/cards"
                                        :output-to            "resources/public/js/cards.js"
                                        :preloads             [devtools.preload]
                                        :source-map-timestamp true}}]}
 
-  :profiles {:uberjar {:main       untangled-template.server-main
+  :profiles {:uberjar {:main       fulcro-template.server-main
                        :aot        :all
                        :prep-tasks ["compile"
                                     ["cljsbuild" "once" "production"]]}

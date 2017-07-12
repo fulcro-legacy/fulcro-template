@@ -1,16 +1,16 @@
-(ns untangled-template.ui.new-user
+(ns fulcro-template.ui.new-user
   (:require [om.next :as om :refer-macros [defui]]
-            [untangled.client.core :as u]
+            [fulcro.client.core :as u]
             [om.dom :as dom]
-            [untangled.client.mutations :as m :refer [defmutation]]
+            [fulcro.client.mutations :as m :refer [defmutation]]
 
-            [untangled.i18n :refer [tr]]
-            [untangled.events :as evts]
-            [untangled.ui.forms :as f]
-            [untangled.ui.bootstrap3 :as b]
-            [untangled.client.core :as uc]
-            [untangled.client.data-fetch :as df]
-            [untangled-template.ui.html5-routing :as r]))
+            [fulcro.i18n :refer [tr]]
+            [fulcro.events :as evts]
+            [fulcro.ui.forms :as f]
+            [fulcro.ui.bootstrap3 :as b]
+            [fulcro.client.core :as uc]
+            [fulcro.client.data-fetch :as df]
+            [fulcro-template.ui.html5-routing :as r]))
 
 (defmutation check-passwords-match
   [{:keys [form-id field kind]}]

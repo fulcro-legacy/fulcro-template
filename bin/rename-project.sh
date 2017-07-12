@@ -33,11 +33,11 @@ rename_matching_dirs () {
 
 main () {
     assert_clean_work_tree
-    read -p "Renaming 'untangled-template' to: " ns
-    search_and_replace "untangled-template" "$ns"
+    read -p "Renaming 'fulcro-template' to: " ns
+    search_and_replace "fulcro-template" "$ns"
     local fdir="${ns//-/_}"
-    search_and_replace "untangled_template" "$fdir"
-    rename_matching_dirs "untangled_template" "$fdir"
+    search_and_replace "fulcro_template" "$fdir"
+    rename_matching_dirs "fulcro_template" "$fdir"
 }
 
 main "$@"

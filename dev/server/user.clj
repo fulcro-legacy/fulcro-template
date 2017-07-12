@@ -6,9 +6,9 @@
     [clojure.tools.namespace.repl :as tools-ns :refer [set-refresh-dirs]]
     [com.stuartsierra.component :as component]
     [figwheel-sidecar.system :as fig]
-    [untangled-spec.suite :as suite]
-    [untangled-spec.selectors :as sel]
-    untangled-template.server))
+    [fulcro-spec.suite :as suite]
+    [fulcro-spec.selectors :as sel]
+    fulcro-template.server))
 
 ;;FIGWHEEL
 (def figwheel (atom nil))
@@ -50,7 +50,7 @@
 (defn- init [path]
   {:pre [(not (started? @system))
          (get cfg-paths path)]}
-  (when-let [new-system (untangled-template.server/make-system (get cfg-paths path))]
+  (when-let [new-system (fulcro-template.server/make-system (get cfg-paths path))]
     (reset! system new-system)))
 
 (defn- start []

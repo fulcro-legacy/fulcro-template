@@ -1,10 +1,10 @@
-(ns untangled-template.ui.html5-routing-spec
+(ns fulcro-template.ui.html5-routing-spec
   (:require
-    [untangled-template.ui.html5-routing :as r]
-    [untangled-spec.core :refer [specification provided behavior assertions when-mocking]]
+    [fulcro-template.ui.html5-routing :as r]
+    [fulcro-spec.core :refer [specification provided behavior assertions when-mocking]]
     [bidi.bidi :as bidi]
     [pushy.core :as pushy]
-    [untangled.client.routing :as ur]))
+    [fulcro.client.routing :as ur]))
 
 (specification "Valid handlers"
   (assertions

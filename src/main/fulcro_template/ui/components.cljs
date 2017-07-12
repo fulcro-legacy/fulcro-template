@@ -1,4 +1,4 @@
-(ns untangled-template.ui.components
+(ns fulcro-template.ui.components
   (:require
     [om.next :as om :refer-macros [defui]]
     [om.dom :as dom]))

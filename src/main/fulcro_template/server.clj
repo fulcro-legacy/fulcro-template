@@ -1,12 +1,12 @@
-(ns untangled-template.server
+(ns fulcro-template.server
   (:require
-    [untangled.server :as core]
-    [untangled.easy-server :as easy]
+    [fulcro.server :as core]
+    [fulcro.easy-server :as easy]
     [com.stuartsierra.component :as component]
 
     [om.next.server :as om]
-    [untangled-template.api.read :as r]
-    [untangled-template.api.mutations :as mut]
+    [fulcro-template.api.read :as r]
+    [fulcro-template.api.mutations :as mut]
 
     [taoensso.timbre :as timbre]
     [ring.middleware.session :as session]
@@ -15,7 +15,7 @@
     [ring.util.request :as req]
     [ring.middleware.cookies :as cookies]
     [ring.util.response :as response]
-    [untangled.client.util :as util]))
+    [fulcro.client.util :as util]))
 
 (defn wrap-html5-routes-as-index [handler]
   (fn [req]
@@ -65,9 +65,9 @@
   (stop [this] this))
 
 (defn make-system [config-path]
-  (easy/make-untangled-server
+  (easy/make-fulcro-server
     :config-path config-path
-    :parser (core/untangled-parser)
+    :parser (core/fulcro-parser)
     :parser-injections #{:config :session-store}
     #_(comment
         ; An example for providing extra route handlers (e.g. REST-based endpoints for non-Om clients)
