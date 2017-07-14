@@ -30,7 +30,7 @@
   (let [props                (db->tree (get-query root-component-class) app-state app-state)
         root-factory         (factory root-component-class)
         app-html             (dom/render-to-str (root-factory props))
-        initial-state-script (dom/render-to-str (util/initial-state->script-tag props))]
+        initial-state-script (dom/render-to-str (util/initial-state->script-tag app-state))]
     (timbre/info "Initial stata " props)
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
@@ -49,7 +49,10 @@
       "</body>\n"
       "</html>\n")))
 
-(defn build-app-state [user uri bidi-match]
+(defn build-app-state
+  "Builds an up-to-date app state based on the URL where the db will contain everything needed. Returns a normalized
+  client app db."
+  [user uri bidi-match]
   ; . Always: set ready to true and logged in to the correct thing.
   ; . Put user in app state if logged in
   ; . Bidi match:
@@ -57,7 +60,7 @@
   ; ... remember where they want to go and put them on login
   ; .. logged in:
   ; ... put them on the correct page
-  (let [base-state       (tree->db root/Root (merge (fc/get-initial-state root/Root nil) routing/app-routing-tree) true)
+  (let [base-state       (tree->db root/Root (root/initial-app-state-tree) true)
         base-state       (fc/merge-alternate-union-elements base-state root/Root)
         logged-in?       (boolean user)
         set-route        (fn [s]
@@ -71,16 +74,16 @@
                            logged-in? set-user
                            (not logged-in?) (assoc :loaded-uri uri)
                            set-route (set-route)
-                           :always (assoc :ui/ready? true :ui/loading-data true))]
-    (timbre/info "norm state: " normalized-state)
+                           :always (assoc :ui/ready? true))]
+    #_(timbre/info "norm state: " (keys normalized-state))
     normalized-state))
 
 (defn render-page
   "Server-side render the entry page."
   [uri match user]
 
-  (let [app-state (build-app-state user uri match)]
-    (-> (top-html app-state root/Root)
+  (let [normalized-app-state (build-app-state user uri match)]
+    (-> (top-html normalized-app-state root/Root)
       response/response
       (response/content-type "text/html"))))
 
@@ -92,15 +95,9 @@
           uri         (:uri req)
           bidi-match  (bidi/match-route routing/app-routes uri)
           valid-page? (boolean bidi-match)]
-      (timbre/info "uri" uri)
-      (timbre/info "user" user)
-      (timbre/info "bidi match" bidi-match)
 
       ; . no valid bidi match. BYPASS
-
       (if valid-page?
-        #_(-> (resource/resource-request (assoc req :uri real-html) "public")
-            (response/content-type "text/html"))
         (render-page uri bidi-match user)
         (handler req)))))
 

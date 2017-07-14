@@ -15,7 +15,8 @@
     [fulcro.client.mutations :as m]
     [fulcro.ui.bootstrap3 :as b]
     [fulcro-template.api.mutations :as api]
-    [fulcro.client.core :as uc]))
+    [fulcro.client.core :as uc]
+    [fulcro.client.logging :as log]))
 
 (defrouter Pages :page-router
   (ident [this props] [(:id props) :page])
@@ -75,31 +76,31 @@
         (b/ui-modal-footer nil
           (b/button {:onClick #(om/transact! this `[(b/hide-modal {:id :welcome})])} "Thanks!"))))))
 
+; server-side rendering...we want the server to be able to hand in a completely normalized db for the client to use
+(defn initial-app-state-tree []
+  (let [default-state (merge
+                        {; Is there a user logged in?
+                         :logged-in?   false
+                         ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
+                         :ui/ready?    false
+                         ; What are the details of the logged in user
+                         :current-user nil
+                         :root/modals  (uc/get-initial-state Modals {})
+                         :pages        (u/get-initial-state Pages nil)}
+                        r/app-routing-tree)]
+    #?(:clj  default-state
+       :cljs (let [v (util/get-SSR-initial-state)]
+               (if (contains? v :STATE)
+                 default-state
+                 (atom v))))))
+
 (defui ^:once Root
   static om/IQuery
   (query [this] [:ui/react-key :ui/ready? :logged-in?
                  {:current-user (om/get-query user/User)}
                  {:root/modals (om/get-query Modals)}
-                 fulcro.client.routing/routing-tree-key ; TODO: Check if this is needed...seemed to affect initial state from ssr
+                 fulcro.client.routing/routing-tree-key     ; TODO: Check if this is needed...seemed to affect initial state from ssr
                  :ui/loading-data {:pages (om/get-query Pages)}])
-  static u/InitialAppState
-  (initial-state [this params]
-    (let [default-state (merge
-                          {; Is there a user logged in?
-                           :logged-in?   false
-                           ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
-                           :ui/ready?    false
-                           ; What are the details of the logged in user
-                           :current-user nil
-                           :root/modals  (uc/get-initial-state Modals {})
-                           :pages        (u/get-initial-state Pages nil)}
-                          r/app-routing-tree)]
-      #?(:clj  default-state
-         :cljs (let [v (util/get-SSR-initial-state)]
-                 (if (contains? v :STATE)
-                   default-state
-                   v)))))
-
   Object
   (render [this]
     (let [{:keys [ui/ready? ui/loading-data ui/react-key pages welcome-modal current-user logged-in?] :or {react-key "ROOT"}} (om/props this)]
