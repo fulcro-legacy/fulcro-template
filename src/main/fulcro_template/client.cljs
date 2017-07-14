@@ -8,5 +8,7 @@
 (defonce app
   (atom (uc/new-fulcro-client
           :started-callback (fn [{:keys [reconciler] :as app}]
-                              (f/load app :logged-in? nil {}) ; scalar value (boolean). No component needed.
-                              (f/load app :current-user user/User {:post-mutation `m/login-complete})))))
+                              (let [logged-in? (:logged-in? (om/app-state reconciler))]
+                                (when-not logged-in?
+                                  (f/load app :logged-in? nil {}) ; scalar value (boolean). No component needed.
+                                  (f/load app :current-user user/User {:post-mutation `m/login-complete})))))))

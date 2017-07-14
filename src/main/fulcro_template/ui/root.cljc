@@ -80,6 +80,7 @@
   (query [this] [:ui/react-key :ui/ready? :logged-in?
                  {:current-user (om/get-query user/User)}
                  {:root/modals (om/get-query Modals)}
+                 fulcro.client.routing/routing-tree-key ; TODO: Check if this is needed...seemed to affect initial state from ssr
                  :ui/loading-data {:pages (om/get-query Pages)}])
   static u/InitialAppState
   (initial-state [this params]

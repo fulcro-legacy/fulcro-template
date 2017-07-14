@@ -23,22 +23,22 @@
 ;; To indicate when we should turn on URI mapping. This is so you can use with devcards (by turning it off)
 (defonce use-html5-routing (atom true))
 
-(def MAIN "index.html")
-(def MAIN-URI (str "/" MAIN))
-(def LOGIN "login.html")
-(def LOGIN-URI (str "/" LOGIN))
+(def MAIN "/index.html")
+(def MAIN-URI MAIN)
+(def LOGIN "/login.html")
+(def LOGIN-URI LOGIN)
 
 (def app-routes
   "The bidi routing map for the application. The leaf keywords are the route names. Parameters
   in the route are available for use in the routing algorithm as :param/param-name."
   (branch
-    "/"
-    (leaf MAIN :main)
-    (leaf "index-dev.html" :main)
+    ""
     (leaf "" :main)
+    (leaf "/" :main)
+    (leaf MAIN :main)
     (leaf LOGIN :login)
-    (leaf "signup.html" :new-user)
-    (leaf "preferences.html" :preferences)))
+    (leaf "/signup.html" :new-user)
+    (leaf "/preferences.html" :preferences)))
 
 (defn invalid-route?
   "Returns true if the given keyword is not a valid location in the routing tree."

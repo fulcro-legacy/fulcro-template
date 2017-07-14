@@ -2,7 +2,8 @@
   (:require
     [fulcro-template.api.mutations :as m]
     [fulcro.server :refer [defquery-entity defquery-root]]
-    [taoensso.timbre :as timbre]))
+    [taoensso.timbre :as timbre]
+    [fulcro-template.api.user-db :as users]))
 
 ;; SERVER READ IMPLEMENTATION. We're using `fulcro-parser`. You can either use defmulti on the multimethods
 ;; (see fulcro.server defmulti declarations) or the defquery-* helper macros.
@@ -16,9 +17,7 @@
 (defquery-root :current-user
   "Answer the :current-user query"
   (value [{:keys [request]} params]
-    (let [resp (-> m/valid-users
-                 deref
-                 (get (-> request :session :uid))
+    (let [resp (-> (users/get-user (-> request :session :uid))
                  (select-keys [:uid :name :email]))]
       (timbre/info "Current user: " resp)
       resp)))

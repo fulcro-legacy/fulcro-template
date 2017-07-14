@@ -43,49 +43,51 @@
                                        :main          fulcro-template.client-main
                                        :optimizations :simple
                                        :output-dir    "resources/public/js/prod"
-                                       :output-to     "resources/public/js/fulcro_template.min.js"}}
-                       {:id           "dev"
-                        :figwheel     {:on-jsload "cljs.user/mount"}
-                        :source-paths ["dev/client" "src/main"]
-                        :compiler     {:asset-path           "js/dev"
-                                       :main                 cljs.user
-                                       :optimizations        :none
-                                       :output-dir           "resources/public/js/dev"
-                                       :output-to            "resources/public/js/fulcro_template.js"
-                                       :preloads             [devtools.preload]
-                                       :source-map-timestamp true}}
-                       {:id           "test"
-                        :source-paths ["src/test" "src/main"]
-                        :figwheel     {:on-jsload "fulcro-template.client-test-main/client-tests"}
-                        :compiler     {:asset-path    "js/test"
-                                       :main          fulcro-template.client-test-main
-                                       :optimizations :none
-                                       :output-dir    "resources/public/js/test"
-                                       :output-to     "resources/public/js/test/test.js"
-                                       :preloads      [devtools.preload]}}
-                       {:id           "automated-tests"
-                        :source-paths ["src/test" "src/main"]
-                        :compiler     {:asset-path    "js/ci"
-                                       :main          fulcro-template.CI-runner
-                                       :optimizations :none
-                                       :output-dir    "resources/private/js/ci"
-                                       :output-to     "resources/private/js/unit-tests.js"}}
-                       {:id           "cards"
-                        :figwheel     {:devcards true}
-                        :source-paths ["src/main" "src/cards"]
-                        :compiler     {:asset-path           "js/cards"
-                                       :main                 fulcro-template.cards
-                                       :optimizations        :none
-                                       :output-dir           "resources/public/js/cards"
-                                       :output-to            "resources/public/js/cards.js"
-                                       :preloads             [devtools.preload]
-                                       :source-map-timestamp true}}]}
+                                       :output-to     "resources/public/js/fulcro_template.js"}}]}
+
 
   :profiles {:uberjar {:main       fulcro-template.server-main
                        :aot        :all
                        :prep-tasks ["compile"
                                     ["cljsbuild" "once" "production"]]}
              :dev     {:source-paths ["dev/client" "dev/server" "src/client" "src/server"]
+                       :cljsbuild    {:builds
+                                      [{:id           "dev"
+                                        :figwheel     {:on-jsload "cljs.user/mount"}
+                                        :source-paths ["dev/client" "src/main"]
+                                        :compiler     {:asset-path           "js/dev"
+                                                       :main                 cljs.user
+                                                       :optimizations        :none
+                                                       :output-dir           "resources/public/js/dev"
+                                                       :output-to            "resources/public/js/fulcro_template.js"
+                                                       :preloads             [devtools.preload]
+                                                       :source-map-timestamp true}}
+                                       {:id           "test"
+                                        :source-paths ["src/test" "src/main"]
+                                        :figwheel     {:on-jsload "fulcro-template.client-test-main/client-tests"}
+                                        :compiler     {:asset-path    "js/test"
+                                                       :main          fulcro-template.client-test-main
+                                                       :optimizations :none
+                                                       :output-dir    "resources/public/js/test"
+                                                       :output-to     "resources/public/js/test/test.js"
+                                                       :preloads      [devtools.preload]}}
+                                       {:id           "automated-tests"
+                                        :source-paths ["src/test" "src/main"]
+                                        :compiler     {:asset-path    "js/ci"
+                                                       :main          fulcro-template.CI-runner
+                                                       :optimizations :none
+                                                       :output-dir    "resources/private/js/ci"
+                                                       :output-to     "resources/private/js/unit-tests.js"}}
+                                       {:id           "cards"
+                                        :figwheel     {:devcards true}
+                                        :source-paths ["src/main" "src/cards"]
+                                        :compiler     {:asset-path           "js/cards"
+                                                       :main                 fulcro-template.cards
+                                                       :optimizations        :none
+                                                       :output-dir           "resources/public/js/cards"
+                                                       :output-to            "resources/public/js/cards.js"
+                                                       :preloads             [devtools.preload]
+                                                       :source-map-timestamp true}}]}
                        :dependencies [[binaryage/devtools "0.9.4"]
                                       [org.clojure/tools.namespace "0.3.0-alpha4"]
                                       [org.clojure/tools.nrepl "0.2.13"]
