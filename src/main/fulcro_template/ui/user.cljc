@@ -1,7 +1,7 @@
 (ns fulcro-template.ui.user
   (:require
     [om.dom :as dom]
-    [om.next :as om :refer-macros [defui]]
+    [om.next :as om :refer [defui]]
     [fulcro.client.core :as uc]))
 
 (defui ^:once User

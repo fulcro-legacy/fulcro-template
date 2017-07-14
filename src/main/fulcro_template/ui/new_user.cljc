@@ -1,9 +1,8 @@
 (ns fulcro-template.ui.new-user
-  (:require [om.next :as om :refer-macros [defui]]
+  (:require [om.next :as om :refer [defui]]
             [fulcro.client.core :as u]
             [om.dom :as dom]
             [fulcro.client.mutations :as m :refer [defmutation]]
-
             [fulcro.i18n :refer [tr]]
             [fulcro.events :as evts]
             [fulcro.ui.forms :as f]
@@ -80,7 +79,6 @@
                                   :input-generator (fn [{:keys [className]}]
                                                      (f/form-field this form :password2 :className className :id "password2"
                                                        :onKeyDown (fn [evt]
-                                                                    (js/console.log :evt evt)
                                                                     (when (evts/enter-key? evt)
                                                                       (sign-up)))))} (tr "Verify Password"))
                 (b/labeled-input {:id              "submit" :split 2

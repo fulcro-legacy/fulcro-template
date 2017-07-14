@@ -8,8 +8,9 @@
     [fulcro-template.ui.main :as main]
     [fulcro-template.ui.preferences :as prefs]
     [fulcro-template.ui.new-user :as nu]
-    [om.next :as om :refer-macros [defui]]
+    [om.next :as om :refer [defui]]
     [fulcro.client.core :as u]
+    [fulcro.client.util :as util]
     [fulcro.client.routing :refer [defrouter]]
     [fulcro.client.mutations :as m]
     [fulcro.ui.bootstrap3 :as b]
@@ -82,19 +83,25 @@
                  :ui/loading-data {:pages (om/get-query Pages)}])
   static u/InitialAppState
   (initial-state [this params]
-    (merge
-      {; Is there a user logged in?
-       :logged-in?   false
-       ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
-       :ui/ready?    false
-       ; What are the details of the logged in user
-       :current-user nil
-       :root/modals  (uc/get-initial-state Modals {})
-       :pages        (u/get-initial-state Pages nil)}
-      r/app-routing-tree))
+    (let [default-state (merge
+                          {; Is there a user logged in?
+                           :logged-in?   false
+                           ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
+                           :ui/ready?    false
+                           ; What are the details of the logged in user
+                           :current-user nil
+                           :root/modals  (uc/get-initial-state Modals {})
+                           :pages        (u/get-initial-state Pages nil)}
+                          r/app-routing-tree)]
+      #?(:clj  default-state
+         :cljs (let [v (util/get-SSR-initial-state)]
+                 (if (contains? v :STATE)
+                   default-state
+                   v)))))
+
   Object
   (render [this]
-    (let [{:keys [ui/ready? ui/loading-data ui/react-key pages welcome-modal current-user logged-in?] :or {ui/react-key "ROOT"}} (om/props this)]
+    (let [{:keys [ui/ready? ui/loading-data ui/react-key pages welcome-modal current-user logged-in?] :or {react-key "ROOT"}} (om/props this)]
       (dom/div #js {:key react-key}
         (ui-navbar this)
         (when ready?
