@@ -31,7 +31,6 @@
         root-factory         (factory root-component-class)
         app-html             (dom/render-to-str (root-factory props))
         initial-state-script (dom/render-to-str (util/initial-state->script-tag app-state))]
-    (timbre/info "Initial stata " props)
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
       "<head>\n"
@@ -75,7 +74,6 @@
                            (not logged-in?) (assoc :loaded-uri uri)
                            set-route (set-route)
                            :always (assoc :ui/ready? true))]
-    #_(timbre/info "norm state: " (keys normalized-state))
     normalized-state))
 
 (defn render-page
@@ -104,8 +102,8 @@
 (defrecord HTML5Route [handler]
   component/Lifecycle
   (start [this]
-    (let [vanilla-pipeline (easy/get-fallback-hook handler)]
-      (easy/set-fallback-hook! handler (comp vanilla-pipeline
+    (let [vanilla-pipeline (easy/get-pre-hook handler)]
+      (easy/set-pre-hook! handler (comp vanilla-pipeline
                                          (partial wrap-html5-routes-as-index))))
     this)
   (stop [this] this))
@@ -157,4 +155,4 @@
                  :session-store (map->SessionStore {})
                  :html5-routes  (component/using
                                   (map->HTML5Route {})
-                                  [:handler])}))
+                                  [:handler :session-store])}))
