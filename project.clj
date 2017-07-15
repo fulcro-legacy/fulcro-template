@@ -41,7 +41,7 @@
                         :jar          true
                         :compiler     {:asset-path    "js/prod"
                                        :main          fulcro-template.client-main
-                                       :optimizations :advanced
+                                       :optimizations :simple
                                        :output-dir    "resources/public/js/prod"
                                        :output-to     "resources/public/js/fulcro_template.min.js"}}
                        {:id           "dev"
