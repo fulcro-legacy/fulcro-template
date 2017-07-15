@@ -85,7 +85,6 @@
   ([component page route-params]
     #?(:cljs (if (and @history @use-html5-routing)
                (let [path (apply bidi/path-for app-routes page (flatten (seq route-params)))]
-                 (js/console.log :page page :set-token path)
                  (pushy/set-token! @history path))
                (om/transact! component `[(set-route! ~{:handler page :route-params route-params}) :pages])))))
 
