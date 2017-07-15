@@ -39,12 +39,12 @@
   :cljsbuild {:builds [{:id           "production"
                         :source-paths ["src/main"]
                         :jar          true
-                        :compiler     {:asset-path    "js/prod"
-                                       :main          fulcro-template.client-main
-                                       :optimizations :simple
-                                       :output-dir    "resources/public/js/prod"
-                                       :output-to     "resources/public/js/fulcro_template.js"}}]}
-
+                        :compiler     {:asset-path         "js/prod"
+                                       :main               fulcro-template.client-main
+                                       :optimizations      :simple ; dead code elim is killing queries on components
+                                       :source-map         "resources/public/js/fulcro_template.js.map"
+                                       :output-dir         "resources/public/js/prod"
+                                       :output-to          "resources/public/js/fulcro_template.js"}}]}
 
   :profiles {:uberjar {:main       fulcro-template.server-main
                        :aot        :all
