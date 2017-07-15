@@ -24,13 +24,14 @@
     [ring.middleware.cookies :as cookies]
     [ring.util.response :as response]
     [fulcro.client.util :as util]
+    [fulcro.server-render :as ssr]
     [fulcro-template.ui.user :as user]))
 
 (defn top-html [app-state root-component-class]
   (let [props                (db->tree (get-query root-component-class) app-state app-state)
         root-factory         (factory root-component-class)
         app-html             (dom/render-to-str (root-factory props))
-        initial-state-script (dom/render-to-str (util/initial-state->script-tag app-state))]
+        initial-state-script (ssr/initial-state->script-tag app-state)]
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
       "<head>\n"
@@ -59,8 +60,7 @@
   ; ... remember where they want to go and put them on login
   ; .. logged in:
   ; ... put them on the correct page
-  (let [base-state       (tree->db root/Root (root/initial-app-state-tree) true)
-        base-state       (fc/merge-alternate-union-elements base-state root/Root)
+  (let [base-state       (ssr/build-initial-state (root/initial-app-state-tree) root/Root)
         logged-in?       (boolean user)
         set-route        (fn [s]
                            (if logged-in?
@@ -104,7 +104,7 @@
   (start [this]
     (let [vanilla-pipeline (easy/get-pre-hook handler)]
       (easy/set-pre-hook! handler (comp vanilla-pipeline
-                                         (partial wrap-html5-routes-as-index))))
+                                    (partial wrap-html5-routes-as-index))))
     this)
   (stop [this] this))
 

@@ -11,6 +11,7 @@
     [om.next :as om :refer [defui]]
     [fulcro.client.core :as u]
     [fulcro.client.util :as util]
+    [fulcro.server-render :as ssr]
     [fulcro.client.routing :refer [defrouter]]
     [fulcro.client.mutations :as m]
     [fulcro.ui.bootstrap3 :as b]
@@ -89,7 +90,7 @@
                          :pages        (u/get-initial-state Pages nil)}
                         r/app-routing-tree)]
     #?(:clj  default-state
-       :cljs (let [v (util/get-SSR-initial-state)]
+       :cljs (let [v (ssr/get-SSR-initial-state)]
                (if (contains? v :STATE)
                  default-state
                  (atom v))))))
