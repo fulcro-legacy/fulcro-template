@@ -27,11 +27,15 @@
     [fulcro.server-render :as ssr]
     [fulcro-template.ui.user :as user]))
 
-(defn top-html [app-state root-component-class]
-  (let [props                (db->tree (get-query root-component-class) app-state app-state)
+(defn top-html
+  "Render the HTML for the SPA. There is only ever one kind of HTML to send, but the initial state and initial app view may vary.
+  This function takes a normalized client database and a root UI class and generates that page."
+  [normalized-client-state root-component-class]
+  ; props are a "view" of the db. We use that to generate the view, but the initial state needs to be the entire db
+  (let [props                (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)
         root-factory         (factory root-component-class)
         app-html             (dom/render-to-str (root-factory props))
-        initial-state-script (ssr/initial-state->script-tag app-state)]
+        initial-state-script (ssr/initial-state->script-tag normalized-client-state)]
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
       "<head>\n"
@@ -53,15 +57,9 @@
   "Builds an up-to-date app state based on the URL where the db will contain everything needed. Returns a normalized
   client app db."
   [user uri bidi-match]
-  ; . Always: set ready to true and logged in to the correct thing.
-  ; . Put user in app state if logged in
-  ; . Bidi match:
-  ; .. they are not logged in:
-  ; ... remember where they want to go and put them on login
-  ; .. logged in:
-  ; ... put them on the correct page
-  (let [base-state       (ssr/build-initial-state (root/initial-app-state-tree) root/Root)
+  (let [base-state       (ssr/build-initial-state (root/initial-app-state-tree) root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
         logged-in?       (boolean user)
+        ; NOTE: All of these state functions are CLIENT code that we're leveraging on the server!
         set-route        (fn [s]
                            (if logged-in?
                              (fulcro.client.routing/update-routing-links s bidi-match)
@@ -69,6 +67,8 @@
         set-user         (fn [s] (-> s
                                    (fc/merge-component user/User user)
                                    (assoc :logged-in? true :current-user (util/get-ident user/User user))))
+        ; Augment the database with the detected route details and user.
+        ; Also mark the app as ready, so the UI will render on the server, AND the client can detect that it was a server render.
         normalized-state (cond-> base-state
                            logged-in? set-user
                            (not logged-in?) (assoc :loaded-uri uri)
@@ -79,32 +79,34 @@
 (defn render-page
   "Server-side render the entry page."
   [uri match user]
-
   (let [normalized-app-state (build-app-state user uri match)]
     (-> (top-html normalized-app-state root/Root)
       response/response
       (response/content-type "text/html"))))
 
-(defn wrap-html5-routes-as-index [handler]
+(defn wrap-server-side-rendering
+  "Ring middleware to handle all sends of the SPA page(s) via server-side rendering. If you want to see the client
+  without SSR, just remove this component from the ring stack and supply an index.html in resources/public."
+  [handler]
   (fn [req]
-    (let [uid         (some-> req :session :uid)
+    (let [uid         (some-> req :session :uid) ; The UID is stored in server session store if they are logged in
           user        (users/get-user uid)
           logged-in?  (boolean user)
           uri         (:uri req)
-          bidi-match  (bidi/match-route routing/app-routes uri)
+          bidi-match  (bidi/match-route routing/app-routes uri) ; where they were trying to go. NOTE: This is shared code with the client!
           valid-page? (boolean bidi-match)]
 
-      ; . no valid bidi match. BYPASS
+      ; . no valid bidi match. BYPASS. We don't handle it.
       (if valid-page?
         (render-page uri bidi-match user)
         (handler req)))))
 
-(defrecord HTML5Route [handler]
+(defrecord ServerSideRenderer [handler]
   component/Lifecycle
   (start [this]
     (let [vanilla-pipeline (easy/get-pre-hook handler)]
       (easy/set-pre-hook! handler (comp vanilla-pipeline
-                                    (partial wrap-html5-routes-as-index))))
+                                    (partial wrap-server-side-rendering))))
     this)
   (stop [this] this))
 
@@ -154,5 +156,6 @@
                                   [:handler :session-store])
                  :session-store (map->SessionStore {})
                  :html5-routes  (component/using
-                                  (map->HTML5Route {})
+                                  (map->ServerSideRenderer {})
+                                  ; Technically, the server-side renderer does not use the session by direct code reference, but it needs it to go "first"
                                   [:handler :session-store])}))

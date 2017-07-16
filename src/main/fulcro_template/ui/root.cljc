@@ -89,10 +89,10 @@
                          :root/modals  (uc/get-initial-state Modals {})
                          :pages        (u/get-initial-state Pages nil)}
                         r/app-routing-tree)]
-    #?(:clj  default-state
-       :cljs (if-let [v (ssr/get-SSR-initial-state)]
-               (atom v)
-               default-state))))
+    #?(:clj  default-state ; the server always starts with the base UI tree, just like the client would have
+       :cljs (if-let [v (ssr/get-SSR-initial-state)] ; the client starts with the server-generated db, if available
+               (atom v) ; putting the state in an atom tells Om it is already normalized
+               default-state)))) ; the default state is a tree, so no atom
 
 (defui ^:once Root
   ; InitialAppState isn't here, because SSR will want to send *normalized* state, and there is no way to return that from here.
