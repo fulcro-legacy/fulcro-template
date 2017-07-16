@@ -90,12 +90,12 @@
                          :pages        (u/get-initial-state Pages nil)}
                         r/app-routing-tree)]
     #?(:clj  default-state
-       :cljs (let [v (ssr/get-SSR-initial-state)]
-               (if (contains? v :STATE)
-                 default-state
-                 (atom v))))))
+       :cljs (if-let [v (ssr/get-SSR-initial-state)]
+               (atom v)
+               default-state))))
 
 (defui ^:once Root
+  ; InitialAppState isn't here, because SSR will want to send *normalized* state, and there is no way to return that from here.
   static om/IQuery
   (query [this] [:ui/react-key :ui/ready? :logged-in?
                  {:current-user (om/get-query user/User)}
