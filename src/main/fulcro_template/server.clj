@@ -101,9 +101,6 @@
           valid-page? (boolean bidi-match)
           language    (some-> req :headers (get "accept-language") (str/split #",") first keyword)]
 
-      (timbre/info req)
-      (timbre/info "Desired language " language)
-
       ; . no valid bidi match. BYPASS. We don't handle it.
       (if valid-page?
         (render-page uri bidi-match user language)
