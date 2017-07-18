@@ -4,37 +4,13 @@
     [taoensso.timbre :as timbre]
     [fulcro.server :as core :refer [defmutation]]
     [fulcro.server :as server]
+    [fulcro-template.api.user-db :as users]
     [taoensso.timbre :as log]))
-
-(def valid-users
-  (atom {1 {:uid 1 :name "Tony" :email "tony@nowhere.com" :password "letmein"}
-         2 {:uid 2 :name "Joe" :email "joe@nowhere.com" :password "letmein"}}))
-
-(defn get-user
-  "Returns a user matching the uname and pword, or nil"
-  [uname pword]
-  (timbre/info uname pword)
-  (select-keys (first (filter (fn [u] (and (= 0 (.compareToIgnoreCase (:email u) uname))
-                                        (= (:password u) pword))) (vals @valid-users)))
-    [:uid :email :name]))
-
-(defn next-id
-  "Get the next available ID for a user."
-  []
-  (->> @valid-users keys (reduce max) inc))
-
-(defn add-user
-  "Add a user to the database. UID must be a tempid. Returns a map from tempid to new real ID."
-  [{:keys [uid] :as user}]
-  (let [real-id (next-id)]
-    (log/info "Adding user " real-id)
-    (swap! valid-users assoc real-id (select-keys (assoc user :uid real-id) [:uid :name :email :password]))
-    {uid real-id}))
 
 (defn commit-new [[table id] entity]
   (log/info "Committing new " table entity)
   (case table
-    :user/by-id (add-user entity)
+    :user/by-id (users/add-user entity)
     {}))
 
 (defmethod core/server-mutate 'fulcro.ui.forms/commit-to-entity [env k {:keys [form/new-entities] :as p}]
@@ -56,7 +32,7 @@
   [{:keys [u p uid]}]
   (action [{:keys [request] :as env}]
     (let [{:keys [session]} request
-          user     (get-user u p)
+          user     (users/get-user u p)
           real-uid (:uid user)]
       (Thread/sleep 300)                                    ; pretend it takes a while to auth a user
       (if user
@@ -75,7 +51,7 @@
   ; if you wanted to directly access the session store, you can
   (action [{:keys [request session-store]}]
     (let [uid  (-> request :session :uid)
-          user (get @valid-users uid)]
+          user (users/get-user uid)]
       (timbre/info "Logout for user: " user)
       (server/augment-response {}
         (fn [resp] (assoc resp :session nil))))))

@@ -2,7 +2,6 @@
   (:require
     [clojure.pprint :refer [pprint]]
     [clojure.stacktrace :refer [print-stack-trace]]
-
     [clojure.tools.namespace.repl :as tools-ns :refer [set-refresh-dirs]]
     [com.stuartsierra.component :as component]
     [figwheel-sidecar.system :as fig]

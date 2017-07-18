@@ -8,13 +8,16 @@
     [fulcro-template.ui.main :as main]
     [fulcro-template.ui.preferences :as prefs]
     [fulcro-template.ui.new-user :as nu]
-    [om.next :as om :refer-macros [defui]]
+    [om.next :as om :refer [defui]]
     [fulcro.client.core :as u]
+    [fulcro.client.util :as util]
+    [fulcro.server-render :as ssr]
     [fulcro.client.routing :refer [defrouter]]
     [fulcro.client.mutations :as m]
     [fulcro.ui.bootstrap3 :as b]
     [fulcro-template.api.mutations :as api]
-    [fulcro.client.core :as uc]))
+    [fulcro.client.core :as uc]
+    [fulcro.client.logging :as log]))
 
 (defrouter Pages :page-router
   (ident [this props] [(:id props) :page])
@@ -74,27 +77,34 @@
         (b/ui-modal-footer nil
           (b/button {:onClick #(om/transact! this `[(b/hide-modal {:id :welcome})])} "Thanks!"))))))
 
+; server-side rendering...we want the server to be able to hand in a completely normalized db for the client to use
+(defn initial-app-state-tree []
+  (let [default-state (merge
+                        {; Is there a user logged in?
+                         :logged-in?   false
+                         ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
+                         :ui/ready?    false
+                         ; What are the details of the logged in user
+                         :current-user nil
+                         :root/modals  (uc/get-initial-state Modals {})
+                         :pages        (u/get-initial-state Pages nil)}
+                        r/app-routing-tree)]
+    #?(:clj  default-state ; the server always starts with the base UI tree, just like the client would have
+       :cljs (if-let [v (ssr/get-SSR-initial-state)] ; the client starts with the server-generated db, if available
+               (atom v) ; putting the state in an atom tells Om it is already normalized
+               default-state)))) ; the default state is a tree, so no atom
+
 (defui ^:once Root
+  ; InitialAppState isn't here, because SSR will want to send *normalized* state, and there is no way to return that from here.
   static om/IQuery
   (query [this] [:ui/react-key :ui/ready? :logged-in?
                  {:current-user (om/get-query user/User)}
                  {:root/modals (om/get-query Modals)}
+                 fulcro.client.routing/routing-tree-key     ; TODO: Check if this is needed...seemed to affect initial state from ssr
                  :ui/loading-data {:pages (om/get-query Pages)}])
-  static u/InitialAppState
-  (initial-state [this params]
-    (merge
-      {; Is there a user logged in?
-       :logged-in?   false
-       ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
-       :ui/ready?    false
-       ; What are the details of the logged in user
-       :current-user nil
-       :root/modals  (uc/get-initial-state Modals {})
-       :pages        (u/get-initial-state Pages nil)}
-      r/app-routing-tree))
   Object
   (render [this]
-    (let [{:keys [ui/ready? ui/loading-data ui/react-key pages welcome-modal current-user logged-in?] :or {ui/react-key "ROOT"}} (om/props this)]
+    (let [{:keys [ui/ready? ui/loading-data ui/react-key pages welcome-modal current-user logged-in?] :or {react-key "ROOT"}} (om/props this)]
       (dom/div #js {:key react-key}
         (ui-navbar this)
         (when ready?
