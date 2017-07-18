@@ -1,6 +1,11 @@
 (ns fulcro-template.ui.root
   (:require
     [fulcro.client.mutations :as mut]
+    [fulcro.client.core :as fc]
+    [fulcro.client.util :as util]
+    [fulcro.client.routing :refer [defrouter]]
+    [fulcro.client.mutations :as m]
+    [fulcro.client.logging :as log]
     [om.dom :as dom]
     [fulcro-template.ui.html5-routing :as r]
     [fulcro-template.ui.login :as l]
@@ -8,20 +13,11 @@
     [fulcro-template.ui.main :as main]
     [fulcro-template.ui.preferences :as prefs]
     [fulcro-template.ui.new-user :as nu]
-    [om.next :as om :refer [defui]]
-    [fulcro.client.core :as u]
-<<<<<<< HEAD:src/main/fulcro_template/ui/root.cljc
-    [fulcro.client.util :as util]
-    [fulcro.server-render :as ssr]
-=======
-    [fulcro.i18n :refer [tr]]
->>>>>>> went through and add i18n to all strings. added i18n readme:src/main/fulcro_template/ui/root.cljs
-    [fulcro.client.routing :refer [defrouter]]
-    [fulcro.client.mutations :as m]
-    [fulcro.ui.bootstrap3 :as b]
     [fulcro-template.api.mutations :as api]
-    [fulcro.client.core :as uc]
-    [fulcro.client.logging :as log]))
+    [om.next :as om :refer [defui]]
+    [fulcro.server-render :as ssr]
+    [fulcro.i18n :refer [tr]]
+    [fulcro.ui.bootstrap3 :as b]))
 
 (defrouter Pages :page-router
   (ident [this props] [(:id props) :page])
@@ -72,8 +68,8 @@
 (defui ^:once Modals
   static om/IQuery
   (query [this] [{:welcome-modal (om/get-query b/Modal)}])
-  static u/InitialAppState
-  (initial-state [this params] {:welcome-modal (uc/get-initial-state b/Modal {:id :welcome :backdrop true})})
+  static fc/InitialAppState
+  (initial-state [this params] {:welcome-modal (fc/get-initial-state b/Modal {:id :welcome :backdrop true})})
   Object
   (render [this]
     (let [{:keys [welcome-modal]} (om/props this)]
@@ -94,13 +90,13 @@
                          :ui/ready?    false
                          ; What are the details of the logged in user
                          :current-user nil
-                         :root/modals  (uc/get-initial-state Modals {})
-                         :pages        (u/get-initial-state Pages nil)}
+                         :root/modals  (fc/get-initial-state Modals {})
+                         :pages        (fc/get-initial-state Pages nil)}
                         r/app-routing-tree)]
-    #?(:clj  default-state ; the server always starts with the base UI tree, just like the client would have
-       :cljs (if-let [v (ssr/get-SSR-initial-state)] ; the client starts with the server-generated db, if available
-               (atom v) ; putting the state in an atom tells Om it is already normalized
-               default-state)))) ; the default state is a tree, so no atom
+    #?(:clj  default-state                                  ; the server always starts with the base UI tree, just like the client would have
+       :cljs (if-let [v (ssr/get-SSR-initial-state)]        ; the client starts with the server-generated db, if available
+               (atom v)                                     ; putting the state in an atom tells Om it is already normalized
+               default-state))))                            ; the default state is a tree, so no atom
 
 (defui ^:once Root
   ; InitialAppState isn't here, because SSR will want to send *normalized* state, and there is no way to return that from here.

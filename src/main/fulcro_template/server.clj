@@ -25,7 +25,10 @@
     [ring.util.response :as response]
     [fulcro.client.util :as util]
     [fulcro.server-render :as ssr]
-    [fulcro-template.ui.user :as user]))
+    [fulcro-template.ui.user :as user]
+    [clojure.string :as str]
+    [fulcro.i18n :as i18n]
+    [fulcro.client.mutations :as m]))
 
 (defn top-html
   "Render the HTML for the SPA. There is only ever one kind of HTML to send, but the initial state and initial app view may vary.
@@ -56,7 +59,7 @@
 (defn build-app-state
   "Builds an up-to-date app state based on the URL where the db will contain everything needed. Returns a normalized
   client app db."
-  [user uri bidi-match]
+  [user uri bidi-match language]
   (let [base-state       (ssr/build-initial-state (root/initial-app-state-tree) root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
         logged-in?       (boolean user)
         ; NOTE: All of these state functions are CLIENT code that we're leveraging on the server!
@@ -72,14 +75,15 @@
         normalized-state (cond-> base-state
                            logged-in? set-user
                            (not logged-in?) (assoc :loaded-uri uri)
+                           language (m/change-locale-impl language)
                            set-route (set-route)
                            :always (assoc :ui/ready? true))]
     normalized-state))
 
 (defn render-page
   "Server-side render the entry page."
-  [uri match user]
-  (let [normalized-app-state (build-app-state user uri match)]
+  [uri match user language]
+  (let [normalized-app-state (build-app-state user uri match language)]
     (-> (top-html normalized-app-state root/Root)
       response/response
       (response/content-type "text/html"))))
@@ -89,16 +93,20 @@
   without SSR, just remove this component from the ring stack and supply an index.html in resources/public."
   [handler]
   (fn [req]
-    (let [uid         (some-> req :session :uid) ; The UID is stored in server session store if they are logged in
+    (let [uid         (some-> req :session :uid)            ; The UID is stored in server session store if they are logged in
           user        (users/get-user uid)
           logged-in?  (boolean user)
           uri         (:uri req)
           bidi-match  (bidi/match-route routing/app-routes uri) ; where they were trying to go. NOTE: This is shared code with the client!
-          valid-page? (boolean bidi-match)]
+          valid-page? (boolean bidi-match)
+          language    (some-> req :headers (get "accept-language") (str/split #",") first keyword)]
+
+      (timbre/info req)
+      (timbre/info "Desired language " language)
 
       ; . no valid bidi match. BYPASS. We don't handle it.
       (if valid-page?
-        (render-page uri bidi-match user)
+        (render-page uri bidi-match user language)
         (handler req)))))
 
 (defrecord ServerSideRenderer [handler]

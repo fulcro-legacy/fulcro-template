@@ -44,13 +44,12 @@ you to your desired page after login.
 ├── package.json                NODE config, used for running CI cljs tests
 ├── project.clj
 ├── resources
-│   └── public
+│   └── public (NOTE: no HTML needed for app anymore, using server-side rendering!)
 │       ├── cards.html          Devcards HTML page
 │       ├── css
 │       │   ├── edn.css         CSS files for rendering specs in browser
 │       │   └── test.css
-│       ├── index-dev.html      Dev mode application home page
-│       └── index.html          Production mode application home page
+│       └── cards.html          Devcards HTML file
 ├── script
 │   └── figwheel.clj            CLJ script for starting figwheel automatically
 ├── bin
@@ -73,20 +72,23 @@ you to your desired page after login.
 │   │       ├── api
 │   │       │   ├── mutations.clj    The server-side implementation of mutations
 │   │       │   ├── mutations.cljs   The client-side impl of mutations
-│   │       │   └── read.clj         Server-side read handlers
+│   │       │   ├── read.clj         Server-side read handlers
+│   │       │   └── user_db.clj      Simulated in-RAM user database
+│   │       ├── locales
+│   │       │   └── es.cljc          Spanish locale (see README-i18n.md)
 │   │       ├── client.cljs          The creation of the client instance
 │   │       ├── client_main.cljs     The production main for client
 │   │       ├── server.clj           The creation of the server
 │   │       ├── server_main.clj      The production main for server
 │   │       └── ui
-│   │           ├── components.cljs     Sample UI placeholder component
-│   │           ├── html5_routing.cljs  Full-blown HTML5 routing with bidi/pushy
-│   │           ├── login.cljs          The login screen
-│   │           ├── main.cljs           The placeholder main screen
-│   │           ├── new_user.cljs       The placeholder new user screen (doesn't submit to server)
-│   │           ├── preferences.cljs    The placeholder preferences screen
-│   │           ├── root.cljs           The UI root
-│   │           └── user.cljs           A representation of User for login
+│   │           ├── components.cljc     Sample UI placeholder component
+│   │           ├── html5_routing.cljc  Full-blown HTML5 routing with bidi/pushy
+│   │           ├── login.cljc          The login screen
+│   │           ├── main.cljc           The placeholder main screen
+│   │           ├── new_user.cljc       The placeholder new user screen (doesn't submit to server)
+│   │           ├── preferences.cljc    The placeholder preferences screen
+│   │           ├── root.cljc           The UI root
+│   │           └── user.cljc           A representation of User for login
 │   └── test
 │       └── fulcro_template
 │           ├── CI_runner.cljs          The entry point for CI testing
