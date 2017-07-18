@@ -1,0 +1,63 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-18 00:48-0500\n"
+"PO-Revision-Date: 2017-07-18 00:50-0500\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.1\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es\n"
+
+#: i18n/i18n.js:36458
+msgid "Passwords must match"
+msgstr "Las contraseñas deben coincidir"
+
+#: i18n/i18n.js:36490
+msgid "Please supply your name.`"
+msgstr "Por favor suministre su nombre.'"
+
+#: i18n/i18n.js:36493
+msgid "Name"
+msgstr "Nombre"
+
+#: i18n/i18n.js:36493
+msgid "Must be a valid email address.`"
+msgstr "Debe ser una dirección de correo electrónico válida."
+
+#: i18n/i18n.js:36496
+msgid "Email Address"
+msgstr "Dirección de correo electrónico"
+
+#: i18n/i18n.js:36497
+msgid "Password must be at least 7 characters long"
+msgstr "La contraseña debe contener al menos 7 caracteres"
+
+#: i18n/i18n.js:36499 i18n/i18n.js:36615
+msgid "Password"
+msgstr "Contraseña"
+
+#: i18n/i18n.js:36504
+msgid "Verify Password"
+msgstr "Verificar Contraseña"
+
+#: i18n/i18n.js:36505
+msgid "A server error happened. Please try again."
+msgstr "Ocurrió un error de servidor. Por favor, inténtelo de nuevo."
+
+#: i18n/i18n.js:36506
+msgid "Sign Up!"
+msgstr "¡Registrarse!"
+
+#: i18n/i18n.js:36611
+msgid "Email"
+msgstr "Email"

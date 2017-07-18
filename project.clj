@@ -6,12 +6,12 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.671"]
 
-                 [fulcrologic/fulcro "1.0.0-beta4.1"]
+                 [fulcrologic/fulcro "1.0.0-beta5"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
                  [bidi "2.1.1"]
 
-                 [fulcrologic/fulcro-spec "1.0.0-beta4-SNAPSHOT" :scope "test"]
+                 [fulcrologic/fulcro-spec "1.0.0-beta4" :scope "test"]
                  [lein-doo "0.1.7" :scope "test"]
                  [org.clojure/core.async "0.3.443"]
                  [http-kit "2.2.0"]
@@ -62,6 +62,13 @@
                                                        :output-to            "resources/public/js/fulcro_template.js"
                                                        :preloads             [devtools.preload]
                                                        :source-map-timestamp true}}
+                                       {:id           "i18n" ;for gettext string extraction
+                                        :source-paths ["src/main"]
+                                        :compiler     {:asset-path    "i18n"
+                                                       :main          fulcro-template.client-main
+                                                       :optimizations :whitespace
+                                                       :output-dir    "i18n/tmp"
+                                                       :output-to     "i18n/i18n.js"}}
                                        {:id           "test"
                                         :source-paths ["src/test" "src/main"]
                                         :figwheel     {:on-jsload "fulcro-template.client-test-main/client-tests"}
