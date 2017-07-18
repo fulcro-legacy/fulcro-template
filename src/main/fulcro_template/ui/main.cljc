@@ -1,6 +1,7 @@
 (ns fulcro-template.ui.main
   (:require [om.next :as om :refer [defui]]
             [fulcro.client.core :as u]
+            [fulcro.i18n :refer [tr]]
             [om.dom :as dom]
             [fulcro.client.mutations :as m]))
 
@@ -14,4 +15,4 @@
   Object
   (render [this]
     (let [{:keys [current-user]} (om/props this)]
-      (dom/div #js {} "Main page"))))
+      (dom/div #js {} (tr "Main page")))))

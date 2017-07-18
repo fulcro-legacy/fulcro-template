@@ -29,18 +29,18 @@
                                                          :refresh       [:logged-in? :current-user]}))]
       (b/container-fluid {}
         (b/row {}
-          (b/col {:lg-offset 4 :lg 4 :xs-offset 1 :xs 11}
+          (b/col {:lg-offset 3 :lg 6 :xs-offset 1 :xs 11}
             (dom/div #js {:className "form-horizontal"}
-              (b/labeled-input {:id "username" :type "text" :split 2 :onChange #(m/set-string! this :ui/username :event %)} (tr "Email"))
-              (b/labeled-input {:id "password" :type "password" :split 2 :onKeyDown (fn [evt] (when (evt/enter-key? evt) (login))) :onChange #(m/set-string! this :ui/password :event %)} (tr "Password"))
-              (b/labeled-input {:id              "submit" :split 2
+              (b/labeled-input {:id "username" :type "text" :split 3 :onChange #(m/set-string! this :ui/username :event %)} (tr "Email"))
+              (b/labeled-input {:id "password" :type "password" :split 3 :onKeyDown (fn [evt] (when (evt/enter-key? evt) (login))) :onChange #(m/set-string! this :ui/password :event %)} (tr "Password"))
+              (b/labeled-input {:id              "submit" :split 3
                                 :input-generator (fn [props]
                                                    (b/button (merge props {:kind :primary :disabled loading-data :type "submit" :onClick login}) "Login"))} ""))))
         (when server-down
           (b/row {}
             (b/col {:xs-offset 4 :xs 4}
-              (b/alert {:kind :warning} "Unable to contact server. Try again later."))))
+              (b/alert {:kind :warning} (tr "Unable to contact server. Try again later.")))))
         (b/row nil
           (b/col {:xs-offset 4 :xs 4}
-            "Don't have a login yet? "
-            (dom/a #js {:onClick #(r/nav-to! this :new-user)} "Sign up!")))))))
+            (tr "Don't have a login yet? ")
+            (dom/a #js {:onClick #(r/nav-to! this :new-user)} (tr "Sign up!"))))))))

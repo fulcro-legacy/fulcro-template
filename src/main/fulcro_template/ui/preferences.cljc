@@ -1,6 +1,7 @@
 (ns fulcro-template.ui.preferences
   (:require [om.next :as om :refer [defui]]
             [fulcro.client.core :as u]
+            [fulcro.i18n :refer [tr]]
             [om.dom :as dom]
             [fulcro.client.mutations :as m]))
 
@@ -13,4 +14,4 @@
   (ident [this props] [:main :page])
   Object
   (render [this]
-    (dom/div #js {} "Preferences page")))
+    (dom/div #js {} (tr "Preferences page"))))

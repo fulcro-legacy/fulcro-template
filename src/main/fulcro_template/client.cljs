@@ -4,9 +4,10 @@
             [fulcro.client.data-fetch :as f]
             [fulcro-template.api.mutations :as m]
             [fulcro-template.ui.html5-routing :as routing]
-            [fulcro-template.ui.user :as user]
             [fulcro.client.mutations :as built-in]
-            [fulcro-template.ui.root :as root]))
+            [fulcro-template.ui.root :as root]
+            [fulcro-template.locales.es]
+            [fulcro-template.ui.user :as user]))
 
 (defonce app
   (atom (uc/new-fulcro-client

@@ -7,57 +7,113 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-18 00:48-0500\n"
-"PO-Revision-Date: 2017-07-18 00:50-0500\n"
+"POT-Creation-Date: 2017-07-18 01:44-0500\n"
+"PO-Revision-Date: 2017-07-18 01:45-0500\n"
+"Last-Translator: \n"
 "Language-Team: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.1\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: es\n"
 
-#: i18n/i18n.js:36458
+#: i18n/i18n.js:36462
 msgid "Passwords must match"
 msgstr "Las contraseñas deben coincidir"
 
-#: i18n/i18n.js:36490
+#: i18n/i18n.js:36494
 msgid "Please supply your name.`"
-msgstr "Por favor suministre su nombre.'"
+msgstr "Por favor suministre su nombre"
 
-#: i18n/i18n.js:36493
+#: i18n/i18n.js:36497
 msgid "Name"
 msgstr "Nombre"
 
-#: i18n/i18n.js:36493
+#: i18n/i18n.js:36497
 msgid "Must be a valid email address.`"
-msgstr "Debe ser una dirección de correo electrónico válida."
+msgstr "Debe ser una dirección de correo electrónico válida"
 
-#: i18n/i18n.js:36496
+#: i18n/i18n.js:36500
 msgid "Email Address"
 msgstr "Dirección de correo electrónico"
 
-#: i18n/i18n.js:36497
+#: i18n/i18n.js:36501
 msgid "Password must be at least 7 characters long"
 msgstr "La contraseña debe contener al menos 7 caracteres"
 
-#: i18n/i18n.js:36499 i18n/i18n.js:36615
+#: i18n/i18n.js:36503 i18n/i18n.js:36619
 msgid "Password"
 msgstr "Contraseña"
 
-#: i18n/i18n.js:36504
+#: i18n/i18n.js:36508
 msgid "Verify Password"
 msgstr "Verificar Contraseña"
 
-#: i18n/i18n.js:36505
+#: i18n/i18n.js:36509
 msgid "A server error happened. Please try again."
 msgstr "Ocurrió un error de servidor. Por favor, inténtelo de nuevo."
 
-#: i18n/i18n.js:36506
+#: i18n/i18n.js:36510
 msgid "Sign Up!"
 msgstr "¡Registrarse!"
 
-#: i18n/i18n.js:36611
+#: i18n/i18n.js:36512
+msgid "Welcome! Your account has been created. "
+msgstr "¡Bienvenido! Tu cuenta ha sido creada."
+
+#: i18n/i18n.js:36514
+msgid "Please, log in."
+msgstr "Por favor, inicia sesión."
+
+#: i18n/i18n.js:36578
+msgid "Main page"
+msgstr "Página Principal"
+
+#: i18n/i18n.js:36615
 msgid "Email"
 msgstr "Email"
+
+#: i18n/i18n.js:36622
+msgid "Unable to contact server. Try again later."
+msgstr "Incapaz de contactar con el servidor. Vuelva a intentarlo más tarde."
+
+#: i18n/i18n.js:36623
+msgid "Don't have a login yet? "
+msgstr "¿Todavía no tienes una cuenta?"
+
+#: i18n/i18n.js:36624
+msgid "Sign up!"
+msgstr "¡Regístrate!"
+
+#: i18n/i18n.js:36655
+msgid "Preferences page"
+msgstr "Página de preferencias"
+
+#: i18n/i18n.js:36725
+msgid "Log out"
+msgstr "Cerrar la sesión"
+
+#: i18n/i18n.js:36727
+msgid "Sign in"
+msgstr "Autenticarse"
+
+#: i18n/i18n.js:36739
+msgid "Main"
+msgstr "Principal"
+
+#: i18n/i18n.js:36740
+msgid "Preferences"
+msgstr "Preferencias"
+
+#: i18n/i18n.js:36758
+msgid "Welcome!"
+msgstr "¡Bienvenido!"
+
+#: i18n/i18n.js:36758
+msgid "Glad you could join us!"
+msgstr "Me alegro de que usted podría unirse a nosotros!"
+
+#: i18n/i18n.js:36762
+msgid "Thanks!"
+msgstr "¡Gracias!"

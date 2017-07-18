@@ -58,30 +58,30 @@
       (if (om/tempid? uid)                                  ; successful submission will remap the tempid to a real ID.
         (b/container-fluid {}
           (b/row {}
-            (b/col {:lg-offset 4 :lg 4 :xs-offset 1 :xs 11}
+            (b/col {:lg-offset 3 :lg 6 :xs-offset 1 :xs 11}
               (b/form-horizontal {}
-                (b/labeled-input {:split           2
+                (b/labeled-input {:split           3
                                   :error           (when (f/invalid? form :name) (tr "Please supply your name.`"))
                                   :input-generator (fn [{:keys [className]}]
                                                      (f/form-field this form :name :className className :id "username"))}
                   (tr "Name"))
-                (b/labeled-input {:split           2
+                (b/labeled-input {:split           3
                                   :error           (when (f/invalid? form :email) (tr "Must be a valid email address.`"))
                                   :input-generator (fn [{:keys [className]}]
                                                      (f/form-field this form :email :className className :id "email"))}
                   (tr "Email Address"))
-                (b/labeled-input {:split           2
+                (b/labeled-input {:split           3
                                   :error           (when (f/invalid? form :password) (tr "Password must be at least 7 characters long"))
                                   :input-generator (fn [{:keys [className]}]
                                                      (f/form-field this form :password :className className :id "password"))} (tr "Password"))
-                (b/labeled-input {:split           2
+                (b/labeled-input {:split           3
                                   :error           (when password-error password-error)
                                   :input-generator (fn [{:keys [className]}]
                                                      (f/form-field this form :password2 :className className :id "password2"
                                                        :onKeyDown (fn [evt]
                                                                     (when (evts/enter-key? evt)
                                                                       (sign-up)))))} (tr "Verify Password"))
-                (b/labeled-input {:id              "submit" :split 2
+                (b/labeled-input {:id              "submit" :split 3
                                   :error           (when create-failed (tr "A server error happened. Please try again."))
                                   :input-generator (fn [props]
                                                      (b/button (merge props
@@ -90,7 +90,7 @@
         (b/container-fluid {}
           (b/row {}
             (b/col {:lg 6 :lg-offset 3 :xs 10 :xs-offset 1}
-              (b/alert {:kind :success} (dom/span nil "Welcome! Your account has been created. You can now " (dom/a #js {:onClick #(r/nav-to! this :login)} "log in."))))))))))
+              (b/alert {:kind :success} (dom/span nil (tr "Welcome! Your account has been created. ") (dom/a #js {:onClick #(r/nav-to! this :login)} (tr "Please, log in.")))))))))))
 
 (def ui-user-form (om/factory UserForm))
 

@@ -22,11 +22,13 @@
   (action [{:keys [state]}] (swap! state assoc :server-down true)))
 
 (defmutation login-complete
-  "Om mutation: Attempted login post-mutation the update the UI with the result."
-  [p]
+  "Om mutation: Attempted login post-mutation the update the UI with the result. Requires the app-root of the mounted application
+  so routing can be started."
+  [{:keys [app-root]}]
   (action [{:keys [component state]}]
     ; idempotent (start routing)
-    (r/start-routing (-> fulcro-template.client/app deref :reconciler om/app-root))
+    (when app-root
+      (r/start-routing app-root))
     (let [{:keys [logged-in? current-user]} @state]
       (let [desired-page (get @state :loaded-uri (or (pushy/get-token @r/history) r/MAIN-URI))
             desired-page (if (= r/LOGIN-URI desired-page)

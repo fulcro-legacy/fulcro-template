@@ -10,8 +10,12 @@
     [fulcro-template.ui.new-user :as nu]
     [om.next :as om :refer [defui]]
     [fulcro.client.core :as u]
+<<<<<<< HEAD:src/main/fulcro_template/ui/root.cljc
     [fulcro.client.util :as util]
     [fulcro.server-render :as ssr]
+=======
+    [fulcro.i18n :refer [tr]]
+>>>>>>> went through and add i18n to all strings. added i18n readme:src/main/fulcro_template/ui/root.cljs
     [fulcro.client.routing :refer [defrouter]]
     [fulcro.client.mutations :as m]
     [fulcro.ui.bootstrap3 :as b]
@@ -33,13 +37,13 @@
     (when loading? (b/badge {} "..."))
     (user/ui-user user)
     (dom/br nil)
-    (dom/a #js {:onClick logout-fn} " Log out")))
+    (dom/a #js {:onClick logout-fn} (tr "Log out"))))
 
 (defn ui-login-button [loading? login-fn]
   (dom/p #js {:className "navbar-right"}
     (when loading?
       (dom/span #js {:className "navbar-text badge"} "..."))
-    (b/button {:className "navbar-btn" :onClick login-fn} "Sign in")))
+    (b/button {:className "navbar-btn" :onClick login-fn} (tr "Sign in"))))
 
 (defn ui-navbar [this]
   (let [login  #(r/nav-to! this :login)
@@ -49,13 +53,17 @@
       (dom/div #js {:className "container-fluid"}
         (dom/div #js {:className "navbar-header"}
           (dom/span #js {:className "navbar-brand"}
-            (dom/span nil "Template Brand")))
+            (dom/span nil "Template Brand")
+            (dom/br nil)
+            (dom/a #js {:onClick #(om/transact! this `[(m/change-locale {:lang :en})]) :href "#"} "en") " | "
+            (dom/a #js {:onClick #(om/transact! this `[(m/change-locale {:lang :es})]) :href "#"} "es")
+            ))
         (dom/div #js {:className "collapse navbar-collapse"}
           (when (true? logged-in?)
             (dom/ul #js {:className "nav navbar-nav"}
               ;; More nav links here
-              (dom/li nil (dom/a #js {:className "active" :onClick #(r/nav-to! this :main)} "Main"))
-              (dom/li nil (dom/a #js {:className "active" :onClick #(r/nav-to! this :preferences)} "Preferences"))))
+              (dom/li nil (dom/a #js {:className "active" :onClick #(r/nav-to! this :main)} (tr "Main")))
+              (dom/li nil (dom/a #js {:className "active" :onClick #(r/nav-to! this :preferences)} (tr "Preferences")))))
           (if (true? logged-in?)
             (ui-login-stats loading-data current-user logout)
             (ui-login-button loading-data login)))))))
@@ -71,11 +79,11 @@
     (let [{:keys [welcome-modal]} (om/props this)]
       (b/ui-modal welcome-modal
         (b/ui-modal-title nil
-          (dom/b nil "Welcome!"))
+          (dom/b nil (tr "Welcome!")))
         (b/ui-modal-body nil
-          (dom/p #js {:className b/text-info} "Glad you could join us!"))
+          (dom/p #js {:className b/text-info} (tr "Glad you could join us!")))
         (b/ui-modal-footer nil
-          (b/button {:onClick #(om/transact! this `[(b/hide-modal {:id :welcome})])} "Thanks!"))))))
+          (b/button {:onClick #(om/transact! this `[(b/hide-modal {:id :welcome})])} (tr "Thanks!")))))))
 
 ; server-side rendering...we want the server to be able to hand in a completely normalized db for the client to use
 (defn initial-app-state-tree []
