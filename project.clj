@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.671"]
 
-                 [fulcrologic/fulcro "1.0.0-beta5-SNAPSHOT"]
+                 [fulcrologic/fulcro "1.0.0-beta5"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
                  [bidi "2.1.1"]
