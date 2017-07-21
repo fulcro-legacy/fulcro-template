@@ -6,12 +6,12 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
                  [org.clojure/clojurescript "1.9.671"]
 
-                 [fulcrologic/fulcro "1.0.0-beta5"]
+                 [fulcrologic/fulcro "1.0.0-beta6-SNAPSHOT"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
-                 [bidi "2.1.1"]
+                 [bidi "2.1.2"]
 
-                 [fulcrologic/fulcro-spec "1.0.0-beta3" :scope "test"]
+                 [fulcrologic/fulcro-spec "1.0.0-beta4" :scope "test"]
                  [lein-doo "0.1.7" :scope "test"]
                  [org.clojure/core.async "0.3.443"]
                  [http-kit "2.2.0"]
@@ -20,6 +20,9 @@
   :plugins [[lein-cljsbuild "1.1.6"]
             [lein-doo "0.1.7"]
             [com.jakemccrary/lein-test-refresh "0.17.0"]]
+
+  :jvm-opts ["-XX:-OmitStackTraceInFastThrow" "-client" "-XX:+TieredCompilation" "-XX:TieredStopAtLevel=1" "-Xmx1g" "-XX:MaxPermSize=128m" "-XX:+UseConcMarkSweepGC" "-XX:+CMSClassUnloadingEnabled" "-Xverify:none"]
+
 
   :doo {:build "automated-tests"
         :paths {:karma "node_modules/karma/bin/karma"}}
@@ -98,7 +101,7 @@
                        :dependencies [[binaryage/devtools "0.9.4"]
                                       [org.clojure/tools.namespace "0.3.0-alpha4"]
                                       [org.clojure/tools.nrepl "0.2.13"]
-                                      [com.cemerick/piggieback "0.2.1"]
+                                      [com.cemerick/piggieback "0.2.2"]
                                       [figwheel-sidecar "0.5.11" :exclusions [org.clojure/tools.reader]]
                                       [devcards "0.2.3"]]
                        :repl-options {:init-ns          user
