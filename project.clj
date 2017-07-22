@@ -21,8 +21,6 @@
             [lein-doo "0.1.7"]
             [com.jakemccrary/lein-test-refresh "0.17.0"]]
 
-  :jvm-opts ["-XX:-OmitStackTraceInFastThrow" "-client" "-XX:+TieredCompilation" "-XX:TieredStopAtLevel=1" "-Xmx1g" "-XX:MaxPermSize=128m" "-XX:+UseConcMarkSweepGC" "-XX:+CMSClassUnloadingEnabled" "-Xverify:none"]
-
 
   :doo {:build "automated-tests"
         :paths {:karma "node_modules/karma/bin/karma"}}
@@ -42,18 +40,20 @@
   :cljsbuild {:builds [{:id           "production"
                         :source-paths ["src/main"]
                         :jar          true
-                        :compiler     {:asset-path         "js/prod"
-                                       :main               fulcro-template.client-main
-                                       :optimizations      :simple ; dead code elim is killing queries on components
-                                       :source-map         "resources/public/js/fulcro_template.js.map"
-                                       :output-dir         "resources/public/js/prod"
-                                       :output-to          "resources/public/js/fulcro_template.js"}}]}
+                        :compiler     {:asset-path    "js/prod"
+                                       :main          fulcro-template.client-main
+                                       :optimizations :simple ; dead code elim is killing queries on components
+                                       :source-map    "resources/public/js/fulcro_template.js.map"
+                                       :output-dir    "resources/public/js/prod"
+                                       :output-to     "resources/public/js/fulcro_template.js"}}]}
 
   :profiles {:uberjar {:main       fulcro-template.server-main
                        :aot        :all
                        :prep-tasks ["compile"
                                     ["cljsbuild" "once" "production"]]}
              :dev     {:source-paths ["dev/client" "dev/server" "src/client" "src/server"]
+                       :jvm-opts     ["-XX:-OmitStackTraceInFastThrow" "-client" "-XX:+TieredCompilation" "-XX:TieredStopAtLevel=1"
+                                      "-Xmx1g" "-XX:MaxPermSize=128m" "-XX:+UseConcMarkSweepGC" "-XX:+CMSClassUnloadingEnabled" "-Xverify:none"]
                        :cljsbuild    {:builds
                                       [{:id           "dev"
                                         :figwheel     {:on-jsload "cljs.user/mount"}
