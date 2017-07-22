@@ -1,9 +1,9 @@
 (ns fulcro-template.server
   (:require
     [fulcro.server :as core]
-    [fulcro.easy-server :as easy]
     [com.stuartsierra.component :as component]
 
+    [org.httpkit.server :refer [run-server]]
     [om.next.server :as om]
     [fulcro-template.api.read :as r]
     [fulcro-template.api.mutations :as mut]
@@ -17,11 +17,18 @@
 
     [bidi.bidi :as bidi]
     [taoensso.timbre :as timbre]
+
     [ring.middleware.session :as session]
     [ring.middleware.session.store :as store]
     [ring.middleware.resource :as resource]
-    [ring.util.request :as req]
+    [ring.middleware.content-type :refer [wrap-content-type]]
+    [ring.middleware.gzip :refer [wrap-gzip]]
+    [ring.middleware.not-modified :refer [wrap-not-modified]]
+    [ring.middleware.params :refer [wrap-params]]
+    [ring.middleware.resource :refer [wrap-resource]]
     [ring.middleware.cookies :as cookies]
+
+    [ring.util.request :as req]
     [ring.util.response :as response]
     [fulcro.client.util :as util]
     [fulcro.server-render :as ssr]
@@ -29,6 +36,10 @@
     [clojure.string :as str]
     [fulcro.i18n :as i18n]
     [fulcro.client.mutations :as m]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; SERVER-SIDE RENDERING
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn top-html
   "Render the HTML for the SPA. There is only ever one kind of HTML to send, but the initial state and initial app view may vary.
@@ -91,10 +102,10 @@
 (defn wrap-server-side-rendering
   "Ring middleware to handle all sends of the SPA page(s) via server-side rendering. If you want to see the client
   without SSR, just remove this component from the ring stack and supply an index.html in resources/public."
-  [handler]
+  [handler user-db]
   (fn [req]
     (let [uid         (some-> req :session :uid)            ; The UID is stored in server session store if they are logged in
-          user        (users/get-user uid)
+          user        (users/get-user user-db uid)
           logged-in?  (boolean user)
           uri         (:uri req)
           bidi-match  (bidi/match-route routing/app-routes uri) ; where they were trying to go. NOTE: This is shared code with the client!
@@ -106,26 +117,18 @@
         (render-page uri bidi-match user language)
         (handler req)))))
 
-(defrecord ServerSideRenderer [handler]
-  component/Lifecycle
-  (start [this]
-    (let [vanilla-pipeline (easy/get-pre-hook handler)]
-      (easy/set-pre-hook! handler (comp vanilla-pipeline
-                                    (partial wrap-server-side-rendering))))
-    this)
-  (stop [this] this))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; SERVER
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defrecord RingSessions [handler session-store]
-  component/Lifecycle
-  (start [this]
-    ; This is the basic pattern for composing into the existing pre-hook handler (which starts out as identity)
-    ; If you're sure this is the only component hooking in, you could simply set it instead.
-    (let [vanilla-pipeline (easy/get-pre-hook handler)]
-      (easy/set-pre-hook! handler (comp vanilla-pipeline
-                                    (fn [h] (session/wrap-session h {:store session-store})))))
-    this)
-  (stop [this] this))
+; To handle the end of the processing chain.
+(defn not-found [req]
+  {:status  404
+   :headers {"Content-Type" "text/plain"}
+   :body    "Resource not found."})
 
+; A place to put user's sessions. See Ring wrap-session.
+; We could use Ring's in memory session store, but this one is a component that will reset on server restarts
 (defrecord SessionStore [memory-store]
   store/SessionStore
   (read-session [_ key]
@@ -141,26 +144,94 @@
   (start [this] (assoc this :memory-store (atom {})))
   (stop [this] this))
 
-(defn make-system [config-path]
-  (easy/make-fulcro-server
-    :config-path config-path
-    :parser (core/fulcro-parser)
-    :parser-injections #{:config :session-store}
-    #_(comment
-        ; An example for providing extra route handlers (e.g. REST-based endpoints for non-Om clients)
-        :extra-routes {:routes   [["/hello/" [#"\d+" :id]] :sample1] ; See docs in Bidi for making route defs
-                       ; Use the route target keyword to define the function that handles that route
-                       :handlers {:sample1 (fn [env {:keys [route-params]}]
-                                             (timbre/info "Got a request on sample1 route with " :ENV env :ROUTE-PARAMS route-params)
-                                             (-> (str "Hello: " (:id route-params))
-                                               response/response
-                                               (response/content-type "text/plain")))}})
-    ; TEMPLATE: Sessions and handling of HTML5 routes (not real files)
-    :components {:sessions      (component/using
-                                  (map->RingSessions {})
-                                  [:handler :session-store])
-                 :session-store (map->SessionStore {})
-                 :html5-routes  (component/using
-                                  (map->ServerSideRenderer {})
-                                  ; Technically, the server-side renderer does not use the session by direct code reference, but it needs it to go "first"
-                                  [:handler :session-store])}))
+; You need at least one of these. Specifies how to handle client requests, and participates in the component system
+; of the server. Libraries can provide modules to install on your server to add functionality in a composable fashion.
+(defrecord APIModule []
+  core/Module
+  (system-key [this] :api-module)                           ; this module will be known in the component system as :api-module. Allows you to inject the module.
+  (components [this] {})                                    ; Additional components to build. This allows library modules to inject other dependencies that it needs into the system. Typically empty for applications.
+  core/APIHandler
+  (api-read [this] core/server-read)                        ; using fulcro multimethods so defmutation et al work.
+  (api-mutate [this] core/server-mutate))
+
+; A component that creates the full server middleware and stores it under the key :full-server-middleware (used by the web server).
+; Your modules (e.g. APIModule above) are composed into one api-handler function by the fulcro-system function, which in
+; turn is placed in the component system  under the ; key :fulcro.server/api-handler.
+; The :fulcro.server/api-handler component in turn has a key :middleware whose value is the middleware for handling API requests from the client.
+; So, you a component (CustomMiddleware) that composes *that* API middleware function
+; into the larger whole. In our application our full-server-middleware needs the user
+; database and session store (which are injected).
+(defrecord CustomMiddleware [full-server-middleware api-handler session-store user-db]
+  component/Lifecycle
+  (stop [this] (dissoc this :full-server-middleware))
+  (start [this]
+    (let [wrap-api (:middleware api-handler)]
+      ; The chained middleware function needs to be *stored* at :full-server-middleware,
+      ; because we're using a Fulcro web server and it expects to find it there.
+      (assoc this :full-server-middleware
+                  (-> not-found
+                    (wrap-resource "public")
+                    wrap-api                                ; from fulcro-system modules. Handles /api
+                    (wrap-server-side-rendering user-db)
+                    (session/wrap-session {:store session-store})
+                    core/wrap-transit-params
+                    core/wrap-transit-response
+                    wrap-content-type
+                    wrap-not-modified
+                    wrap-params
+                    wrap-gzip)))))
+
+(def http-kit-opts
+  [:ip :port :thread :worker-name-prefix
+   :queue-size :max-body :max-line])
+
+; A component that creates a web server and hooks lifecycle up to it. The server-middleware-component (CustomMiddleware)
+; and config are injected.
+(defrecord WebServer [config ^CustomMiddleware server-middleware-component server port]
+  component/Lifecycle
+  (start [this]
+    (try
+      (let [config         (:value config)                  ; config is a component, must pull out value
+            server-opts    (select-keys config http-kit-opts)
+            port           (:port server-opts)
+            middleware     (:full-server-middleware server-middleware-component)
+            started-server (run-server middleware server-opts)]
+        (timbre/info (str "Web server (http://localhost:" port ")") "started successfully. Config of http-kit options:" server-opts)
+        (assoc this :port port :server started-server))
+      (catch Exception e
+        (timbre/fatal "Failed to start web server " e)
+        (throw e))))
+  (stop [this]
+    (if-not server this
+                   (do (server)
+                       (timbre/info "web server stopped.")
+                       (assoc this :server nil)))))
+
+; Injection configuration time! The Stuart Sierra component system handles all of the injection. You simple create
+; components, place them into the system under a key, and wrap them with (component/using ...) in order to specify what they need.
+; When the system is started, the dependencies will be analyzed and started in the correct order (leaves to tree top).
+(defn make-system
+  "Builds the server component system, which can then be started/stopped. `config-path` is a relative or absolute path
+  to a web server configuration EDN file."
+  [config-path]
+  (core/fulcro-system
+    {:components {:config                      (core/new-config config-path) ; you MUST use config if you use our server
+                  ; Needed by Ring sessions. Composed in the Ring stack above
+                  :session-store               (map->SessionStore {})
+                  ; Creation/injection of the middleware stack
+                  :server-middleware-component (component/using
+                                                 (map->CustomMiddleware {})
+                                                 ; the middleware needs the composed module's api handler, session store, and user database
+                                                 {:api-handler   :fulcro.server/api-handler ; remap the generated api handler's key to api-handler, so it is easier to use there
+                                                  :session-store :session-store
+                                                  :user-db       :user-db})
+                  ; The storage for user's who have signed up
+                  :user-db                     (users/map->InMemoryUserDB {})
+                  ; The web server itself, which needs the config and full-stack middleware.
+                  :web-server                  (component/using (map->WebServer {})
+                                                 [:config :server-middleware-component])}
+     ; Modules are composable into the API handler (each can have their own read/mutate) and
+     ; are joined together in a chain that is injected into the component system as :fulcro.server/api-handler
+     :modules    [(component/using (map->APIModule {})
+                    ; the things injected here will be available in the modules' parsing env
+                    [:session-store :user-db])]}))
