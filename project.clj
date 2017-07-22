@@ -3,19 +3,22 @@
   :license {:name "MIT" :url "https://opensource.org/licenses/MIT"}
   :min-lein-version "2.7.0"
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.671"]
 
-                 [fulcrologic/fulcro "1.0.0-beta6-SNAPSHOT"]
+                 [org.clojure/core.async "0.3.443"]
+                 [clojure-future-spec "1.9.0-alpha17"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
                  [bidi "2.1.2"]
+                 [ring/ring-core "1.6.2" :exclusions [commons-codec]]
 
-                 [fulcrologic/fulcro-spec "1.0.0-beta4" :scope "test"]
-                 [lein-doo "0.1.7" :scope "test"]
-                 [org.clojure/core.async "0.3.443"]
+                 [fulcrologic/fulcro "1.0.0-beta6-SNAPSHOT" :exclusions [commons-codec]]
                  [http-kit "2.2.0"]
-                 [com.taoensso/timbre "4.10.0"]]
+                 [com.taoensso/timbre "4.10.0"]
+
+                 [fulcrologic/fulcro-spec "1.0.0-beta5-SNAPSHOT" :scope "test" :exclusions [commons-codec fulcrologic/fulcro commons-fileupload]]
+                 [lein-doo "0.1.7" :scope "test"]]
 
   :plugins [[lein-cljsbuild "1.1.6"]
             [lein-doo "0.1.7"]
@@ -53,7 +56,7 @@
                                     ["cljsbuild" "once" "production"]]}
              :dev     {:source-paths ["dev/client" "dev/server" "src/client" "src/server"]
                        :jvm-opts     ["-XX:-OmitStackTraceInFastThrow" "-client" "-XX:+TieredCompilation" "-XX:TieredStopAtLevel=1"
-                                      "-Xmx1g" "-XX:MaxPermSize=128m" "-XX:+UseConcMarkSweepGC" "-XX:+CMSClassUnloadingEnabled" "-Xverify:none"]
+                                      "-Xmx1g" "-XX:+UseConcMarkSweepGC" "-XX:+CMSClassUnloadingEnabled" "-Xverify:none"]
                        :cljsbuild    {:builds
                                       [{:id           "dev"
                                         :figwheel     {:on-jsload "cljs.user/mount"}
