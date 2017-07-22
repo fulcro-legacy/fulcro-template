@@ -235,3 +235,5 @@
      :modules    [(component/using (map->APIModule {})
                     ; the things injected here will be available in the modules' parsing env
                     [:session-store :user-db])]}))
+
+;; SEE: COMMIT 992d88d3005c6933c57c0416f557101507bd4681 in the Git History for an example using the Easy Server
