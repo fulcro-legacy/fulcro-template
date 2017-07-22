@@ -146,7 +146,7 @@
 
 ; You need at least one of these. Specifies how to handle client requests, and participates in the component system
 ; of the server. Libraries can provide modules to install on your server to add functionality in a composable fashion.
-(defrecord APIModule [session-store user-db]
+(defrecord APIModule []
   core/Module
   (system-key [this] :api-module)                           ; this module will be known in the component system as :api-module. Allows you to inject the module.
   (components [this] {})                                    ; Additional components to build. This allows library modules to inject other dependencies that it needs into the system. Typically empty for applications.
@@ -166,7 +166,7 @@
   (stop [this] (dissoc this :full-server-middleware))
   (start [this]
     (let [wrap-api (:middleware api-handler)]
-      ; The chained middleware function needs to be *stored* at :middleware,
+      ; The chained middleware function needs to be *stored* at :full-server-middleware,
       ; because we're using a Fulcro web server and it expects to find it there.
       (assoc this :full-server-middleware
                   (-> not-found
@@ -187,7 +187,7 @@
 
 ; A component that creates a web server and hooks lifecycle up to it. The server-middleware-component (CustomMiddleware)
 ; and config are injected.
-(defrecord WebServer [port config server-middleware-component server]
+(defrecord WebServer [config ^CustomMiddleware server-middleware-component server port]
   component/Lifecycle
   (start [this]
     (try
