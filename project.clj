@@ -7,11 +7,11 @@
                  [org.clojure/clojurescript "1.9.671"]
 
                  [org.clojure/core.async "0.3.443"]
-                 [clojure-future-spec "1.9.0-alpha17"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
                  [bidi "2.1.2"]
                  [ring/ring-core "1.6.2" :exclusions [commons-codec]]
+                 [bk/ring-gzip "0.2.1"]
 
                  [fulcrologic/fulcro "1.0.0-beta6-SNAPSHOT" :exclusions [commons-codec]]
                  [http-kit "2.2.0"]
