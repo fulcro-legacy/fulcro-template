@@ -54,7 +54,7 @@
                        :aot        :all
                        :prep-tasks ["compile"
                                     ["cljsbuild" "once" "production"]]}
-             :dev     {:source-paths ["dev/client" "dev/server" "src/client" "src/server"]
+             :dev     {:source-paths ["dev/client" "dev/server" "src/main" "src/test" "src/cards"]
                        :jvm-opts     ["-XX:-OmitStackTraceInFastThrow" "-client" "-XX:+TieredCompilation" "-XX:TieredStopAtLevel=1"
                                       "-Xmx1g" "-XX:+UseConcMarkSweepGC" "-XX:+CMSClassUnloadingEnabled" "-Xverify:none"]
                        :cljsbuild    {:builds
