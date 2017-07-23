@@ -3,19 +3,22 @@
   :license {:name "MIT" :url "https://opensource.org/licenses/MIT"}
   :min-lein-version "2.7.0"
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.671"]
 
-                 [fulcrologic/fulcro "1.0.0-beta5-SNAPSHOT"]
+                 [org.clojure/core.async "0.3.443"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
                  [bidi "2.1.2"]
+                 [ring/ring-core "1.6.2" :exclusions [commons-codec]]
+                 [bk/ring-gzip "0.2.1"]
 
-                 [fulcrologic/fulcro-spec "1.0.0-beta3" :scope "test"]
-                 [lein-doo "0.1.7" :scope "test"]
-                 [org.clojure/core.async "0.3.443"]
+                 [fulcrologic/fulcro "1.0.0-beta6.1-SNAPSHOT" :exclusions [commons-codec]]
                  [http-kit "2.2.0"]
-                 [com.taoensso/timbre "4.10.0"]]
+                 [com.taoensso/timbre "4.10.0"]
+
+                 [fulcrologic/fulcro-spec "1.0.0-beta5" :scope "test" :exclusions [commons-codec fulcrologic/fulcro commons-fileupload]]
+                 [lein-doo "0.1.7" :scope "test"]]
 
   :plugins [[lein-cljsbuild "1.1.6"]
             [lein-doo "0.1.7"]
@@ -39,18 +42,20 @@
   :cljsbuild {:builds [{:id           "production"
                         :source-paths ["src/main"]
                         :jar          true
-                        :compiler     {:asset-path         "js/prod"
-                                       :main               fulcro-template.client-main
-                                       :optimizations      :simple ; dead code elim is killing queries on components
-                                       :source-map         "resources/public/js/fulcro_template.js.map"
-                                       :output-dir         "resources/public/js/prod"
-                                       :output-to          "resources/public/js/fulcro_template.js"}}]}
+                        :compiler     {:asset-path    "js/prod"
+                                       :main          fulcro-template.client-main
+                                       :optimizations :simple ; dead code elim is killing queries on components
+                                       :source-map    "resources/public/js/fulcro_template.js.map"
+                                       :output-dir    "resources/public/js/prod"
+                                       :output-to     "resources/public/js/fulcro_template.js"}}]}
 
   :profiles {:uberjar {:main       fulcro-template.server-main
                        :aot        :all
                        :prep-tasks ["compile"
                                     ["cljsbuild" "once" "production"]]}
-             :dev     {:source-paths ["dev/client" "dev/server" "src/client" "src/server"]
+             :dev     {:source-paths ["dev/client" "dev/server" "src/main" "src/test" "src/cards"]
+                       :jvm-opts     ["-XX:-OmitStackTraceInFastThrow" "-client" "-XX:+TieredCompilation" "-XX:TieredStopAtLevel=1"
+                                      "-Xmx1g" "-XX:+UseConcMarkSweepGC" "-XX:+CMSClassUnloadingEnabled" "-Xverify:none"]
                        :cljsbuild    {:builds
                                       [{:id           "dev"
                                         :figwheel     {:on-jsload "cljs.user/mount"}
@@ -98,7 +103,7 @@
                        :dependencies [[binaryage/devtools "0.9.4"]
                                       [org.clojure/tools.namespace "0.3.0-alpha4"]
                                       [org.clojure/tools.nrepl "0.2.13"]
-                                      [com.cemerick/piggieback "0.2.1"]
+                                      [com.cemerick/piggieback "0.2.2"]
                                       [figwheel-sidecar "0.5.11" :exclusions [org.clojure/tools.reader]]
                                       [devcards "0.2.3"]]
                        :repl-options {:init-ns          user

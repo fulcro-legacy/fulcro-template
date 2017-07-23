@@ -7,19 +7,19 @@
     [fulcro-template.api.user-db :as users]
     [taoensso.timbre :as log]))
 
-(defn commit-new [[table id] entity]
+(defn commit-new [user-db [table id] entity]
   (log/info "Committing new " table entity)
   (case table
-    :user/by-id (users/add-user entity)
+    :user/by-id (users/add-user user-db entity)
     {}))
 
-(defmethod core/server-mutate 'fulcro.ui.forms/commit-to-entity [env k {:keys [form/new-entities] :as p}]
+(defmethod core/server-mutate 'fulcro.ui.forms/commit-to-entity [{:keys [user-db]} k {:keys [form/new-entities] :as p}]
   {:action (fn []
              (log/info "Commit entity: " k p)
              (when (seq new-entities)
                {:tempids (reduce (fn [remaps [k v]]
                                    (log/info "Create new " k v)
-                                   (merge remaps (commit-new k v))) {} new-entities)}))})
+                                   (merge remaps (commit-new user-db k v))) {} new-entities)}))})
 
 (defmutation attempt-login
   "Server mutation: Attempt a login on the server. Returns a remapping of the user ID generated on the client.
@@ -30,9 +30,9 @@
 
   The `request` will be available in the `env` of action. This is a normal Ring request (session is under :session)."
   [{:keys [u p uid]}]
-  (action [{:keys [request] :as env}]
+  (action [{:keys [request user-db] :as env}]
     (let [{:keys [session]} request
-          user     (users/get-user u p)
+          user     (users/get-user user-db u p)
           real-uid (:uid user)]
       (Thread/sleep 300)                                    ; pretend it takes a while to auth a user
       (if user
@@ -49,9 +49,9 @@
   the user anymore."
   [ignored-params]
   ; if you wanted to directly access the session store, you can
-  (action [{:keys [request session-store]}]
+  (action [{:keys [request session-store user-db]}]
     (let [uid  (-> request :session :uid)
-          user (users/get-user uid)]
+          user (users/get-user user-db uid)]
       (timbre/info "Logout for user: " user)
       (server/augment-response {}
         (fn [resp] (assoc resp :session nil))))))

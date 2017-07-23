@@ -10,11 +10,8 @@
 
 #?(:clj
    (specification "Server side rendering of index"
-     (let [state (fc/get-initial-state root/Root {})]
+     (let [state (root/initial-app-state-tree)]
        (assertions
          "Initial state for SSR starts with the default state for the ui"
          (contains? state :logged-in?) => true
-         (contains? state :ui/ready?) => true
-         "Includes the alternate union elements"
-         :todo => true
-         ))))
+         (contains? state :ui/ready?) => true))))
