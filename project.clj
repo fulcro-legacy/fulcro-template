@@ -13,11 +13,11 @@
                  [ring/ring-core "1.6.2" :exclusions [commons-codec]]
                  [bk/ring-gzip "0.2.1"]
 
-                 [fulcrologic/fulcro "1.0.0-beta6-SNAPSHOT" :exclusions [commons-codec]]
+                 [fulcrologic/fulcro "1.0.0-beta6.1-SNAPSHOT" :exclusions [commons-codec]]
                  [http-kit "2.2.0"]
                  [com.taoensso/timbre "4.10.0"]
 
-                 [fulcrologic/fulcro-spec "1.0.0-beta5-SNAPSHOT" :scope "test" :exclusions [commons-codec fulcrologic/fulcro commons-fileupload]]
+                 [fulcrologic/fulcro-spec "1.0.0-beta5" :scope "test" :exclusions [commons-codec fulcrologic/fulcro commons-fileupload]]
                  [lein-doo "0.1.7" :scope "test"]]
 
   :plugins [[lein-cljsbuild "1.1.6"]

@@ -1,6 +1,6 @@
 (ns cljs.user
   (:require
-    [fulcro.client.core :as uc]
+    [fulcro.client.core :as fc]
     [om.next :as om]
 
     [fulcro-template.client :as core]
@@ -14,7 +14,7 @@
 (log/set-level :all)
 
 (defn mount []
-  (reset! core/app (uc/mount @core/app root/Root "app")))
+  (reset! core/app (fc/mount @core/app root/Root "app")))
 
 (mount)
 
