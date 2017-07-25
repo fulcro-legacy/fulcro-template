@@ -31,8 +31,10 @@
         (b/row {}
           (b/col {:lg-offset 3 :lg 6 :xs-offset 1 :xs 11}
             (dom/div #js {:className "form-horizontal"}
-              (b/labeled-input {:id "username" :type "text" :split 3 :onChange #(m/set-string! this :ui/username :event %)} (tr "Email"))
-              (b/labeled-input {:id "password" :type "password" :split 3 :onKeyDown (fn [evt] (when (evt/enter-key? evt) (login))) :onChange #(m/set-string! this :ui/password :event %)} (tr "Password"))
+              (b/labeled-input {:id "username" :value username :type "text" :split 3
+                                :onChange #(m/set-string! this :ui/username :event %)} (tr "Email"))
+              (b/labeled-input {:id "password" :value password :type "password" :split 3
+                                :onKeyDown (fn [evt] (when (evt/enter-key? evt) (login))) :onChange #(m/set-string! this :ui/password :event %)} (tr "Password"))
               (b/labeled-input {:id              "submit" :split 3
                                 :input-generator (fn [props]
                                                    (b/button (merge props {:kind :primary :disabled loading-data :type "submit" :onClick login}) "Login"))} ""))))

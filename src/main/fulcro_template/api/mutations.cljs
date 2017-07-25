@@ -36,6 +36,7 @@
                            desired-page)]
         (swap! state assoc :ui/ready? true)                 ; Make the UI show up. (flicker prevention)
         (when logged-in?
+          (swap! state update-in [:login :page] assoc :ui/username "" :ui/password "")
           (if @r/use-html5-routing
             (pushy/set-token! @r/history desired-page)
             (swap! state ur/update-routing-links {:handler :main})))))))
@@ -44,7 +45,7 @@
   "Om mutation: Removes user identity from the local app and asks the server to forget the user as well."
   [p]
   (action [{:keys [state]}]
-    (swap! state assoc :current-user {} :logged-in? false)
+    (swap! state assoc :current-user {} :logged-in? false :user/by-id {})
     (pushy/set-token! @r/history r/LOGIN-URI))
   (remote [env] true))
 
