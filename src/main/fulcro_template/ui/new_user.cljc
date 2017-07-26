@@ -50,7 +50,9 @@
   static om/Ident
   (ident [this props] [:user/by-id (:uid props)])
   Object
-  ; SSR state cannot properly initialize forms, so we ensure it is initialized on mount
+  ; SSR state cannot properly initialize forms, so we ensure it is initialized on mount. This mutation is safe
+  ; to run on an already initialized form, but we only do it once since the extra transact is not necessary
+  ; and would be distracting in the logs.
   (componentWillMount [this]
     (when-not (f/is-form? (om/props this))
       (om/transact! this `[(f/initialize-form {})])))

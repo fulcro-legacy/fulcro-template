@@ -9,7 +9,7 @@
     [fulcro.client.core :as fc]))
 
 (defmutation attempt-login
-  "Om mutation: Attempt to log in the user. Triggers a server interaction to see if there is already a cookie."
+  "Fulcro mutation: Attempt to log in the user. Triggers a server interaction to see if there is already a cookie."
   [{:keys [uid]}]
   (action [{:keys [state]}]
     (swap! state assoc
@@ -18,11 +18,12 @@
   (remote [env] true))
 
 (defmutation server-down
-  "Om mutation: Called if the server does not respond so we can show an error."
+  "Fulcro mutation: Called if the server does not respond so we can show an error."
   [p]
   (action [{:keys [state]}] (swap! state assoc :server-down true)))
 
 (defmutation clear-new-user
+  "Fulcro mutation: Used for returning to the sign-in page from the login link. Clears the form."
   [ignored]
   (action [{:keys [state]}]
     (let [uid        (om/tempid)
@@ -35,7 +36,7 @@
                        (assoc-in [:new-user :page :form] user-ident)))))))
 
 (defmutation login-complete
-  "Om mutation: Attempted login post-mutation the update the UI with the result. Requires the app-root of the mounted application
+  "Fulcro mutation: Attempted login post-mutation the update the UI with the result. Requires the app-root of the mounted application
   so routing can be started."
   [{:keys [app-root]}]
   (action [{:keys [component state]}]
@@ -55,7 +56,7 @@
             (swap! state ur/update-routing-links {:handler :main})))))))
 
 (defmutation logout
-  "Om mutation: Removes user identity from the local app and asks the server to forget the user as well."
+  "Fulcro mutation: Removes user identity from the local app and asks the server to forget the user as well."
   [p]
   (action [{:keys [state]}]
     (swap! state assoc :current-user {} :logged-in? false :user/by-id {})
