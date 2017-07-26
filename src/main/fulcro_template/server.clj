@@ -71,7 +71,7 @@
   "Builds an up-to-date app state based on the URL where the db will contain everything needed. Returns a normalized
   client app db."
   [user uri bidi-match language]
-  (let [base-state       (ssr/build-initial-state (root/initial-app-state-tree) root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
+  (let [base-state       (ssr/build-initial-state (fc/get-initial-state root/Root nil) root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
         logged-in?       (boolean user)
         ; NOTE: All of these state functions are CLIENT code that we're leveraging on the server!
         set-route        (fn [s]
@@ -171,6 +171,7 @@
       (assoc this :full-server-middleware
                   (-> not-found
                     (wrap-resource "public")
+                    (wrap-resource "cljsjs")
                     wrap-api                                ; from fulcro-system modules. Handles /api
                     (wrap-server-side-rendering user-db)
                     (session/wrap-session {:store session-store})

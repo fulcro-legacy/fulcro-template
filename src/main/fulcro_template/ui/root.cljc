@@ -81,25 +81,18 @@
         (b/ui-modal-footer nil
           (b/button {:onClick #(om/transact! this `[(b/hide-modal {:id :welcome})])} (tr "Thanks!")))))))
 
-; server-side rendering...we want the server to be able to hand in a completely normalized db for the client to use
-(defn initial-app-state-tree []
-  (let [default-state (merge
-                        {; Is there a user logged in?
-                         :logged-in?   false
-                         ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
-                         :ui/ready?    false
-                         ; What are the details of the logged in user
-                         :current-user nil
-                         :root/modals  (fc/get-initial-state Modals {})
-                         :pages        (fc/get-initial-state Pages nil)}
-                        r/app-routing-tree)]
-    #?(:clj  default-state                                  ; the server always starts with the base UI tree, just like the client would have
-       :cljs (if-let [v (ssr/get-SSR-initial-state)]        ; the client starts with the server-generated db, if available
-               (atom v)                                     ; putting the state in an atom tells Om it is already normalized
-               default-state))))                            ; the default state is a tree, so no atom
-
 (defui ^:once Root
-  ; InitialAppState isn't here, because SSR will want to send *normalized* state, and there is no way to return that from here.
+  static fc/InitialAppState
+  (initial-state [c p] (merge
+                         {; Is there a user logged in?
+                          :logged-in?   false
+                          ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
+                          :ui/ready?    false
+                          ; What are the details of the logged in user
+                          :current-user nil
+                          :root/modals  (fc/get-initial-state Modals {})
+                          :pages        (fc/get-initial-state Pages nil)}
+                         r/app-routing-tree))
   static om/IQuery
   (query [this] [:ui/react-key :ui/ready? :logged-in?
                  {:current-user (om/get-query user/User)}
