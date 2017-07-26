@@ -30,14 +30,14 @@
     (when app-root
       (r/start-routing app-root))
     (let [{:keys [logged-in? current-user]} @state]
-      (let [desired-page (get @state :loaded-uri (or (pushy/get-token @r/history) r/MAIN-URI))
+      (let [desired-page (get @state :loaded-uri (or (and @r/history (pushy/get-token @r/history)) r/MAIN-URI))
             desired-page (if (= r/LOGIN-URI desired-page)
                            r/MAIN-URI
                            desired-page)]
         (swap! state assoc :ui/ready? true)                 ; Make the UI show up. (flicker prevention)
         (when logged-in?
           (swap! state update-in [:login :page] assoc :ui/username "" :ui/password "")
-          (if @r/use-html5-routing
+          (if (and @r/history @r/use-html5-routing)
             (pushy/set-token! @r/history desired-page)
             (swap! state ur/update-routing-links {:handler :main})))))))
 
@@ -46,6 +46,7 @@
   [p]
   (action [{:keys [state]}]
     (swap! state assoc :current-user {} :logged-in? false :user/by-id {})
-    (pushy/set-token! @r/history r/LOGIN-URI))
+    (when (and @r/use-html5-routing @r/history)
+      (pushy/set-token! @r/history r/LOGIN-URI)))
   (remote [env] true))
 
