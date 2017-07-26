@@ -5,7 +5,8 @@
     [fulcro.client.routing :as ur]
     [fulcro-template.ui.html5-routing :as r]
     [om.next :as om]
-    [fulcro.client.logging :as log]))
+    [fulcro.client.logging :as log]
+    [fulcro.client.core :as fc]))
 
 (defmutation attempt-login
   "Om mutation: Attempt to log in the user. Triggers a server interaction to see if there is already a cookie."
@@ -20,6 +21,18 @@
   "Om mutation: Called if the server does not respond so we can show an error."
   [p]
   (action [{:keys [state]}] (swap! state assoc :server-down true)))
+
+(defmutation clear-new-user
+  [ignored]
+  (action [{:keys [state]}]
+    (let [uid        (om/tempid)
+          new-user   {:uid uid :name "" :password "" :password2 ""}
+          user-ident [:user/by-id uid]]
+      (swap! state (fn [s]
+                     (-> s
+                       (assoc :user/by-id {}) ; clear all users
+                       (assoc-in user-ident new-user)
+                       (assoc-in [:new-user :page :form] user-ident)))))))
 
 (defmutation login-complete
   "Om mutation: Attempted login post-mutation the update the UI with the result. Requires the app-root of the mounted application

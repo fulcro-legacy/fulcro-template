@@ -21,6 +21,8 @@
                                    (log/info "Create new " k v)
                                    (merge remaps (commit-new user-db k v))) {} new-entities)}))})
 
+
+
 (defmutation attempt-login
   "Server mutation: Attempt a login on the server. Returns a remapping of the user ID generated on the client.
 

@@ -33,11 +33,6 @@
 
 (declare UserForm)
 
-(defmutation init-user-form
-  [ignored]
-  (action [{:keys [ref state]}]
-    (swap! state update-in ref (fn [f] (f/build-form UserForm f)))))
-
 (defui ^:once UserForm
   static f/IForm
   (form-spec [this]
@@ -58,7 +53,7 @@
   ; SSR state cannot properly initialize forms, so we ensure it is initialized on mount
   (componentWillMount [this]
     (when-not (f/is-form? (om/props this))
-      (om/transact! this `[(init-user-form {})])))
+      (om/transact! this `[(f/initialize-form {})])))
   (render [this]
     (let [{:keys [uid name email password password2 ui/password-error ui/create-failed] :as form} (om/props this)
           sign-up (fn []
@@ -67,7 +62,7 @@
                       (f/commit-to-entity! this :remote true :fallback `create-user-failed :fallback-params {:id uid})
                       (om/transact! this `[(f/validate-form ~{:form-id [:user/by-id uid]})])))]
       (if (om/tempid? uid)                                  ; successful submission will remap the tempid to a real ID.
-        (when (f/is-form? form)
+        (when (f/is-form? form)                             ;prevents flicker on form init from SSR
           (b/container-fluid {}
             (b/row {}
               (b/col {:lg-offset 3 :lg 6 :xs-offset 1 :xs 11}

@@ -45,4 +45,6 @@
         (b/row nil
           (b/col {:xs-offset 4 :xs 4}
             (tr "Don't have a login yet? ")
-            (dom/a #js {:onClick #(r/nav-to! this :new-user)} (tr "Sign up!"))))))))
+            (dom/a #js {:onClick (fn [evt]
+                                   (om/transact! this `[(api/clear-new-user {})])
+                                   (r/nav-to! this :new-user))} (tr "Sign up!"))))))))
