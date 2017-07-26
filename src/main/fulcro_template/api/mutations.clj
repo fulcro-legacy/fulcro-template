@@ -52,6 +52,6 @@
   (action [{:keys [request session-store user-db]}]
     (let [uid  (-> request :session :uid)
           user (users/get-user user-db uid)]
-      (timbre/info "Logout for user: " user)
+      (timbre/info "Logout for user: " uid)
       (server/augment-response {}
         (fn [resp] (assoc resp :session nil))))))
