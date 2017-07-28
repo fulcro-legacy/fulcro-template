@@ -53,8 +53,11 @@
   ; SSR state cannot properly initialize forms, so we ensure it is initialized on mount. This mutation is safe
   ; to run on an already initialized form, but we only do it once since the extra transact is not necessary
   ; and would be distracting in the logs.
-  (componentWillMount [this]
-    (when-not (f/is-form? (om/props this))
+  (componentWillReceiveProps [this props]                   ; on return to this screen once cleared
+    (when (or (f/server-initialized? props) (not (f/is-form? props)))
+      (om/transact! this `[(f/initialize-form {})])))
+  (componentWillMount [this]                                ; on initial from server
+    (when (or (f/server-initialized? (om/props this)) (not (f/is-form? (om/props this))))
       (om/transact! this `[(f/initialize-form {})])))
   (render [this]
     (let [{:keys [uid name email password password2 ui/password-error ui/create-failed] :as form} (om/props this)
