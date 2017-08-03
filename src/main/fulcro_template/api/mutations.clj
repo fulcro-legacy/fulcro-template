@@ -37,7 +37,7 @@
           user     (users/get-user user-db u p)
           real-uid (:uid user)]
       (Thread/sleep 300)                                    ; pretend it takes a while to auth a user
-      (if user
+      (if (seq user)
         (do
           (timbre/info "Logged in user " user)
           (server/augment-response {:tempids {uid real-uid}}
