@@ -31,7 +31,7 @@
           user-ident [:user/by-id uid]]
       (swap! state (fn [s]
                      (-> s
-                       (assoc :user/by-id {}) ; clear all users
+                       (assoc :user/by-id {})               ; clear all users
                        (assoc-in user-ident new-user)
                        (assoc-in [:new-user :page :form] user-ident)))))))
 
@@ -43,7 +43,8 @@
     ; idempotent (start routing)
     (when app-root
       (r/start-routing app-root))
-    (let [{:keys [logged-in? current-user]} @state]
+    (let [current-user (get-in @state (get @state :current-user))
+          logged-in? (contains? current-user :name)]
       (let [desired-page (get @state :loaded-uri (or (and @r/history (pushy/get-token @r/history)) r/MAIN-URI))
             desired-page (if (= r/LOGIN-URI desired-page)
                            r/MAIN-URI
@@ -51,6 +52,7 @@
         (swap! state assoc :ui/ready? true)                 ; Make the UI show up. (flicker prevention)
         (when logged-in?
           (swap! state update-in [:login :page] assoc :ui/username "" :ui/password "")
+          (swap! state assoc :logged-in? true)
           (if (and @r/history @r/use-html5-routing)
             (pushy/set-token! @r/history desired-page)
             (swap! state ur/update-routing-links {:handler :main})))))))
