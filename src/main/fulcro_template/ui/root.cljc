@@ -42,9 +42,10 @@
     (b/button {:className "navbar-btn" :onClick login-fn} (tr "Sign in"))))
 
 (defn ui-navbar [this]
-  (let [login  #(r/nav-to! this :login)
-        logout #(om/transact! this `[(api/logout {}) (r/set-route! {:handler :login}) :logged-in? :current-user])
-        {:keys [ui/loading-data current-user logged-in?]} (om/props this)]
+  (let [login      #(r/nav-to! this :login)
+        logout     #(om/transact! this `[(api/logout {}) (r/set-route! {:handler :login}) :current-user])
+        {:keys [ui/loading-data current-user]} (om/props this)
+        logged-in? (contains? current-user :name)]
     (dom/div #js {:className "navbar navbar-default"}
       (dom/div #js {:className "container-fluid"}
         (dom/div #js {:className "navbar-header"}
@@ -55,12 +56,12 @@
             (dom/a #js {:onClick #(om/transact! this `[(m/change-locale {:lang :es})]) :href "#"} "es")
             ))
         (dom/div #js {:className "collapse navbar-collapse"}
-          (when (true? logged-in?)
+          (when logged-in?
             (dom/ul #js {:className "nav navbar-nav"}
               ;; More nav links here
               (dom/li nil (dom/a #js {:className "active" :onClick #(r/nav-to! this :main)} (tr "Main")))
               (dom/li nil (dom/a #js {:className "active" :onClick #(r/nav-to! this :preferences)} (tr "Preferences")))))
-          (if (true? logged-in?)
+          (if logged-in?
             (ui-login-stats loading-data current-user logout)
             (ui-login-button loading-data login)))))))
 

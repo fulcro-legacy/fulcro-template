@@ -21,7 +21,5 @@
                                     {:keys [ui/locale ui/ready?]} @state]
                                 (if ready?                  ; The only way ready is true, is if we're coming from a server-side render
                                   (routing/start-routing root)
-                                  (do                       ; not SSR. we need to detect if the user is already logged in by asking the server to eval our session (cookie)
-                                    (f/load app :logged-in? nil {}) ; scalar value (boolean). No component needed.
-                                    (f/load app :current-user user/User {:post-mutation        `m/login-complete
-                                                                         :post-mutation-params {:app-root (om/app-root reconciler)}}))))))))
+                                  (f/load app :current-user user/User {:post-mutation        `m/login-complete
+                                                                       :post-mutation-params {:app-root (om/app-root reconciler)}})))))))

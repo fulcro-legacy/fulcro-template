@@ -31,6 +31,8 @@
   [_ value args]                                            ; crappy regex for email...but you get the point
   (seq (re-matches #"^[^ @]+@[^ ]+[.a-zA-Z0-9]*[a-zA-Z]$" value)))
 
+(declare UserForm)
+
 (defui ^:once UserForm
   static f/IForm
   (form-spec [this]
@@ -42,12 +44,21 @@
      (f/html5-input :password2 "password")
      (f/on-form-change `check-passwords-match)])
   static u/InitialAppState
-  (initial-state [this params] (f/build-form UserForm {:uid (om/tempid) :name "" :password "" :password2 ""}))
+  (initial-state [this params] {:uid (om/tempid) :name "" :password "" :password2 ""})
   static om/IQuery
   (query [this] [:ui/create-failed :uid :name :email :password :password2 :ui/password-error f/form-root-key f/form-key])
   static om/Ident
   (ident [this props] [:user/by-id (:uid props)])
   Object
+  ; SSR state cannot properly initialize forms, so we ensure it is initialized on mount. This mutation is safe
+  ; to run on an already initialized form, but we only do it once since the extra transact is not necessary
+  ; and would be distracting in the logs.
+  (componentWillReceiveProps [this props]                   ; on return to this screen once cleared
+    (when (or (f/server-initialized? props) (not (f/is-form? props)))
+      (om/transact! this `[(f/initialize-form {})])))
+  (componentWillMount [this]                                ; on initial from server
+    (when (or (f/server-initialized? (om/props this)) (not (f/is-form? (om/props this))))
+      (om/transact! this `[(f/initialize-form {})])))
   (render [this]
     (let [{:keys [uid name email password password2 ui/password-error ui/create-failed] :as form} (om/props this)
           sign-up (fn []
@@ -56,37 +67,38 @@
                       (f/commit-to-entity! this :remote true :fallback `create-user-failed :fallback-params {:id uid})
                       (om/transact! this `[(f/validate-form ~{:form-id [:user/by-id uid]})])))]
       (if (om/tempid? uid)                                  ; successful submission will remap the tempid to a real ID.
-        (b/container-fluid {}
-          (b/row {}
-            (b/col {:lg-offset 3 :lg 6 :xs-offset 1 :xs 11}
-              (b/form-horizontal {}
-                (b/labeled-input {:split           3
-                                  :error           (when (f/invalid? form :name) (tr "Please supply your name.`"))
-                                  :input-generator (fn [{:keys [className]}]
-                                                     (f/form-field this form :name :className className :id "username"))}
-                  (tr "Name"))
-                (b/labeled-input {:split           3
-                                  :error           (when (f/invalid? form :email) (tr "Must be a valid email address.`"))
-                                  :input-generator (fn [{:keys [className]}]
-                                                     (f/form-field this form :email :className className :id "email"))}
-                  (tr "Email Address"))
-                (b/labeled-input {:split           3
-                                  :error           (when (f/invalid? form :password) (tr "Password must be at least 7 characters long"))
-                                  :input-generator (fn [{:keys [className]}]
-                                                     (f/form-field this form :password :className className :id "password"))} (tr "Password"))
-                (b/labeled-input {:split           3
-                                  :error           (when password-error password-error)
-                                  :input-generator (fn [{:keys [className]}]
-                                                     (f/form-field this form :password2 :className className :id "password2"
-                                                       :onKeyDown (fn [evt]
-                                                                    (when (evts/enter-key? evt)
-                                                                      (sign-up)))))} (tr "Verify Password"))
-                (b/labeled-input {:id              "submit" :split 3
-                                  :error           (when create-failed (tr "A server error happened. Please try again."))
-                                  :input-generator (fn [props]
-                                                     (b/button (merge props
-                                                                 {:kind    :primary
-                                                                  :onClick sign-up}) (tr "Sign Up!")))} "")))))
+        (when (f/is-form? form)                             ;prevents flicker on form init from SSR
+          (b/container-fluid {}
+            (b/row {}
+              (b/col {:lg-offset 3 :lg 6 :xs-offset 1 :xs 11}
+                (b/form-horizontal {}
+                  (b/labeled-input {:split           3
+                                    :error           (when (f/invalid? form :name) (tr "Please supply your name.`"))
+                                    :input-generator (fn [{:keys [className]}]
+                                                       (f/form-field this form :name :className className :id "username"))}
+                    (tr "Name"))
+                  (b/labeled-input {:split           3
+                                    :error           (when (f/invalid? form :email) (tr "Must be a valid email address.`"))
+                                    :input-generator (fn [{:keys [className]}]
+                                                       (f/form-field this form :email :className className :id "email"))}
+                    (tr "Email Address"))
+                  (b/labeled-input {:split           3
+                                    :error           (when (f/invalid? form :password) (tr "Password must be at least 7 characters long"))
+                                    :input-generator (fn [{:keys [className]}]
+                                                       (f/form-field this form :password :className className :id "password"))} (tr "Password"))
+                  (b/labeled-input {:split           3
+                                    :error           (when password-error password-error)
+                                    :input-generator (fn [{:keys [className]}]
+                                                       (f/form-field this form :password2 :className className :id "password2"
+                                                         :onKeyDown (fn [evt]
+                                                                      (when (evts/enter-key? evt)
+                                                                        (sign-up)))))} (tr "Verify Password"))
+                  (b/labeled-input {:id              "submit" :split 3
+                                    :error           (when create-failed (tr "A server error happened. Please try again."))
+                                    :input-generator (fn [props]
+                                                       (b/button (merge props
+                                                                   {:kind    :primary
+                                                                    :onClick sign-up}) (tr "Sign Up!")))} ""))))))
         (b/container-fluid {}
           (b/row {}
             (b/col {:lg 6 :lg-offset 3 :xs 10 :xs-offset 1}
