@@ -158,7 +158,7 @@ IF your compile fails, Recompile after failed compile:
 Open a browser on:
 
 ```
-http://localhost:3000/index-dev.html
+http://localhost:3000
 ```
 
 ## Dev Cards (once figwheel is running)
