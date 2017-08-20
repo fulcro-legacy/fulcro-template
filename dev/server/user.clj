@@ -77,11 +77,6 @@
   (stop)
   (refresh :after 'user/go))
 
-(defn engage
-  "Ensure the server is stopped, start the server, then start a figwheel REPL. Useful for vi/emacs."
-  [path & build-ids]
-  (stop) (go path) (start-figwheel build-ids))
-
 ; Run (start-server-tests) in a REPL to start a runner that can render results in a browser
 (suite/def-test-suite start-server-tests
   {:config       {:port 8888}
@@ -89,3 +84,4 @@
    :source-paths ["dev/server" "src/main"]}
   {:available #{:focused :unit :integration}
    :default   #{::sel/none :focused :unit}})
+
