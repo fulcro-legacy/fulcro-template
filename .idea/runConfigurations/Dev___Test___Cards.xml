@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Dev + Test + Cards" type="ClojureREPL" factoryName="Local" activateToolWindowBeforeRun="false">
+    <setting name="replType" value="2" />
+    <module name="fulcro-template" />
+    <setting name="jvmArgs" value="-Ddev -Dtest -Dcards" />
+    <setting name="parameters" value="script/figwheel.clj" />
+    <setting name="workingDir" value="$PROJECT_DIR$" />
+    <setting name="profiles" value="" />
+    <method />
+  </configuration>
+</component>
