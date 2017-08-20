@@ -114,7 +114,7 @@
                                          [org.clojure/tools.nrepl "0.2.13"]
                                          [com.cemerick/piggieback "0.2.2"]
                                          [lein-doo "0.1.7" :scope "test"]
-                                         [figwheel-sidecar "0.5.11" :exclusions [org.clojure/tools.reader]]
+                                         [figwheel-sidecar "0.5.13" :exclusions [org.clojure/tools.reader]]
                                          [devcards "0.2.3"]]
                           :repl-options {:init-ns          user
                                          :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}})
