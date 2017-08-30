@@ -5,7 +5,7 @@
 
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.908"]
-                 [fulcrologic/fulcro "1.0.0-beta8" :exclusions [commons-codec]]
+                 [fulcrologic/fulcro "1.0.0-beta10-SNAPSHOT" :exclusions [commons-codec]]
                  [org.clojure/core.async "0.3.443"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
@@ -14,7 +14,7 @@
                  [bk/ring-gzip "0.2.1"]
                  [http-kit "2.2.0"]
                  [com.taoensso/timbre "4.10.0"]
-                 [fulcrologic/fulcro-spec "1.0.0-beta8" :scope "test" :exclusions [commons-codec fulcrologic/fulcro commons-fileupload]]]
+                 [fulcrologic/fulcro-spec "1.0.0-beta9" :scope "test" :exclusions [commons-codec fulcrologic/fulcro commons-fileupload]]]
 
   :uberjar-name "fulcro_template.jar"
 
