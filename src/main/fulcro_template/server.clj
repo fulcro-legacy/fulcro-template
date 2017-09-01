@@ -110,7 +110,7 @@
           uri         (:uri req)
           bidi-match  (bidi/match-route routing/app-routes uri) ; where they were trying to go. NOTE: This is shared code with the client!
           valid-page? (boolean bidi-match)
-          language    (some-> req :headers (get "accept-language") (str/split #",") first keyword)]
+          language    (some-> req :headers (get "accept-language") (str/split #",") first)]
 
       ; . no valid bidi match. BYPASS. We don't handle it.
       (if valid-page?
