@@ -14,6 +14,7 @@
                  [bk/ring-gzip "0.2.1"]
                  [http-kit "2.2.0"]
                  [com.taoensso/timbre "4.10.0"]
+                 [cljsjs/react-dom-server "15.5.4-0"]
                  [fulcrologic/fulcro-spec "1.0.0-beta9" :scope "test" :exclusions [commons-codec fulcrologic/fulcro commons-fileupload]]]
 
   :uberjar-name "fulcro_template.jar"
