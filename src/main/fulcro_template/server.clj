@@ -35,7 +35,11 @@
     [fulcro-template.ui.user :as user]
     [clojure.string :as str]
     [fulcro.i18n :as i18n]
-    [fulcro.client.mutations :as m]))
+    [fulcro.client.mutations :as m]
+    [clojure.java.io :as io])
+  (:import (javax.script ScriptEngineManager)
+           (java.io InputStreamReader)
+           (jdk.nashorn.api.scripting NashornScriptEngine)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SERVER-SIDE RENDERING
@@ -90,6 +94,25 @@
                            set-route (set-route)
                            :always (assoc :ui/ready? true))]
     normalized-state))
+
+(defonce ^NashornScriptEngine nashorn (atom nil))
+
+(defn read [path] (io/reader (io/resource path)))
+
+(defn start-nashorn []
+  (reset! nashorn (-> (ScriptEngineManager.) (.getEngineByName "nashorn")))
+  (println "Polyfill")
+  (println (.eval @nashorn (read "public/nashorn-polyfill.js")))
+  (println "Application")
+  (println (.eval @nashorn (read "public/js/fulcro_template.js"))))
+
+(defn nashorn-render []
+  (start-nashorn)
+  (.invokeFunction @nashorn "fulcro_template.client_main.server_render" nil))
+
+(comment
+  (nashorn-render)
+  (clojure.repl/pst))
 
 (defn render-page
   "Server-side render the entry page."
