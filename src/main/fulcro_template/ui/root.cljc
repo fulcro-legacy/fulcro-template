@@ -53,8 +53,7 @@
             (dom/span nil "Template Brand")
             (dom/br nil)
             (dom/a #js {:onClick #(om/transact! this `[(m/change-locale {:lang :en})]) :href "#"} "en") " | "
-            (dom/a #js {:onClick #(om/transact! this `[(m/change-locale {:lang :es})]) :href "#"} "es")
-            ))
+            (dom/a #js {:onClick #(om/transact! this `[(m/change-locale {:lang :es})]) :href "#"} "es")))
         (dom/div #js {:className "collapse navbar-collapse"}
           (when logged-in?
             (dom/ul #js {:className "nav navbar-nav"}
