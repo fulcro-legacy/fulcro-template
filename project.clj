@@ -5,7 +5,7 @@
 
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.908"]
-                 [fulcrologic/fulcro "1.0.0-beta10-SNAPSHOT" :exclusions [commons-codec]]
+                 [fulcrologic/fulcro "1.0.0-beta11-SNAPSHOT" :exclusions [commons-codec]]
                  [org.clojure/core.async "0.3.443"]
                  [org.omcljs/om "1.0.0-beta1"]
                  [kibu/pushy "0.3.7"]
@@ -32,7 +32,7 @@
                         :jar          true
                         :compiler     {:asset-path    "js/prod"
                                        :main          fulcro-template.client-main
-                                       :optimizations :advanced
+                                       :optimizations :whitespace
                                        :externs       ["externs.js"]
                                        :source-map    "resources/public/js/fulcro_template.js.map"
                                        :output-dir    "resources/public/js/prod"

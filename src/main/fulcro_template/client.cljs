@@ -6,7 +6,7 @@
             [fulcro-template.ui.html5-routing :as routing]
             [fulcro.client.mutations :as built-in]
             [fulcro-template.ui.root :as root]
-            [fulcro-template.locales.es]
+            translations.es
             [fulcro-template.ui.user :as user]
             [fulcro.client.logging :as log]
             [fulcro.server-render :as ssr]))
