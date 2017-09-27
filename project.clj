@@ -32,8 +32,7 @@
                         :source-paths ["src/main"]
                         :jar          true
                         :compiler     {:asset-path    "js/prod"
-                                       :main          fulcro-template.client-main
-                                       :optimizations :whitespace
+                                       :optimizations :advanced
                                        :externs       ["externs.js"]
                                        :source-map    "resources/public/js/fulcro_template.js.map"
                                        :output-dir    "resources/public/js/prod"

@@ -37,7 +37,7 @@
     [fulcro.i18n :as i18n]
     [fulcro.client.mutations :as m]
     [clojure.java.io :as io])
-  (:import (javax.script ScriptEngineManager ScriptException)
+  (:import (javax.script ScriptEngineManager ScriptException ScriptContext)
            (java.io InputStreamReader)
            (jdk.nashorn.api.scripting NashornScriptEngine NashornException)))
 
@@ -45,27 +45,24 @@
 ;; SERVER-SIDE RENDERING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(declare nashorn-render)
 (defn top-html
   "Render the HTML for the SPA. There is only ever one kind of HTML to send, but the initial state and initial app view may vary.
   This function takes a normalized client database and a root UI class and generates that page."
   [normalized-client-state root-component-class]
   ; props are a "view" of the db. We use that to generate the view, but the initial state needs to be the entire db
-  (let [props                (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)
-        root-factory         (factory root-component-class)
-        app-html             (dom/render-to-str (root-factory props))
-        initial-state-script (ssr/initial-state->script-tag normalized-client-state)]
+  (let [props (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)]
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
       "<head>\n"
       "<meta charset='UTF-8'>\n"
       "<meta name='viewport' content='width=device-width, initial-scale=1'>\n"
       "<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>\n"
-      initial-state-script
       "<title>Home Page (Dev Mode)</title>\n"
       "</head>\n"
       "<body>\n"
       "<div class='container-fluid' id='app'>"
-      app-html
+      (nashorn-render props)
       "</div>\n"
       "<script src='js/fulcro_template.js' type='text/javascript'></script>\n"
       "</body>\n"
@@ -95,27 +92,34 @@
                            :always (assoc :ui/ready? true))]
     normalized-state))
 
-(defonce ^NashornScriptEngine nashorn (atom nil))
+(defonce nashorn (atom nil))
 
-(defn read [path] (io/reader (io/resource path)))
+(defn- read-js [path] (io/reader (io/resource path)))
 
-(defn start-nashorn []
-  (reset! nashorn (-> (ScriptEngineManager.) (.getEngineByName "nashorn")))
-  (println "Polyfill")
-  (println (.eval @nashorn (read "public/nashorn-polyfill.js")))
-  (println "Application")
-  (println (.eval @nashorn (read "public/js/fulcro_template.js"))))
+(defn- start-nashorn
+  ([]
+   (start-nashorn false))
+  ([reinit]
+   (when (or reinit (not @nashorn))
+     (reset! nashorn (-> (ScriptEngineManager.) (.getEngineByName "nashorn")))
+     (.eval @nashorn (read-js "public/nashorn-polyfill.js"))
+     (.eval @nashorn (read-js "public/js/fulcro_template.js")))))
 
-(defn nashorn-render []
+(defn ^String nashorn-render
+  "Render the given tree of props via Nashorn"
+  [props]
   (try
-    (when-not @nashorn (start-nashorn))
-    (let [client-main (.eval @nashorn "fulcro_template.client_main")]
-      (.invokeMethod @nashorn client-main "server_render" nil))
+    (start-nashorn)
+    (let [string-props  (util/transit-clj->str props)
+          script-engine ^NashornScriptEngine @nashorn
+          namespc       (.eval script-engine "fulcro_template.client_nashorn_rendering")
+          result        (.invokeMethod script-engine namespc "server_render" (into-array [string-props]))
+          html          (String/valueOf result)]
+      html)
     (catch ScriptException e (println e "stack trace = " (NashornException/getScriptStackString (.getCause e))))))
 
 (comment
-  (nashorn-render)
-  (clojure.repl/pst))
+  (time (nashorn-render (fc/get-initial-state root/Root nil))))
 
 (defn render-page
   "Server-side render the entry page."

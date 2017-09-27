@@ -7,9 +7,7 @@
             [om.next :as om]))
 
 ;; In dev mode, we mount from cljs/user.cljs
-;(reset! app (core/mount @app root/Root "app"))
+(when-not (exists? js/usingNashorn)
+  (reset! app (core/mount @app root/Root "app")))
 
-(def ui-root (om/factory root/Root))
 
-(defn ^:export server-render []
-  (js/ReactDOMServer.renderToString (ui-root (core/get-initial-state root/Root nil))))
