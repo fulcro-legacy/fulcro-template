@@ -13,7 +13,7 @@
 
 (defonce app
   (atom (uc/new-fulcro-client
-          :initial-state (when-let [v (ssr/get-SSR-initial-state)] ; the client starts with the server-generated db, if available
+          :initial-state (when-let [v (when (exists? js/window) (ssr/get-SSR-initial-state))] ; the client starts with the server-generated db, if available
                            (atom v))                        ; putting the state in an atom tells Om it is already normalized
           :started-callback (fn [{:keys [reconciler] :as app}]
                               (let [state (om/app-state reconciler)
