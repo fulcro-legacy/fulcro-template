@@ -6,5 +6,3 @@ console.warn = print;
 console.error = print;
 console.log = print;
 
-var window = {};
-var document = {};

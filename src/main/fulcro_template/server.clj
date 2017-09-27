@@ -37,9 +37,9 @@
     [fulcro.i18n :as i18n]
     [fulcro.client.mutations :as m]
     [clojure.java.io :as io])
-  (:import (javax.script ScriptEngineManager)
+  (:import (javax.script ScriptEngineManager ScriptException)
            (java.io InputStreamReader)
-           (jdk.nashorn.api.scripting NashornScriptEngine)))
+           (jdk.nashorn.api.scripting NashornScriptEngine NashornException)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SERVER-SIDE RENDERING
@@ -107,8 +107,11 @@
   (println (.eval @nashorn (read "public/js/fulcro_template.js"))))
 
 (defn nashorn-render []
-  (start-nashorn)
-  (.invokeFunction @nashorn "fulcro_template.client_main.server_render" nil))
+  (try
+    (when-not @nashorn (start-nashorn))
+    (let [client-main (.eval @nashorn "fulcro_template.client_main")]
+      (.invokeMethod @nashorn client-main "server_render" nil))
+    (catch ScriptException e (println e "stack trace = " (NashornException/getScriptStackString (.getCause e))))))
 
 (comment
   (nashorn-render)
