@@ -122,7 +122,9 @@
           result        (.invokeMethod script-engine namespc "server_render" (into-array [string-props]))
           html          (String/valueOf result)]
       html)
-    (catch ScriptException e (println e "stack trace = " (NashornException/getScriptStackString (.getCause e))))))
+    (catch ScriptException e
+      (timbre/debug "Server-side render failed. This is an expected error when not running from a production build with adv optimizations.")
+      (timbre/trace "Rendering exception:" e))))
 
 (defn render-page
   "Server-side render the entry page."
