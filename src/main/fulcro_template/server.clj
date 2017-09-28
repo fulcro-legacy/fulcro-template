@@ -52,8 +52,8 @@
   [normalized-client-state root-component-class]
   ; props are a "view" of the db. We use that to generate the view, but the initial state needs to be the entire db
   (let [props                (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)
-        root-factory         (factory root-component-class)
-        app-html             (dom/render-to-str (root-factory props))
+        ;root-factory         (factory root-component-class)
+        ; app-html             (dom/render-to-str (root-factory props)). Fast, but not isomorphic if you use external js libs
         initial-state-script (ssr/initial-state->script-tag normalized-client-state)]
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
