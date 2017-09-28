@@ -51,13 +51,17 @@
   This function takes a normalized client database and a root UI class and generates that page."
   [normalized-client-state root-component-class]
   ; props are a "view" of the db. We use that to generate the view, but the initial state needs to be the entire db
-  (let [props (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)]
+  (let [props                (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)
+        root-factory         (factory root-component-class)
+        app-html             (dom/render-to-str (root-factory props))
+        initial-state-script (ssr/initial-state->script-tag normalized-client-state)]
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
       "<head>\n"
       "<meta charset='UTF-8'>\n"
       "<meta name='viewport' content='width=device-width, initial-scale=1'>\n"
       "<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>\n"
+      initial-state-script
       "<title>Home Page (Dev Mode)</title>\n"
       "</head>\n"
       "<body>\n"
