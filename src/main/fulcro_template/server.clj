@@ -96,11 +96,13 @@
                            :always (assoc :ui/ready? true))]
     normalized-state))
 
+; You probably want more than one of these...concurrent access without private bindings isn't safe
 (defonce nashorn (atom nil))
 
 (defn- read-js [path] (io/reader (io/resource path)))
 
 (defn- start-nashorn
+  "Start a single Nashorn instance capable of running *one* SSR at a time. Not thread safe."
   ([]
    (start-nashorn false))
   ([reinit]
@@ -110,7 +112,7 @@
      (.eval @nashorn (read-js "public/js/fulcro_template.js")))))
 
 (defn ^String nashorn-render
-  "Render the given tree of props via Nashorn"
+  "Render the given tree of props via Nashorn. Returns the HTML as a string."
   [props]
   (try
     (start-nashorn)
@@ -121,9 +123,6 @@
           html          (String/valueOf result)]
       html)
     (catch ScriptException e (println e "stack trace = " (NashornException/getScriptStackString (.getCause e))))))
-
-(comment
-  (time (nashorn-render (fc/get-initial-state root/Root nil))))
 
 (defn render-page
   "Server-side render the entry page."
