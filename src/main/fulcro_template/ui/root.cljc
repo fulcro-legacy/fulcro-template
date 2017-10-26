@@ -6,7 +6,7 @@
     [fulcro.client.routing :refer [defrouter]]
     [fulcro.client.mutations :as m]
     [fulcro.client.logging :as log]
-    [om.dom :as dom]
+    [fulcro.client.dom :as dom]
     [fulcro-template.ui.html5-routing :as r]
     [fulcro-template.ui.login :as l]
     [fulcro-template.ui.user :as user]
@@ -14,7 +14,7 @@
     [fulcro-template.ui.preferences :as prefs]
     [fulcro-template.ui.new-user :as nu]
     [fulcro-template.api.mutations :as api]
-    [om.next :as om :refer [defui]]
+    [fulcro.client.primitives :as om :refer [defui]]
     [fulcro.server-render :as ssr]
     [fulcro.i18n :refer [tr]]
     [fulcro.ui.bootstrap3 :as b]))

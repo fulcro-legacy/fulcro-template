@@ -4,12 +4,12 @@
     [com.stuartsierra.component :as component]
 
     [org.httpkit.server :refer [run-server]]
-    [om.next.server :as om]
+    [fulcro.server :as om]
     [fulcro-template.api.read :as r]
     [fulcro-template.api.mutations :as mut]
-    [om.next :refer [tree->db db->tree factory get-query]]
+    [fulcro.client.primitives :refer [get-ident tree->db db->tree factory get-query]]
     [fulcro-template.api.user-db :as users]
-    [om.dom :as dom]
+    [fulcro.client.dom :as dom]
 
     [fulcro-template.ui.root :as root]
     [fulcro-template.ui.html5-routing :as routing]
@@ -30,7 +30,7 @@
 
     [ring.util.request :as req]
     [ring.util.response :as response]
-    [fulcro.client.util :as util]
+    [fulcro.util :as util]
     [fulcro.server-render :as ssr]
     [fulcro-template.ui.user :as user]
     [clojure.string :as str]
@@ -46,28 +46,29 @@
   This function takes a normalized client database and a root UI class and generates that page."
   [normalized-client-state root-component-class]
   ; props are a "view" of the db. We use that to generate the view, but the initial state needs to be the entire db
-  (let [props                (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)
-        root-factory         (factory root-component-class)
-        app-html             (dom/render-to-str (root-factory props))
-        initial-state-script (ssr/initial-state->script-tag normalized-client-state)]
+  (let [;props                (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)
+        ;root-factory         (factory root-component-class)
+        ;app-html             (dom/render-to-str (root-factory props))
+        ;initial-state-script (ssr/initial-state->script-tag normalized-client-state)
+        ]
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
       "<head>\n"
       "<meta charset='UTF-8'>\n"
       "<meta name='viewport' content='width=device-width, initial-scale=1'>\n"
       "<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>\n"
-      initial-state-script
+      ;initial-state-script
       "<title>Home Page (Dev Mode)</title>\n"
       "</head>\n"
       "<body>\n"
       "<div class='container-fluid' id='app'>"
-      app-html
+      ;app-html
       "</div>\n"
       "<script src='js/fulcro_template.js' type='text/javascript'></script>\n"
       "</body>\n"
       "</html>\n")))
 
-(defn build-app-state
+#_(defn build-app-state
   "Builds an up-to-date app state based on the URL where the db will contain everything needed. Returns a normalized
   client app db."
   [user uri bidi-match language]
@@ -80,7 +81,7 @@
                              (fulcro.client.routing/update-routing-links s {:handler :login})))
         set-user         (fn [s] (-> s
                                    (fc/merge-component user/User user)
-                                   (assoc :logged-in? true :current-user (util/get-ident user/User user))))
+                                   (assoc :logged-in? true :current-user (get-ident user/User user))))
         ; Augment the database with the detected route details and user.
         ; Also mark the app as ready, so the UI will render on the server, AND the client can detect that it was a server render.
         normalized-state (cond-> base-state
@@ -94,7 +95,7 @@
 (defn render-page
   "Server-side render the entry page."
   [uri match user language]
-  (let [normalized-app-state (build-app-state user uri match language)]
+  (let [normalized-app-state {} #_(build-app-state user uri match language)]
     (-> (top-html normalized-app-state root/Root)
       response/response
       (response/content-type "text/html"))))

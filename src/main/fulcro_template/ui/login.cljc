@@ -1,9 +1,9 @@
 (ns fulcro-template.ui.login
-  (:require [om.next :as om :refer [defui]]
+  (:require [fulcro.client.primitives :as om :refer [defui]]
             [fulcro.i18n :refer [tr]]
             [fulcro.client.core :as u]
             [fulcro.client.data-fetch :as df]
-            [om.dom :as dom]
+            [fulcro.client.dom :as dom]
             [fulcro-template.api.mutations :as api]
             [fulcro.client.mutations :as m]
             [fulcro-template.ui.html5-routing :as r]

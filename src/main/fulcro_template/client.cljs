@@ -1,5 +1,5 @@
 (ns fulcro-template.client
-  (:require [om.next :as om]
+  (:require [fulcro.client.primitives :as om]
             [fulcro.client.core :as uc]
             [fulcro.client.data-fetch :as f]
             [fulcro-template.api.mutations :as m]

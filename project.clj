@@ -4,17 +4,17 @@
   :min-lein-version "2.7.0"
 
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.908"]
-                 [fulcrologic/fulcro "1.0.0-beta11-SNAPSHOT" :exclusions [commons-codec]]
+                 [org.clojure/clojurescript "1.9.946"]
+                 [fulcrologic/fulcro "2.0.0-SNAPSHOT" ]
                  [org.clojure/core.async "0.3.443"]
-                 [org.omcljs/om "1.0.0-beta1"]
-                 [kibu/pushy "0.3.7"]
+                 [kibu/pushy "0.3.8"]
+                 [commons-codec "1.10"]
                  [bidi "2.1.2"]
-                 [ring/ring-core "1.6.2" :exclusions [commons-codec]]
+                 [ring/ring-core "1.6.2" ]
                  [bk/ring-gzip "0.2.1"]
                  [http-kit "2.2.0"]
                  [com.taoensso/timbre "4.10.0"]
-                 [fulcrologic/fulcro-spec "1.0.0-beta9" :scope "test" :exclusions [commons-codec fulcrologic/fulcro commons-fileupload]]]
+                 [fulcrologic/fulcro-spec "2.0.0-SNAPSHOT" :scope "test" :exclusions [ fulcrologic/fulcro ]]]
 
   :uberjar-name "fulcro_template.jar"
 

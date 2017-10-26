@@ -1,8 +1,8 @@
 (ns fulcro-template.ui.main
-  (:require [om.next :as om :refer [defui]]
+  (:require [fulcro.client.primitives :as om :refer [defui]]
             [fulcro.client.core :as u]
             [fulcro.i18n :refer [tr]]
-            [om.dom :as dom]
+            [fulcro.client.dom :as dom]
             [fulcro.client.mutations :as m]))
 
 (defui ^:once MainPage

@@ -1,7 +1,7 @@
 (ns fulcro-template.ui.new-user
-  (:require [om.next :as om :refer [defui]]
+  (:require [fulcro.client.primitives :as om :refer [defui]]
             [fulcro.client.core :as u]
-            [om.dom :as dom]
+            [fulcro.client.dom :as dom]
             [fulcro.client.mutations :as m :refer [defmutation]]
             [fulcro.i18n :refer [tr]]
             [fulcro.events :as evts]

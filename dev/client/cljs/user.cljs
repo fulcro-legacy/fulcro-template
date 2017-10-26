@@ -1,7 +1,7 @@
 (ns cljs.user
   (:require
     [fulcro.client.core :as fc]
-    [om.next :as om]
+    [fulcro.client.primitives :as om]
 
     [fulcro-template.client :as core]
     [fulcro-template.ui.root :as root]
