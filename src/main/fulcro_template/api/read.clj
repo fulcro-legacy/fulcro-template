@@ -22,7 +22,7 @@
           (fn [resp] (assoc-in resp [:session :uid] real-uid))))
       (do
         (timbre/error "Invalid login using email: " username)
-        {:login/error "Invalid credentials"}))))
+        {:uid :no-such-user :name "Unkown" :email username :login/error "Invalid credentials"}))))
 
 (defquery-root :current-user
   "Answer the :current-user query. This is also how you log in (passing optional username and password)"

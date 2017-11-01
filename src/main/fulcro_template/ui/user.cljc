@@ -6,7 +6,7 @@
 
 (defui ^:once User
   static om/IQuery
-  (query [this] [:uid :name :email])
+  (query [this] [:login/error :uid :name :email])
   static om/Ident
   (ident [this props] [:user/by-id (:uid props)])
   Object

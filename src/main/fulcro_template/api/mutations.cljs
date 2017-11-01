@@ -44,7 +44,9 @@
     (when app-root
       (r/start-routing app-root))
     (let [current-user (get-in @state (get @state :current-user))
-          logged-in? (contains? current-user :name)]
+          logged-in?   (and
+                         (-> current-user :login/error not)
+                         (-> current-user :uid pos-int?))]
       (let [desired-page (get @state :loaded-uri (or (and @r/history (pushy/get-token @r/history)) r/MAIN-URI))
             desired-page (if (= r/LOGIN-URI desired-page)
                            r/MAIN-URI
