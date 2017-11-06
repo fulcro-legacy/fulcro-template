@@ -1,5 +1,10 @@
 # Template
 
+NOTE: Due to popular demand I've created a bare-bones Leiningen template for Fulcro (as of September 2017). I mentioned
+on the defn podcast that I didn't have one, but I've since decided it is useful enough to maintain. So, you can
+use this more complex template, or simply run `lein new fulcro your-new-app` to get something smaller that still
+has support for development, production, devcards, and testing.
+
 This is a Full Stack template with specs, dev cards, and client code.
 It contains a mock login/signup screen, top-level tab routing (once logged in), etc.
 
