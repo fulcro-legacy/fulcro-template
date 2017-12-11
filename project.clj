@@ -5,7 +5,7 @@
 
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.946"]
-                 [fulcrologic/fulcro "2.0.0-SNAPSHOT" ]
+                 [fulcrologic/fulcro "2.0.0-beta6" ]
                  [org.clojure/core.async "0.3.443"]
                  [kibu/pushy "0.3.8"]
                  [commons-codec "1.10"]
@@ -14,7 +14,7 @@
                  [bk/ring-gzip "0.2.1"]
                  [http-kit "2.2.0"]
                  [com.taoensso/timbre "4.10.0"]
-                 [fulcrologic/fulcro-spec "2.0.0-SNAPSHOT" :scope "test" :exclusions [ fulcrologic/fulcro ]]]
+                 [fulcrologic/fulcro-spec "2.0.0-beta3" :scope "test" :exclusions [ fulcrologic/fulcro ]]]
 
   :uberjar-name "fulcro_template.jar"
 
@@ -69,7 +69,7 @@
                                                           :optimizations        :none
                                                           :output-dir           "resources/public/js/dev"
                                                           :output-to            "resources/public/js/fulcro_template.js"
-                                                          :preloads             [devtools.preload]
+                                                          :preloads             [devtools.preload fulcro.inspect.preload]
                                                           :source-map-timestamp true}}
                                           {:id           "i18n" ;for gettext string extraction
                                            :source-paths ["src/main"]
@@ -110,11 +110,12 @@
                                          [com.jakemccrary/lein-test-refresh "0.17.0"]]
 
                           :dependencies [[binaryage/devtools "0.9.4"]
+                                         [fulcrologic/fulcro-inspect "2.0.0-alpha1"]
                                          [org.clojure/tools.namespace "0.3.0-alpha4"]
                                          [org.clojure/tools.nrepl "0.2.13"]
                                          [com.cemerick/piggieback "0.2.2"]
                                          [lein-doo "0.1.7" :scope "test"]
-                                         [figwheel-sidecar "0.5.13" :exclusions [org.clojure/tools.reader]]
+                                         [figwheel-sidecar "0.5.14" :exclusions [org.clojure/tools.reader]]
                                          [devcards "0.2.3"]]
                           :repl-options {:init-ns          user
                                          :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}})

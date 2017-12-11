@@ -1,6 +1,6 @@
 (ns fulcro-template.client
   (:require [fulcro.client.primitives :as om]
-            [fulcro.client.core :as uc]
+            [fulcro.client :as uc]
             [fulcro.client.data-fetch :as f]
             [fulcro-template.api.mutations :as m]
             [fulcro-template.ui.html5-routing :as routing]
@@ -14,6 +14,7 @@
 (defonce app
   (atom (uc/new-fulcro-client
           :initial-state (when-let [v (ssr/get-SSR-initial-state)] ; the client starts with the server-generated db, if available
+                           (js/console.log "Got initial state " v)
                            (atom v))                        ; putting the state in an atom tells Om it is already normalized
           :started-callback (fn [{:keys [reconciler] :as app}]
                               (let [state (om/app-state reconciler)

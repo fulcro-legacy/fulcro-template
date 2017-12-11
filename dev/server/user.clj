@@ -1,14 +1,12 @@
 (ns user
   (:require
-    [clojure.pprint :refer [pprint]]
-    [clojure.stacktrace :refer [print-stack-trace]]
-    [fulcro.gettext :as g]
     [clojure.tools.namespace.repl :as tools-ns :refer [set-refresh-dirs]]
     [com.stuartsierra.component :as component]
     [figwheel-sidecar.system :as fig]
     [fulcro-spec.suite :as suite]
     [fulcro-spec.selectors :as sel]
-    fulcro-template.server))
+    fulcro-template.server
+    [com.stuartsierra.component :as component]))
 
 ;;FIGWHEEL
 (def figwheel (atom nil))

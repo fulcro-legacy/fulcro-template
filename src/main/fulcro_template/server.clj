@@ -4,16 +4,15 @@
     [com.stuartsierra.component :as component]
 
     [org.httpkit.server :refer [run-server]]
-    [fulcro.server :as om]
-    [fulcro-template.api.read :as r]
-    [fulcro-template.api.mutations :as mut]
-    [fulcro.client.primitives :refer [get-ident tree->db db->tree factory get-query]]
+    [fulcro.server :as server]
+    fulcro-template.api.read
+    fulcro-template.api.mutations
+    [fulcro.client.primitives :as prim :refer [get-ident tree->db db->tree factory get-query]]
     [fulcro-template.api.user-db :as users]
-    [fulcro.client.dom :as dom]
 
     [fulcro-template.ui.root :as root]
     [fulcro-template.ui.html5-routing :as routing]
-    [fulcro.client.core :as fc]
+    [fulcro.client :as fc]
 
     [bidi.bidi :as bidi]
     [taoensso.timbre :as timbre]
@@ -35,7 +34,8 @@
     [fulcro-template.ui.user :as user]
     [clojure.string :as str]
     [fulcro.i18n :as i18n]
-    [fulcro.client.mutations :as m]))
+    [fulcro.client.mutations :as m]
+    [fulcro.client.dom :as dom]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SERVER-SIDE RENDERING
@@ -46,33 +46,32 @@
   This function takes a normalized client database and a root UI class and generates that page."
   [normalized-client-state root-component-class]
   ; props are a "view" of the db. We use that to generate the view, but the initial state needs to be the entire db
-  (let [;props                (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)
-        ;root-factory         (factory root-component-class)
-        ;app-html             (dom/render-to-str (root-factory props))
-        ;initial-state-script (ssr/initial-state->script-tag normalized-client-state)
-        ]
+  (let [props                (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)
+        root-factory         (factory root-component-class)
+        app-html             (dom/render-to-str (root-factory props))
+        initial-state-script (ssr/initial-state->script-tag normalized-client-state)]
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
       "<head>\n"
       "<meta charset='UTF-8'>\n"
       "<meta name='viewport' content='width=device-width, initial-scale=1'>\n"
       "<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>\n"
-      ;initial-state-script
+      initial-state-script
       "<title>Home Page (Dev Mode)</title>\n"
       "</head>\n"
       "<body>\n"
       "<div class='container-fluid' id='app'>"
-      ;app-html
+      app-html
       "</div>\n"
       "<script src='js/fulcro_template.js' type='text/javascript'></script>\n"
       "</body>\n"
       "</html>\n")))
 
-#_(defn build-app-state
+(defn build-app-state
   "Builds an up-to-date app state based on the URL where the db will contain everything needed. Returns a normalized
   client app db."
   [user uri bidi-match language]
-  (let [base-state       (ssr/build-initial-state (fc/get-initial-state root/Root nil) root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
+  (let [base-state       (ssr/build-initial-state (prim/get-initial-state root/Root nil) root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
         logged-in?       (boolean user)
         ; NOTE: All of these state functions are CLIENT code that we're leveraging on the server!
         set-route        (fn [s]
@@ -95,7 +94,7 @@
 (defn render-page
   "Server-side render the entry page."
   [uri match user language]
-  (let [normalized-app-state {} #_(build-app-state user uri match language)]
+  (let [normalized-app-state (build-app-state user uri match language)]
     (-> (top-html normalized-app-state root/Root)
       response/response
       (response/content-type "text/html"))))
@@ -107,7 +106,6 @@
   (fn [req]
     (let [uid         (some-> req :session :uid)            ; The UID is stored in server session store if they are logged in
           user        (users/get-user user-db uid)
-          logged-in?  (boolean user)
           uri         (:uri req)
           bidi-match  (bidi/match-route routing/app-routes uri) ; where they were trying to go. NOTE: This is shared code with the client!
           valid-page? (boolean bidi-match)

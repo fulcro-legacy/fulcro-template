@@ -6,7 +6,7 @@
     [fulcro-template.ui.html5-routing :as r]
     [fulcro.client.primitives :as om]
     [fulcro.client.logging :as log]
-    [fulcro.client.core :as fc]))
+    [fulcro.client :as fc]))
 
 (defmutation attempt-login
   "Fulcro mutation: Attempt to log in the user. Triggers a server interaction to see if there is already a cookie."

@@ -2,7 +2,7 @@
   (:require
     [fulcro.client.dom :as dom]
     [fulcro.client.primitives :as om :refer [defui]]
-    [fulcro.client.core :as uc]))
+    [fulcro.client :as uc]))
 
 (defui ^:once User
   static om/IQuery

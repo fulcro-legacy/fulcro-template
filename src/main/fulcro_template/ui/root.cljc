@@ -1,11 +1,7 @@
 (ns fulcro-template.ui.root
   (:require
-    [fulcro.client.mutations :as mut]
-    [fulcro.client.core :as fc]
-    [fulcro.client.util :as util]
     [fulcro.client.routing :refer [defrouter]]
     [fulcro.client.mutations :as m]
-    [fulcro.client.logging :as log]
     [fulcro.client.dom :as dom]
     [fulcro-template.ui.html5-routing :as r]
     [fulcro-template.ui.login :as l]
@@ -14,8 +10,7 @@
     [fulcro-template.ui.preferences :as prefs]
     [fulcro-template.ui.new-user :as nu]
     [fulcro-template.api.mutations :as api]
-    [fulcro.client.primitives :as om :refer [defui]]
-    [fulcro.server-render :as ssr]
+    [fulcro.client.primitives :as prim :refer [defsc]]
     [fulcro.i18n :refer [tr]]
     [fulcro.ui.bootstrap3 :as b]))
 
@@ -26,7 +21,7 @@
   :preferences prefs/PreferencesPage
   :main main/MainPage)
 
-(def ui-pages (om/factory Pages))
+(def ui-pages (prim/factory Pages))
 
 (defn ui-login-stats [loading? user logout-fn]
   (dom/p #js {:className "navbar-text navbar-right"}
@@ -43,8 +38,8 @@
 
 (defn ui-navbar [this]
   (let [login      #(r/nav-to! this :login)
-        logout     #(om/transact! this `[(api/logout {}) (r/set-route! {:handler :login}) :current-user])
-        {:keys [ui/loading-data current-user]} (om/props this)
+        logout     #(prim/transact! this `[(api/logout {}) (r/set-route! {:handler :login}) :current-user])
+        {:keys [ui/loading-data current-user]} (prim/props this)
         logged-in? (contains? current-user :name)]
     (dom/div #js {:className "navbar navbar-default"}
       (dom/div #js {:className "container-fluid"}
@@ -52,8 +47,8 @@
           (dom/span #js {:className "navbar-brand"}
             (dom/span nil "Template Brand")
             (dom/br nil)
-            (dom/a #js {:onClick #(om/transact! this `[(m/change-locale {:lang :en})]) :href "#"} "en") " | "
-            (dom/a #js {:onClick #(om/transact! this `[(m/change-locale {:lang :es})]) :href "#"} "es")))
+            (dom/a #js {:onClick #(prim/transact! this `[(m/change-locale {:lang :en})]) :href "#"} "en") " | "
+            (dom/a #js {:onClick #(prim/transact! this `[(m/change-locale {:lang :es})]) :href "#"} "es")))
         (dom/div #js {:className "collapse navbar-collapse"}
           (when logged-in?
             (dom/ul #js {:className "nav navbar-nav"}
@@ -65,44 +60,34 @@
             (ui-login-button loading-data login)))))))
 
 ;; Add other modals here.
-(defui ^:once Modals
-  static om/IQuery
-  (query [this] [{:welcome-modal (om/get-query b/Modal)}])
-  static fc/InitialAppState
-  (initial-state [this params] {:welcome-modal (fc/get-initial-state b/Modal {:id :welcome :backdrop true})})
-  Object
-  (render [this]
-    (let [{:keys [welcome-modal]} (om/props this)]
-      (b/ui-modal welcome-modal
-        (b/ui-modal-title nil
-          (dom/b nil (tr "Welcome!")))
-        (b/ui-modal-body nil
-          (dom/p #js {:className b/text-info} (tr "Glad you could join us!")))
-        (b/ui-modal-footer nil
-          (b/button {:onClick #(om/transact! this `[(b/hide-modal {:id :welcome})])} (tr "Thanks!")))))))
+(defsc Modals [this {:keys [welcome-modal]}]
+  {:query         [{:welcome-modal (prim/get-query b/Modal)}]
+   :initial-state (fn [params] {:welcome-modal (prim/get-initial-state b/Modal {:id :welcome :backdrop true})})}
+  (b/ui-modal welcome-modal
+    (b/ui-modal-title nil
+      (dom/b nil (tr "Welcome!")))
+    (b/ui-modal-body nil
+      (dom/p #js {:className b/text-info} (tr "Glad you could join us!")))
+    (b/ui-modal-footer nil
+      (b/button {:onClick #(prim/transact! this `[(b/hide-modal {:id :welcome})])} (tr "Thanks!")))))
 
-(defui ^:once Root
-  static fc/InitialAppState
-  (initial-state [c p] (merge
-                         {; Is there a user logged in?
-                          :logged-in?   false
-                          ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
-                          :ui/ready?    false
-                          ; What are the details of the logged in user
-                          :current-user nil
-                          :root/modals  (fc/get-initial-state Modals {})
-                          :pages        (fc/get-initial-state Pages nil)}
-                         r/app-routing-tree))
-  static om/IQuery
-  (query [this] [:ui/react-key :ui/ready? :logged-in?
-                 {:current-user (om/get-query user/User)}
-                 {:root/modals (om/get-query Modals)}
-                 fulcro.client.routing/routing-tree-key     ; TODO: Check if this is needed...seemed to affect initial state from ssr
-                 :ui/loading-data {:pages (om/get-query Pages)}])
-  Object
-  (render [this]
-    (let [{:keys [ui/ready? ui/loading-data ui/react-key pages welcome-modal current-user logged-in?] :or {react-key "ROOT"}} (om/props this)]
-      (dom/div #js {:key react-key}
-        (ui-navbar this)
-        (when ready?
-          (ui-pages pages))))))
+(defsc Root [this {:keys [ui/ready? ui/react-key pages] :or {react-key "ROOT"}}]
+  {:initial-state (fn [p] (merge
+                            {; Is there a user logged in?
+                             :logged-in?   false
+                             ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
+                             :ui/ready?    false
+                             ; What are the details of the logged in user
+                             :current-user nil
+                             :root/modals  (prim/get-initial-state Modals {})
+                             :pages        (prim/get-initial-state Pages nil)}
+                            r/app-routing-tree))
+   :query         [:ui/react-key :ui/ready? :logged-in?
+                   {:current-user (prim/get-query user/User)}
+                   {:root/modals (prim/get-query Modals)}
+                   fulcro.client.routing/routing-tree-key   ; TODO: Check if this is needed...seemed to affect initial state from ssr
+                   :ui/loading-data {:pages (prim/get-query Pages)}]}
+  (dom/div #js {:key react-key}
+    (ui-navbar this)
+    (when ready?
+      (ui-pages pages))))
