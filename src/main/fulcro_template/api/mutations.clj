@@ -1,6 +1,6 @@
 (ns fulcro-template.api.mutations
   (:require
-    [om.next.server :as oms]
+    [fulcro.server :as oms]
     [taoensso.timbre :as timbre]
     [fulcro.server :as core :refer [defmutation]]
     [fulcro.server :as server]

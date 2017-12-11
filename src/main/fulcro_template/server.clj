@@ -4,16 +4,15 @@
     [com.stuartsierra.component :as component]
 
     [org.httpkit.server :refer [run-server]]
-    [om.next.server :as om]
-    [fulcro-template.api.read :as r]
-    [fulcro-template.api.mutations :as mut]
-    [om.next :refer [tree->db db->tree factory get-query]]
+    [fulcro.server :as server]
+    fulcro-template.api.read
+    fulcro-template.api.mutations
+    [fulcro.client.primitives :as prim :refer [get-ident tree->db db->tree factory get-query]]
     [fulcro-template.api.user-db :as users]
-    [om.dom :as dom]
 
     [fulcro-template.ui.root :as root]
     [fulcro-template.ui.html5-routing :as routing]
-    [fulcro.client.core :as fc]
+    [fulcro.client :as fc]
 
     [bidi.bidi :as bidi]
     [taoensso.timbre :as timbre]
@@ -30,12 +29,13 @@
 
     [ring.util.request :as req]
     [ring.util.response :as response]
-    [fulcro.client.util :as util]
+    [fulcro.util :as util]
     [fulcro.server-render :as ssr]
     [fulcro-template.ui.user :as user]
     [clojure.string :as str]
     [fulcro.i18n :as i18n]
-    [fulcro.client.mutations :as m]))
+    [fulcro.client.mutations :as m]
+    [fulcro.client.dom :as dom]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SERVER-SIDE RENDERING
@@ -71,7 +71,7 @@
   "Builds an up-to-date app state based on the URL where the db will contain everything needed. Returns a normalized
   client app db."
   [user uri bidi-match language]
-  (let [base-state       (ssr/build-initial-state (fc/get-initial-state root/Root nil) root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
+  (let [base-state       (ssr/build-initial-state (prim/get-initial-state root/Root nil) root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
         logged-in?       (boolean user)
         ; NOTE: All of these state functions are CLIENT code that we're leveraging on the server!
         set-route        (fn [s]
@@ -80,7 +80,7 @@
                              (fulcro.client.routing/update-routing-links s {:handler :login})))
         set-user         (fn [s] (-> s
                                    (fc/merge-component user/User user)
-                                   (assoc :logged-in? true :current-user (util/get-ident user/User user))))
+                                   (assoc :logged-in? true :current-user (get-ident user/User user))))
         ; Augment the database with the detected route details and user.
         ; Also mark the app as ready, so the UI will render on the server, AND the client can detect that it was a server render.
         normalized-state (cond-> base-state
@@ -106,7 +106,6 @@
   (fn [req]
     (let [uid         (some-> req :session :uid)            ; The UID is stored in server session store if they are logged in
           user        (users/get-user user-db uid)
-          logged-in?  (boolean user)
           uri         (:uri req)
           bidi-match  (bidi/match-route routing/app-routes uri) ; where they were trying to go. NOTE: This is shared code with the client!
           valid-page? (boolean bidi-match)
