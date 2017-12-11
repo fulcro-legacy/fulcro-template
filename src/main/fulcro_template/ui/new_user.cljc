@@ -1,13 +1,13 @@
 (ns fulcro-template.ui.new-user
-  (:require [om.next :as om :refer [defui]]
-            [fulcro.client.core :as u]
-            [om.dom :as dom]
+  (:require [fulcro.client.primitives :as prim :refer [defsc defui]]
+            [fulcro.client :as u]
+            [fulcro.client.dom :as dom]
             [fulcro.client.mutations :as m :refer [defmutation]]
             [fulcro.i18n :refer [tr]]
             [fulcro.events :as evts]
             [fulcro.ui.forms :as f]
             [fulcro.ui.bootstrap3 :as b]
-            [fulcro.client.core :as uc]
+            [fulcro.client :as uc]
             [fulcro.client.data-fetch :as df]
             [fulcro-template.ui.html5-routing :as r]))
 
@@ -43,11 +43,11 @@
      (f/html5-input :password "password" :validator `f/minmax-length? :validator-args {:min 7 :max 100})
      (f/html5-input :password2 "password")
      (f/on-form-change `check-passwords-match)])
-  static u/InitialAppState
-  (initial-state [this params] {:uid (om/tempid) :name "" :password "" :password2 ""})
-  static om/IQuery
+  static prim/InitialAppState
+  (initial-state [this params] {:uid (prim/tempid) :name "" :password "" :password2 ""})
+  static prim/IQuery
   (query [this] [:ui/create-failed :uid :name :email :password :password2 :ui/password-error f/form-root-key f/form-key])
-  static om/Ident
+  static prim/Ident
   (ident [this props] [:user/by-id (:uid props)])
   Object
   ; SSR state cannot properly initialize forms, so we ensure it is initialized on mount. This mutation is safe
@@ -55,18 +55,18 @@
   ; and would be distracting in the logs.
   (componentWillReceiveProps [this props]                   ; on return to this screen once cleared
     (when (or (f/server-initialized? props) (not (f/is-form? props)))
-      (om/transact! this `[(f/initialize-form {})])))
+      (prim/transact! this `[(f/initialize-form {})])))
   (componentWillMount [this]                                ; on initial from server
-    (when (or (f/server-initialized? (om/props this)) (not (f/is-form? (om/props this))))
-      (om/transact! this `[(f/initialize-form {})])))
+    (when (or (f/server-initialized? (prim/props this)) (not (f/is-form? (prim/props this))))
+      (prim/transact! this `[(f/initialize-form {})])))
   (render [this]
-    (let [{:keys [uid name email password password2 ui/password-error ui/create-failed] :as form} (om/props this)
+    (let [{:keys [uid name email password password2 ui/password-error ui/create-failed] :as form} (prim/props this)
           sign-up (fn []
                     (m/set-value! this :ui/create-failed false)
                     (if (f/would-be-valid? form)
                       (f/commit-to-entity! this :remote true :fallback `create-user-failed :fallback-params {:id uid})
-                      (om/transact! this `[(f/validate-form ~{:form-id [:user/by-id uid]})])))]
-      (if (om/tempid? uid)                                  ; successful submission will remap the tempid to a real ID.
+                      (prim/transact! this `[(f/validate-form ~{:form-id [:user/by-id uid]})])))]
+      (if (prim/tempid? uid)                                ; successful submission will remap the tempid to a real ID.
         (when (f/is-form? form)                             ;prevents flicker on form init from SSR
           (b/container-fluid {}
             (b/row {}
@@ -104,14 +104,10 @@
             (b/col {:lg 6 :lg-offset 3 :xs 10 :xs-offset 1}
               (b/alert {:kind :success} (dom/span nil (tr "Welcome! Your account has been created. ") (dom/a #js {:onClick #(r/nav-to! this :login)} (tr "Please, log in.")))))))))))
 
-(def ui-user-form (om/factory UserForm))
+(def ui-user-form (prim/factory UserForm))
 
-(defui ^:once NewUser
-  static u/InitialAppState
-  (initial-state [this params] {:id :new-user :form (uc/get-initial-state UserForm {})})
-  static om/IQuery
-  (query [this] [:id {:form (om/get-query UserForm)}])
-  Object
-  (render [this]
-    (let [{:keys [form]} (om/props this)]
-      (ui-user-form form))))
+(defsc NewUser [this {:keys [form]}]
+  {:initial-state (fn [params] {:id :new-user :form (prim/get-initial-state UserForm {})})
+   :ident         (fn [] [:new-user :page])
+   :query         [:id {:form (prim/get-query UserForm)}]}
+  (ui-user-form form))

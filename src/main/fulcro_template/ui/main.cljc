@@ -1,18 +1,12 @@
 (ns fulcro-template.ui.main
-  (:require [om.next :as om :refer [defui]]
-            [fulcro.client.core :as u]
+  (:require [fulcro.client.primitives :as prim :refer [defsc]]
+            [fulcro.client :as u]
             [fulcro.i18n :refer [tr]]
-            [om.dom :as dom]
+            [fulcro.client.dom :as dom]
             [fulcro.client.mutations :as m]))
 
-(defui ^:once MainPage
-  static u/InitialAppState
-  (initial-state [this params] {:id :main})
-  static om/IQuery
-  (query [this] [:id [:current-user '_]])
-  static om/Ident
-  (ident [this props] [:main :page])
-  Object
-  (render [this]
-    (let [{:keys [current-user]} (om/props this)]
-      (dom/div #js {} (tr "Main page")))))
+(defsc MainPage [this {:keys [current-user]}]
+  {:initial-state {:id :main}
+   :query         [:id [:current-user '_]]
+   :ident         (fn [] [:main :page])}
+  (dom/div #js {} (tr "Main page")))

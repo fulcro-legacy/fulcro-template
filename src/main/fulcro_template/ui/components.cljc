@@ -1,7 +1,7 @@
 (ns fulcro-template.ui.components
   (:require
-    [om.next :as om :refer [defui]]
-    [om.dom :as dom]))
+    [fulcro.client.primitives :as om :refer [defui]]
+    [fulcro.client.dom :as dom]))
 
 (defui ^:once PlaceholderImage
   Object

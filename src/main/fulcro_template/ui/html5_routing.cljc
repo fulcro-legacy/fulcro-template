@@ -5,7 +5,7 @@
     #?(:cljs [pushy.core :as pushy])
     [bidi.verbose :refer [branch leaf param]]
     [bidi.bidi :as bidi]
-    [om.next :as om]
+    [fulcro.client.primitives :as om]
     [fulcro.client.logging :as log]))
 
 (def app-routing-tree
