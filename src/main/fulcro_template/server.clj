@@ -33,22 +33,36 @@
     [fulcro.server-render :as ssr]
     [fulcro-template.ui.user :as user]
     [clojure.string :as str]
-    [fulcro.i18n :as i18n]
+    [fulcro.alpha.i18n :as i18n]
     [fulcro.client.mutations :as m]
-    [fulcro.client.dom :as dom]))
+    [fulcro.client.dom :as dom]
+    [fulcro.logging :as log])
+  (:import (com.ibm.icu.text MessageFormat)
+           (java.util Locale)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SERVER-SIDE RENDERING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn message-formatter [{:keys [::i18n/localized-format-string
+                                 ::i18n/locale ::i18n/format-options]}]
+  (let [locale-str (name locale)]
+    (try
+      (let [formatter (new MessageFormat localized-format-string (Locale/forLanguageTag locale-str))]
+        (.format formatter format-options))
+      (catch Exception e
+        (log/error "Formatting failed!" e)
+        "???"))))
+
 (defn top-html
   "Render the HTML for the SPA. There is only ever one kind of HTML to send, but the initial state and initial app view may vary.
   This function takes a normalized client database and a root UI class and generates that page."
-  [normalized-client-state root-component-class]
+  [normalized-client-state root-component-class locale]
   ; props are a "view" of the db. We use that to generate the view, but the initial state needs to be the entire db
   (let [props                (db->tree (get-query root-component-class) normalized-client-state normalized-client-state)
         root-factory         (factory root-component-class)
-        app-html             (dom/render-to-str (root-factory props))
+        app-html             (i18n/with-locale message-formatter locale
+                               (dom/render-to-str (root-factory props)))
         initial-state-script (ssr/initial-state->script-tag normalized-client-state)]
     (str "<!DOCTYPE) html>\n"
       "<html lang='en'>\n"
@@ -70,8 +84,10 @@
 (defn build-app-state
   "Builds an up-to-date app state based on the URL where the db will contain everything needed. Returns a normalized
   client app db."
-  [user uri bidi-match language]
-  (let [base-state       (ssr/build-initial-state (prim/get-initial-state root/Root nil) root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
+  [user uri bidi-match locale]
+  (let [initial-tree     (prim/get-initial-state root/Root nil)
+        tree-with-locale (assoc initial-tree ::i18n/current-locale locale)
+        base-state       (ssr/build-initial-state tree-with-locale root/Root) ; start with a normalized db that includes all union branches. Uses client UI!
         logged-in?       (boolean user)
         ; NOTE: All of these state functions are CLIENT code that we're leveraging on the server!
         set-route        (fn [s]
@@ -86,7 +102,6 @@
         normalized-state (cond-> base-state
                            logged-in? set-user
                            (not logged-in?) (assoc :loaded-uri uri)
-                           language (m/change-locale-impl language)
                            set-route (set-route)
                            :always (assoc :ui/ready? true))]
     normalized-state))
@@ -94,8 +109,9 @@
 (defn render-page
   "Server-side render the entry page."
   [uri match user language]
-  (let [normalized-app-state (build-app-state user uri match language)]
-    (-> (top-html normalized-app-state root/Root)
+  (let [locale (i18n/load-locale "i18n" (or language :en))
+        normalized-app-state (build-app-state user uri match locale)]
+    (-> (top-html normalized-app-state root/Root locale)
       response/response
       (response/content-type "text/html"))))
 
@@ -109,7 +125,7 @@
           uri         (:uri req)
           bidi-match  (bidi/match-route routing/app-routes uri) ; where they were trying to go. NOTE: This is shared code with the client!
           valid-page? (boolean bidi-match)
-          language    (some-> req :headers (get "accept-language") (str/split #",") first)]
+          language    (some-> req :headers (get "accept-language") (str/split #",") first keyword)]
 
       ; . no valid bidi match. BYPASS. We don't handle it.
       (if valid-page?

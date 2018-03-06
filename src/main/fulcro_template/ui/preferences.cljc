@@ -1,7 +1,7 @@
 (ns fulcro-template.ui.preferences
   (:require [fulcro.client.primitives :as prim :refer [defsc]]
             [fulcro.client :as u]
-            [fulcro.i18n :refer [tr]]
+            [fulcro.alpha.i18n :refer [tr]]
             [fulcro.client.dom :as dom]
             [fulcro.client.mutations :as m]))
 

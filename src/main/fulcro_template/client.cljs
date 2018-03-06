@@ -1,26 +1,31 @@
 (ns fulcro-template.client
-  (:require [fulcro.client.primitives :as om]
-            [fulcro.client :as uc]
-            [fulcro.client.data-fetch :as f]
-            [fulcro-template.api.mutations :as m]
-            [fulcro-template.ui.html5-routing :as routing]
-            [fulcro.client.mutations :as built-in]
-            [fulcro-template.ui.root :as root]
-            translations.es
-            [fulcro-template.ui.user :as user]
-            [fulcro.client.logging :as log]
-            [fulcro.server-render :as ssr]))
+  (:require
+    [fulcro-template.api.mutations :as m]
+    [fulcro-template.ui.html5-routing :as routing]
+    [fulcro-template.ui.user :as user]
+    [fulcro.alpha.i18n :as i18n]
+    [fulcro.client :as fc]
+    [fulcro.client.data-fetch :as f]
+    [fulcro.client.primitives :as prim]
+    [fulcro.server-render :as ssr]
+    yahoo.intl-messageformat-with-locales))
+
+(defn message-format [{:keys [::i18n/localized-format-string ::i18n/locale ::i18n/format-options]}]
+  (let [locale-str (name locale)
+        formatter  (js/IntlMessageFormat. localized-format-string locale-str)]
+    (.format formatter (clj->js format-options))))
 
 (defonce app
-  (atom (uc/new-fulcro-client
+  (atom (fc/new-fulcro-client
           :initial-state (when-let [v (ssr/get-SSR-initial-state)] ; the client starts with the server-generated db, if available
-                           (js/console.log "Got initial state " v)
-                           (atom v))                        ; putting the state in an atom tells Om it is already normalized
+                           (atom v))                        ; putting the state in an atom indicates it is already normalized
+          :reconciler-options {:shared    {::i18n/message-formatter message-format}
+                               :shared-fn ::i18n/current-locale}
           :started-callback (fn [{:keys [reconciler] :as app}]
-                              (let [state (om/app-state reconciler)
-                                    root  (om/app-root reconciler)
-                                    {:keys [ui/locale ui/ready?]} @state]
+                              (let [state (prim/app-state reconciler)
+                                    root  (prim/app-root reconciler)
+                                    {:keys [ui/ready?]} @state]
                                 (if ready?                  ; The only way ready is true, is if we're coming from a server-side render
                                   (routing/start-routing root)
                                   (f/load app :current-user user/User {:post-mutation        `m/login-complete
-                                                                       :post-mutation-params {:app-root (om/app-root reconciler)}})))))))
+                                                                       :post-mutation-params {:app-root (prim/app-root reconciler)}})))))))

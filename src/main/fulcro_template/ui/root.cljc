@@ -11,7 +11,7 @@
     [fulcro-template.ui.new-user :as nu]
     [fulcro-template.api.mutations :as api]
     [fulcro.client.primitives :as prim :refer [defsc]]
-    [fulcro.i18n :refer [tr]]
+    [fulcro.alpha.i18n :as i18n :refer [tr]]
     [fulcro.ui.bootstrap3 :as b]))
 
 (defrouter Pages :page-router
@@ -47,8 +47,8 @@
           (dom/span #js {:className "navbar-brand"}
             (dom/span nil "Template Brand")
             (dom/br nil)
-            (dom/a #js {:onClick #(prim/transact! this `[(m/change-locale {:lang :en})]) :href "#"} "en") " | "
-            (dom/a #js {:onClick #(prim/transact! this `[(m/change-locale {:lang :es})]) :href "#"} "es")))
+            (dom/a #js {:onClick #(prim/transact! this `[(i18n/change-locale {:locale :en})]) :href "#"} "en") " | "
+            (dom/a #js {:onClick #(prim/transact! this `[(i18n/change-locale {:locale :es})]) :href "#"} "es")))
         (dom/div #js {:className "collapse navbar-collapse"}
           (when logged-in?
             (dom/ul #js {:className "nav navbar-nav"}
@@ -71,23 +71,25 @@
     (b/ui-modal-footer nil
       (b/button {:onClick #(prim/transact! this `[(b/hide-modal {:id :welcome})])} (tr "Thanks!")))))
 
-(defsc Root [this {:keys [ui/ready? ui/react-key pages] :or {react-key "ROOT"}}]
+(defsc Root [this {:keys [ui/ready? pages ::i18n/current-locale]}]
   {:initial-state (fn [p] (merge
                             {; Is there a user logged in?
-                             :logged-in?   false
+                             :logged-in?           false
                              ; Is the UI ready for initial render? This avoids flicker while we figure out if the user is already logged in
-                             :ui/ready?    false
+                             :ui/ready?            false
                              ; What are the details of the logged in user
-                             :current-user nil
-                             :root/modals  (prim/get-initial-state Modals {})
-                             :pages        (prim/get-initial-state Pages nil)}
+                             :current-user         nil
+                             :root/modals          (prim/get-initial-state Modals {})
+                             ::i18n/current-locale (prim/get-initial-state i18n/Locale {:locale :en :translations {}})
+                             :pages                (prim/get-initial-state Pages nil)}
                             r/app-routing-tree))
-   :query         [:ui/react-key :ui/ready? :logged-in?
+   :query         [:ui/ready? :logged-in?
+                   {::i18n/current-locale (prim/get-query i18n/Locale)}
                    {:current-user (prim/get-query user/User)}
                    {:root/modals (prim/get-query Modals)}
                    fulcro.client.routing/routing-tree-key   ; TODO: Check if this is needed...seemed to affect initial state from ssr
                    :ui/loading-data {:pages (prim/get-query Pages)}]}
-  (dom/div #js {:key react-key}
+  (dom/div nil
     (ui-navbar this)
     (when ready?
       (ui-pages pages))))

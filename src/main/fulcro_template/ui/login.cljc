@@ -1,6 +1,6 @@
 (ns fulcro-template.ui.login
   (:require [fulcro.client.primitives :as prim :refer [defsc]]
-            [fulcro.i18n :refer [tr]]
+            [fulcro.alpha.i18n :refer [tr]]
             [fulcro.client :as u]
             [fulcro.client.data-fetch :as df]
             [fulcro.client.dom :as dom]
