@@ -1,8 +1,7 @@
 (ns fulcro-template.ui.user
   (:require
     [fulcro.client.dom :as dom]
-    [fulcro.client.primitives :as om :refer [defui]]
-    [fulcro.client :as uc]))
+    [fulcro.client.primitives :as om :refer [defui]]))
 
 (defui ^:once User
   static om/IQuery

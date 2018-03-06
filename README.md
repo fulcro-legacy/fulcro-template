@@ -12,7 +12,6 @@ You must run the server (and use it through the server) for login to work. The s
 
 You can login with `tony@nowhere.com` or `joe@nowhere.com`, the password is `letmein`.
 
-
 It is set up to be deployable to Heroku (or anywhere) as a standalone jar.
 
 Master: <img src="https://api.travis-ci.org/fulcrologic/fulcro-template.svg?branch=master"></img>
@@ -49,6 +48,7 @@ you to your desired page after login.
 ├── package.json                NODE config, used for running CI cljs tests
 ├── project.clj
 ├── resources
+│   ├── i18n   Location for messages.pot and locale translation files
 │   └── public (NOTE: no HTML needed for app anymore, using server-side rendering!)
 │       ├── cards.html          Devcards HTML page
 │       ├── css
@@ -79,8 +79,6 @@ you to your desired page after login.
 │   │       │   ├── mutations.cljs   The client-side impl of mutations
 │   │       │   ├── read.clj         Server-side read handlers
 │   │       │   └── user_db.clj      Simulated in-RAM user database
-│   │       ├── locales
-│   │       │   └── es.cljc          Spanish locale (see README-i18n.md)
 │   │       ├── client.cljs          The creation of the client instance
 │   │       ├── client_main.cljs     The production main for client
 │   │       ├── server.clj           The creation of the server

@@ -1,14 +1,11 @@
 (ns fulcro-template.ui.new-user
   (:require [fulcro.client.primitives :as prim :refer [defsc defui]]
-            [fulcro.client :as u]
             [fulcro.client.dom :as dom]
             [fulcro.client.mutations :as m :refer [defmutation]]
-            [fulcro.i18n :refer [tr]]
+            [fulcro.alpha.i18n :refer [tr]]
             [fulcro.events :as evts]
             [fulcro.ui.forms :as f]
             [fulcro.ui.bootstrap3 :as b]
-            [fulcro.client :as uc]
-            [fulcro.client.data-fetch :as df]
             [fulcro-template.ui.html5-routing :as r]))
 
 (defmutation check-passwords-match

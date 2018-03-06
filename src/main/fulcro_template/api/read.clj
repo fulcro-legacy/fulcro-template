@@ -4,7 +4,8 @@
     [fulcro.server :refer [defquery-entity defquery-root]]
     [taoensso.timbre :as timbre]
     [fulcro-template.api.user-db :as users]
-    [fulcro.server :as server]))
+    [fulcro.server :as server]
+    [fulcro.alpha.i18n :as i18n]))
 
 ;; SERVER READ IMPLEMENTATION. We're using `fulcro-parser`. You can either use defmulti on the multimethods
 ;; (see fulcro.server defmulti declarations) or the defquery-* helper macros.
@@ -33,3 +34,9 @@
                    (select-keys [:uid :name :email]))]
         (timbre/info "Current user: " resp)
         resp))))
+
+(defquery-root ::i18n/translations
+  (value [env {:keys [locale]}]
+    (if-let [translations (i18n/load-locale "i18n" locale)]
+      translations
+      nil)))
