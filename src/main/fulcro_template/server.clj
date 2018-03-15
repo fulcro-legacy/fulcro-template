@@ -35,7 +35,7 @@
     [clojure.string :as str]
     [fulcro.i18n :as i18n]
     [fulcro.client.mutations :as m]
-    [fulcro.client.dom :as dom]))
+    [fulcro.client.alpha.dom-server :as dom]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SERVER-SIDE RENDERING

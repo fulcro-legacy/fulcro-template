@@ -1,6 +1,6 @@
 (ns fulcro-template.ui.user
   (:require
-    [fulcro.client.dom :as dom]
+    #?(:cljs [fulcro.client.alpha.dom :as dom] :clj [fulcro.client.alpha.dom-server :as dom])
     [fulcro.client.primitives :as om :refer [defui]]
     [fulcro.client :as uc]))
 

@@ -2,11 +2,12 @@
   (:require [fulcro.client.primitives :as prim :refer [defsc]]
             [fulcro.client :as u]
             [fulcro.i18n :refer [tr]]
-            [fulcro.client.dom :as dom]
+    #?(:cljs [fulcro.client.alpha.dom :as dom] :clj
+            [fulcro.client.alpha.dom-server :as dom])
             [fulcro.client.mutations :as m]))
 
 (defsc MainPage [this {:keys [current-user]}]
   {:initial-state {:id :main}
    :query         [:id [:current-user '_]]
    :ident         (fn [] [:main :page])}
-  (dom/div #js {} (tr "Main page")))
+  (dom/div (tr "Main page")))
