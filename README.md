@@ -2,7 +2,7 @@
 
 NOTE: Due to popular demand I've created a bare-bones Leiningen template for Fulcro (as of September 2017). I mentioned
 on the defn podcast that I didn't have one, but I've since decided it is useful enough to maintain. So, you can
-now run `lein new fulcro your-new-app` to get something smaller that still
+now run `lein new fulcro your-new-app` (use the `figwheel` option if you don't want to use `shadow-cljs`) to get something smaller that still
 has support for development, production, devcards, and testing.
 
 This is a full stack sample application with specs, dev cards, and client code.
