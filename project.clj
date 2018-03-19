@@ -5,7 +5,10 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.9.946"]
-                 [fulcrologic/fulcro "2.3.1" :exclusions [org.clojure/tools.reader com.taoensso/encore]]
+                 [fulcrologic/fulcro "2.4.1" :exclusions [org.clojure/tools.reader com.taoensso/encore]]
+                 [cljsjs/react "16.2.0-3"]
+                 [cljsjs/react-dom "16.2.0-3"]
+                 [cljsjs/react-dom-server "16.2.0-3"]
                  [org.clojure/core.async "0.4.474"]
                  [kibu/pushy "0.3.8"]
                  [commons-codec "1.11"]
@@ -110,7 +113,7 @@
                                          [com.jakemccrary/lein-test-refresh "0.21.1"]]
 
                           :dependencies [[binaryage/devtools "0.9.9"]
-                                         [fulcrologic/fulcro-inspect "2.0.0-alpha6"]
+                                         [fulcrologic/fulcro-inspect "2.0.0" :exclusions [fulcrologic/fulcro-css]]
                                          [org.clojure/tools.namespace "0.3.0-alpha4"]
                                          [org.clojure/tools.nrepl "0.2.13"]
                                          [com.cemerick/piggieback "0.2.2"]
