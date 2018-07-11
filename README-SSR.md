@@ -1,8 +1,7 @@
 # Server-Side Rendering
 
-This template includes server-side rendering, of which
-the basics are covered in the
-[Developer's Guide](https://fulcrologic.github.io/fulcro/guide.html#!/fulcro_devguide.M50_Server_Side_Rendering).
+This template includes server-side rendering, the basics are covered in the
+[Server-side Rendering Chapter in the Developer's Guide](http://book.fulcrologic.com/#_server_side_rendering).
 
 There are also extensive comments in the code. See:
 
