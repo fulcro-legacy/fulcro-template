@@ -1,9 +1,10 @@
 (ns fulcro-template.ui.login
   (:require [fulcro.client.primitives :as prim :refer [defsc]]
-            [fulcro.alpha.i18n :refer [tr]]
+            [fulcro.i18n :refer [tr]]
             [fulcro.client :as u]
             [fulcro.client.data-fetch :as df]
-            [fulcro.client.dom :as dom]
+   #?(:clj  [fulcro.client.dom-server :as dom] 
+      :cljs [fulcro.client.dom :as dom]) 
             [fulcro-template.api.mutations :as api]
             [fulcro.client.mutations :as m]
             [fulcro-template.ui.html5-routing :as r]
@@ -23,7 +24,7 @@
     (b/container-fluid {}
       (b/row {}
         (b/col {:lg-offset 3 :lg 6 :xs-offset 1 :xs 11}
-          (dom/div #js {:className "form-horizontal"}
+          (dom/div :.form-horizontal
             (b/labeled-input {:id       "username" :value username :type "text" :split 3
                               :onChange #(m/set-string! this :ui/username :event %)} (tr "Email"))
             (b/labeled-input {:id        "password" :value password :type "password" :split 3
@@ -41,6 +42,6 @@
       (b/row nil
         (b/col {:xs-offset 4 :xs 4}
           (tr "Don't have a login yet? ")
-          (dom/a #js {:onClick (fn [evt]
-                                 (prim/transact! this `[(api/clear-new-user {})])
-                                 (r/nav-to! this :new-user))} (tr "Sign up!")))))))
+          (dom/a {:onClick (fn [evt]
+                             (prim/transact! this `[(api/clear-new-user {})])
+                             (r/nav-to! this :new-user))} (tr "Sign up!")))))))

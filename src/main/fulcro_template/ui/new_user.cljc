@@ -1,8 +1,9 @@
 (ns fulcro-template.ui.new-user
   (:require [fulcro.client.primitives :as prim :refer [defsc defui]]
-            [fulcro.client.dom :as dom]
+   #?(:clj  [fulcro.client.dom-server :as dom] 
+      :cljs [fulcro.client.dom :as dom]) 
             [fulcro.client.mutations :as m :refer [defmutation]]
-            [fulcro.alpha.i18n :refer [tr]]
+            [fulcro.i18n :refer [tr]]
             [fulcro.events :as evts]
             [fulcro.ui.forms :as f]
             [fulcro.ui.bootstrap3 :as b]
@@ -99,7 +100,7 @@
         (b/container-fluid {}
           (b/row {}
             (b/col {:lg 6 :lg-offset 3 :xs 10 :xs-offset 1}
-              (b/alert {:kind :success} (dom/span nil (tr "Welcome! Your account has been created. ") (dom/a #js {:onClick #(r/nav-to! this :login)} (tr "Please, log in.")))))))))))
+              (b/alert {:kind :success} (dom/span (tr "Welcome! Your account has been created. ") (dom/a {:onClick #(r/nav-to! this :login)} (tr "Please, log in.")))))))))))
 
 (def ui-user-form (prim/factory UserForm))
 

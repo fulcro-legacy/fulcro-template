@@ -3,14 +3,13 @@
     [fulcro-template.api.mutations :as m]
     [fulcro-template.ui.html5-routing :as routing]
     [fulcro-template.ui.user :as user]
-    [fulcro.alpha.i18n :as i18n]
+    [fulcro.i18n :as i18n]
     [fulcro.client :as fc]
     [fulcro.client.data-fetch :as f]
     [fulcro.client.primitives :as prim]
-    [fulcro.server-render :as ssr]
-    yahoo.intl-messageformat-with-locales))
+    [fulcro.server-render :as ssr]))
 
-(defn message-format [{:keys [::i18n/localized-format-string ::i18n/locale ::i18n/format-options]}]
+(defn message-formatter [{:keys [::i18n/localized-format-string ::i18n/locale ::i18n/format-options]}]
   (let [locale-str (name locale)
         formatter  (js/IntlMessageFormat. localized-format-string locale-str)]
     (.format formatter (clj->js format-options))))
@@ -19,7 +18,7 @@
   (atom (fc/new-fulcro-client
           :initial-state (when-let [v (ssr/get-SSR-initial-state)] ; the client starts with the server-generated db, if available
                            (atom v))                        ; putting the state in an atom indicates it is already normalized
-          :reconciler-options {:shared    {::i18n/message-formatter message-format}
+          :reconciler-options {:shared    {::i18n/message-formatter message-formatter}
                                :shared-fn ::i18n/current-locale}
           :started-callback (fn [{:keys [reconciler] :as app}]
                               (let [state (prim/app-state reconciler)

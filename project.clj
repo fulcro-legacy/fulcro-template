@@ -4,20 +4,25 @@
   :min-lein-version "2.7.0"
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.9.946"]
-                 [fulcrologic/fulcro "2.4.1" :exclusions [org.clojure/tools.reader com.taoensso/encore]]
-                 [cljsjs/react "16.2.0-3"]
-                 [cljsjs/react-dom "16.2.0-3"]
-                 [cljsjs/react-dom-server "16.2.0-3"]
+                 [org.clojure/clojurescript "1.10.339"]
+                 [fulcrologic/fulcro "2.5.12" :exclusions [org.clojure/tools.reader 
+                                                           com.taoensso/encore]]
+                 [cljsjs/react "16.4.0-0"]
+                 [cljsjs/react-dom "16.4.0-0"]
+                 [cljsjs/react-dom-server "16.4.0-0"]
                  [org.clojure/core.async "0.4.474"]
                  [kibu/pushy "0.3.8"]
                  [commons-codec "1.11"]
-                 [bidi "2.1.2"]
+                 [bidi "2.1.3"]
                  [ring/ring-core "1.6.3"]
                  [bk/ring-gzip "0.2.1"]
                  [http-kit "2.2.0"]
                  [com.taoensso/timbre "4.10.0"]
-                 [fulcrologic/fulcro-spec "2.0.3-1" :scope "test" :exclusions [fulcrologic/fulcro]]]
+                 [com.ibm.icu/icu4j "62.1"]
+                 [fulcrologic/fulcro-spec "2.1.0-1" :scope "test" 
+                                                    :exclusions [fulcrologic/fulcro 
+                                                                 org.clojure/tools.reader 
+                                                                 com.taoensso/encore]]]
 
   :uberjar-name "fulcro_template.jar"
 
