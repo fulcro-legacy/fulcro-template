@@ -8,4 +8,5 @@ You take the messages.pot file to a translator and get back locale.po files. Tho
 all go in resources/i18n, and the server can serve them to the client via
 the normal load mechanism.
 
-See the Developer's Guide for more information on i18n.
+See the [Developer's Guide for more information on i18n](http://book.fulcrologic.com/#I18N).
+

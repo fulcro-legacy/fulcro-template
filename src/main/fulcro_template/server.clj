@@ -33,9 +33,9 @@
     [fulcro.server-render :as ssr]
     [fulcro-template.ui.user :as user]
     [clojure.string :as str]
-    [fulcro.alpha.i18n :as i18n]
+    [fulcro.i18n :as i18n]
     [fulcro.client.mutations :as m]
-    [fulcro.client.dom :as dom]
+    [fulcro.client.dom-server :as dom]
     [fulcro.logging :as log])
   (:import (com.ibm.icu.text MessageFormat)
            (java.util Locale)))
@@ -70,6 +70,7 @@
       "<meta charset='UTF-8'>\n"
       "<meta name='viewport' content='width=device-width, initial-scale=1'>\n"
       "<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>\n"
+      "<script src='intl-messageformat-with-locales.min.js'></script>"
       initial-state-script
       "<title>Home Page (Dev Mode)</title>\n"
       "</head>\n"

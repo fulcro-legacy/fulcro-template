@@ -6,7 +6,7 @@
   "directories": {},
   "dependencies": {},
   "devDependencies": {
-    "karma": "2.0.0",
+    "karma": "^2.0.4",
     "karma-chrome-launcher": "2.2.0",
     "karma-cljs-test": "0.1.0",
     "karma-firefox-launcher": "1.1.0"
