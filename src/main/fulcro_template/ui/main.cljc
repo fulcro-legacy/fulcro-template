@@ -7,7 +7,7 @@
             [fulcro-css.css-injection :as injection]
             [fulcro.client.mutations :as m]))
 
-(defsc MainPage [this {:keys [:current-user]} _ {:keys [a]}]
+(defsc MainPage [this {:keys [:current-user]}]
   {:initial-state {:id :main}
    :query         [:id [:current-user '_]]
    :ident         (fn [] [:main :page])}
