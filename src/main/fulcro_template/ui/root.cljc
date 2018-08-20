@@ -2,7 +2,8 @@
   (:require
     [fulcro.client.routing :refer [defrouter]]
     [fulcro.client.mutations :as m]
-    [fulcro.client.dom :as dom]
+    #?(:cljs [fulcro.client.dom :as dom]
+       :clj  [fulcro.client.dom-server :as dom])
     [fulcro-template.ui.html5-routing :as r]
     [fulcro-template.ui.login :as l]
     [fulcro-template.ui.user :as user]
@@ -11,7 +12,7 @@
     [fulcro-template.ui.new-user :as nu]
     [fulcro-template.api.mutations :as api]
     [fulcro.client.primitives :as prim :refer [defsc]]
-    [fulcro.alpha.i18n :as i18n :refer [tr]]
+    [fulcro.i18n :as i18n :refer [tr]]
     [fulcro.ui.bootstrap3 :as b]))
 
 (defrouter Pages :page-router

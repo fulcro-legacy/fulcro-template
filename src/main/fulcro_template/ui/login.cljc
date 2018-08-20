@@ -1,9 +1,10 @@
 (ns fulcro-template.ui.login
   (:require [fulcro.client.primitives :as prim :refer [defsc]]
-            [fulcro.alpha.i18n :refer [tr]]
+            [fulcro.i18n :refer [tr]]
             [fulcro.client :as u]
             [fulcro.client.data-fetch :as df]
-            [fulcro.client.dom :as dom]
+            #?(:cljs [fulcro.client.dom :as dom]
+               :clj  [fulcro.client.dom-server :as dom])
             [fulcro-template.api.mutations :as api]
             [fulcro.client.mutations :as m]
             [fulcro-template.ui.html5-routing :as r]

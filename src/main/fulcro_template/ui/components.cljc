@@ -1,7 +1,8 @@
 (ns fulcro-template.ui.components
   (:require
     [fulcro.client.primitives :as om :refer [defui]]
-    [fulcro.client.dom :as dom]))
+    #?(:cljs [fulcro.client.dom :as dom]
+       :clj  [fulcro.client.dom-server :as dom])))
 
 (defui ^:once PlaceholderImage
   Object

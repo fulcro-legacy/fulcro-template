@@ -3,12 +3,11 @@
     [fulcro-template.api.mutations :as m]
     [fulcro-template.ui.html5-routing :as routing]
     [fulcro-template.ui.user :as user]
-    [fulcro.alpha.i18n :as i18n]
+    [fulcro.i18n :as i18n]
     [fulcro.client :as fc]
     [fulcro.client.data-fetch :as f]
     [fulcro.client.primitives :as prim]
-    [fulcro.server-render :as ssr]
-    yahoo.intl-messageformat-with-locales))
+    [fulcro.server-render :as ssr]))
 
 (defn message-format [{:keys [::i18n/localized-format-string ::i18n/locale ::i18n/format-options]}]
   (let [locale-str (name locale)

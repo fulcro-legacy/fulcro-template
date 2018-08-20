@@ -5,7 +5,7 @@
     [taoensso.timbre :as timbre]
     [fulcro-template.api.user-db :as users]
     [fulcro.server :as server]
-    [fulcro.alpha.i18n :as i18n]))
+    [fulcro.i18n :as i18n]))
 
 ;; SERVER READ IMPLEMENTATION. We're using `fulcro-parser`. You can either use defmulti on the multimethods
 ;; (see fulcro.server defmulti declarations) or the defquery-* helper macros.
