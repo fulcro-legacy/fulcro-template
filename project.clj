@@ -13,7 +13,7 @@
                  [bidi "2.1.2"]
                  [ring/ring-core "1.6.3"]
                  [bk/ring-gzip "0.2.1"]
-                 [http-kit "2.2.0"]
+                 [http-kit "2.3.0"]
                  [com.taoensso/timbre "4.10.0"]
                  [fulcrologic/fulcro-spec "2.1.0-1" :scope "test" :exclusions [fulcrologic/fulcro]]]
 
